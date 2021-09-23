@@ -6,19 +6,36 @@ namespace Geometry_Dash_LikeBot_3
 {
     internal class Program
     {
+        private static Server s;
         /// <summary>
         /// Main entry point.
         /// </summary>
         static async Task Main(string[] args)
         {
-            Server s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
+            Console.CancelKeyPress += Console_CancelKeyPress;
+
+            Database.Data.Read();
+            Console.WriteLine($"Account list loaded {Database.Data.Accounts.Count} accounts.");
+
+            s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
             s.Events.Logger = LogReceived;
             s.Events.RequestReceived += Events_RequestReceived;
             s.Events.ExceptionEncountered += Events_ExceptionEncountered;
 
             var serverStartTask = s.StartAsync();
-            Console.WriteLine($"Server started at {Constants.IP}:{Constants.Port}");
+            Console.WriteLine($"Server started at {Constants.IP}:{Constants.Port}.");
             await serverStartTask;
+        }
+
+        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            Console.WriteLine($"Stopping server.");
+            s.Stop();
+
+            Console.WriteLine($"Saving database.");
+            Database.Data.Save();
+
+            Console.WriteLine($"Done.");
         }
 
         private static void Events_ExceptionEncountered(object sender, ExceptionEventArgs e)
