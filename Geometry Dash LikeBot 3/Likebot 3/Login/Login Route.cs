@@ -51,6 +51,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             // now check account fr
             var result = checker.Check();
             response.IsSuccess = result.Item1;
+            if (response.IsSuccess) response.Message = "Logged in successfully!";
+            else if (!response.IsSuccess) response.Message = "Failed logging in :(";
 
             // save account id and player id to database which is
             // just a fucking json file to be loaded every start
