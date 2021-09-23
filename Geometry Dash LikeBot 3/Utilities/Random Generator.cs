@@ -8,12 +8,12 @@ namespace Geometry_Dash_LikeBot_3.Utilities
 {
     public static class Random_Generator
     {
-        private static Random random = new Random();
+        private static Random Random = new();
         public static string RandomString(int length)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghjklmnopqrstuvwxyz";
+            const string chars = "123456789abcdefghjklmnopqrstuvwxyz";
             return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+              .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
     }
 }

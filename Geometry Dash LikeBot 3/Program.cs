@@ -11,11 +11,14 @@ namespace Geometry_Dash_LikeBot_3
         /// </summary>
         static async Task Main(string[] args)
         {
-            Server s = new Server("127.0.0.1", 9000, false);
+            Server s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
             s.Events.Logger = LogReceived;
             s.Events.RequestReceived += Events_RequestReceived;
             s.Events.ExceptionEncountered += Events_ExceptionEncountered;
-            await s.StartAsync();
+
+            var serverStartTask = s.StartAsync();
+            Console.WriteLine($"Server started at {Constants.IP}:{Constants.Port}");
+            await serverStartTask;
         }
 
         private static void Events_ExceptionEncountered(object sender, ExceptionEventArgs e)
@@ -33,5 +36,11 @@ namespace Geometry_Dash_LikeBot_3
             Console.WriteLine(message);
         }
 
+        static async Task DefaultRoute(HttpContext ctx)
+        {
+            ctx.Response.StatusCode = 302;
+            ctx.Response.Headers["Location"] = "https://catgirlcare.org/";
+            await ctx.Response.Send("No.");
+        }
     }
 }

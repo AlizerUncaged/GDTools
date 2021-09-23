@@ -25,7 +25,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
         [StaticRoute(HttpMethod.GET, "/check")]
         public async Task CheckAccount(HttpContext ctx)
         {
-            // result json SessionID and IsSuccess
+
             await ctx.Response.Send(Utilities.Random_Generator.RandomString(16));
         }
     }
