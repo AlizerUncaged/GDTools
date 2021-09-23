@@ -12,8 +12,7 @@
         body {
             overflow: -moz-scrollbars-vertical;
             overflow-x: hidden;
-            overflow-y: auto;
-            font-family: 'Lato', sans-serif;
+            overflow-y: auto;font-family: 'Montserrat', sans-serif;
             color: var(--foreground);
             background-color: var(--background);
         }
@@ -79,4 +78,18 @@
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
             transition: background-color 5000s ease-in-out 0s;
+        }  ::-webkit-scrollbar
+        {
+          width: 12px;  /* for vertical scrollbars */
+          height: 12px; /* for horizontal scrollbars */
+        }
+        
+        ::-webkit-scrollbar-track
+        {
+          background: rgba(0, 0, 0, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb
+        {
+          background: rgba(0, 0, 0, 0.5);
         }

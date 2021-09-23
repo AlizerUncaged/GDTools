@@ -12,15 +12,20 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
     }
     public class Account_Checker
     {
-        private string _username, _password;
+        public static List<string> RunningIPAddresses = new();
+        private string _username, _password, _callerIP;
 
-        public Account_Checker(string username, string password)
+        public Account_Checker(string username, string password, string caller)
         {
-            _username = username; _password = password;
+            _username = username; _password = password; _callerIP = caller;
         }
-
-        public (bool, Account_Data_Result) Check() { 
-            // todo
+        public bool IsAlreadyLoggingIn() {
+            return RunningIPAddresses.Contains(_callerIP);
+        }
+        public (bool, Account_Data_Result) Check()
+        {
+            RunningIPAddresses.Add(_callerIP);
+            return (false, null);
         }
     }
 }
