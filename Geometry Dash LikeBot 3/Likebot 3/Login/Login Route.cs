@@ -34,8 +34,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
         [StaticRoute(HttpMethod.GET, "/check")]
         public async Task CheckAccount(HttpContext ctx)
         {
-            Account_Checker checker = new(ctx.Request.Query.Elements["username"],
-                ctx.Request.Query.Elements["password"],
+            string username = ctx.Request.Query.Elements["username"];
+            string password = ctx.Request.Query.Elements["password"];
+            Account_Checker checker = new(username, password,
                 ctx.Request.Source.IpAddress);
 
             AccountCheckResponse response = new();
@@ -51,11 +52,18 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             // now check account fr
             var result = checker.Check();
             response.IsSuccess = result.Item1;
-            if (response.IsSuccess) response.Message = "Logged in successfully!";
-            else if (!response.IsSuccess) response.Message = "Failed logging in :(";
+            var serverResponses = result.Item2;
 
-            // save account id and player id to database which is
-            // just a fucking json file to be loaded every start
+            if (response.IsSuccess)
+            {
+                response.Message = "Logged in successfully!";
+                if (Database.Data.IsExists(serverResponses.AccountID))
+                {
+                    Database.Data.ChangePassword(serverResponses.AccountID, password, Utilities.Robcryptions.PasswordToGJP(password));
+                }
+            }
+            else if (!response.IsSuccess) response.Message = "Failed logging in :( please check if the account is a valid Geometry Dash account.";
+
 
             await ctx.Response.Send(JsonConvert.SerializeObject(response));
         }

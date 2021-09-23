@@ -14,6 +14,11 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public string Password;
 
+        // generated
+        public string UDID;
+        // generated
+        public string UUID;
+
         public int UseCount;
 
         public string GJP;
@@ -26,5 +31,7 @@ namespace Geometry_Dash_LikeBot_3.Database
         /// 512 character key.
         /// </summary>
         public string SessionID;
+
+        public List<(bool /* is login success */, string /* ip address */)> Logins;
     }
 }

@@ -10,6 +10,9 @@ namespace Geometry_Dash_LikeBot_3
     {
         public const string IP = "127.0.0.1";
         public const int Port = 9000;
+
+        public const string BoomlingsHost = "http://www.boomlings.com/";
+
         public const string DatabaseFile = "Database.json";
     }
 }
