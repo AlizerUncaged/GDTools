@@ -1,0 +1,73 @@
+
+        :root {
+            --background: #24252D;
+            --backgroundLighter: #2A2D3A;
+            --foreground: rgba(255, 255, 255, 0.5);
+        }
+
+        b {
+            color: #fff;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            color: var(--foreground);
+            background-color: var(--background);
+        }
+
+        .navbar {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .form-control {
+            background-color: var(--backgroundLighter);
+            color: var(--foreground);
+            outline: none;
+            border: none;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .form-control:focus {
+            background-color: var(--background);
+            color: var(--foreground);
+        }
+
+
+        .form-control:disabled {
+            background-color: var(--background);
+            color: var(--foreground);
+            box-shadow: none;
+        }
+
+
+        .force-white {
+            color: var(--foreground) !important;
+        }
+
+        .bg-dark {
+            background-color: var(--background) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--backgroundLighter);
+            color: var(--foreground);
+            outline: none;
+            border: none;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--background);
+        }
+
+        #loader {
+            transition: all 0.5s ease-in-out;
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            transition: background-color 5000s ease-in-out 0s;
+        }
