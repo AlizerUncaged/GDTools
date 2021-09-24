@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -46,7 +46,6 @@
 
   <ItemGroup>
     <Folder Include="Likebot 3\Misc\" />
-    <Folder Include="Likebot 3\Proxies\" />
   </ItemGroup>
 
 </Project>

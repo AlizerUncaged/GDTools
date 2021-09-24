@@ -67,11 +67,15 @@
                                     if (objr["IsSuccess"]) {
                                         setCookie("SessionsKey", objr["SessionsKey"], 30);
                                         document.getElementById("spinner-l").classList.add("text-success");
+
+                                        // redirect
                                     }
                                     else {
                                         document.getElementById("spinner-l").classList.add("text-danger");
+                                        document.getElementById("username").disabled = false;
+                                        document.getElementById("password").disabled = false;
+                                        isChecking = false;
                                     }
-
                                 } else {
 
                                 }
@@ -89,6 +93,13 @@
                     }
 
                     function checkAccount() {
+
+                        document.getElementById("spinner-l").classList.remove("text-danger");
+                        document.getElementById("spinner-l").classList.remove("spinner-grow");
+                        document.getElementById("spinner-l").classList.add("text-light");
+                        document.getElementById("spinner-l").classList.add("spinner-border");
+                        document.getElementById("checking-gd-message").innerText = "Checking your Geometry Dash account.";
+
                         let usernameVal = document.getElementById("username").value;
                         let passwordVal = document.getElementById("password").value;
                         if (isEmpty(usernameVal)) return;
@@ -100,7 +111,7 @@
                         document.getElementById("password").disabled = true;
 
                         // wait for this
-                        makeRequest("GET", "/check?username=" + encodeURI(usernameVal) + "&password=" + encodeURI(passwordVal));
+                        makeRequest("GET", "/check?username=" + usernameVal + "&password=" + passwordVal);
                     }
                 </script>
                 <form action="/">

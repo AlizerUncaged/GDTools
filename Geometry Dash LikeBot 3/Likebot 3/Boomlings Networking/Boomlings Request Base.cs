@@ -29,24 +29,22 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
                 var handler = new HttpClientHandler { Proxy = socks5 };
                 HttpClient httpClient = new HttpClient(handler, true);
+                httpClient.Timeout = TimeSpan.FromSeconds(5);
+
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                 httpClient.DefaultRequestVersion = HttpVersion.Version11;
 
                 var content = new StringContent(Query);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
-                // "http://194.233.71.142/s.php"
                 var postResult = await httpClient.PostAsync(Endpoint, content);
 
-                // var postResult = await _client.PostAsync(,Endpoint, new StringContent(Query));
                 string dataResult = await postResult.Content.ReadAsStringAsync();
 
-                Console.WriteLine("Response " + dataResult);
                 return dataResult;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
 
             }
             return null;

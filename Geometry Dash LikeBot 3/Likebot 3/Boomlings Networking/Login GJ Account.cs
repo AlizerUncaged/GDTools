@@ -8,6 +8,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 {
     public class Account_Data_Result
     {
+        public string Message;
         public bool Success;
         public int AccountID;
         public int PlayerID;
@@ -36,6 +37,20 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
             var response = await SendAsync();
 
+            if (!string.IsNullOrWhiteSpace(response))
+                foreach (string line in response.Split('\n'))
+                {
+                    if (line.Contains(','))
+                    {
+                        var IDs = line.Split(',');
+                        result.Success = int.TryParse(IDs[0], out result.AccountID);
+                        result.Success = int.TryParse(IDs[0], out result.PlayerID);
+                        result.Message = "Successfully logged in!";
+                    }
+                }
+
+            if (response == null) result.Message = "An error occured with the request.";
+            if (response.Contains("-1")) result.Message = "Failed logging in :( please make sure it's a valid Geometry Dash account.";
 
             return result;
         }

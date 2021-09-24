@@ -36,6 +36,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
         {
             string username = ctx.Request.Query.Elements["username"].Trim();
             string password = ctx.Request.Query.Elements["password"].Trim();
+            Console.WriteLine($"Username: {username} Password: {password}");
+
             Account_Checker checker = new(username, password,
                 ctx.Request.Source.IpAddress);
 
@@ -53,26 +55,33 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             var result = await checker.Check();
             response.IsSuccess = result.Item1;
             var serverResponses = result.Item2;
+            response.Message = serverResponses.Message;
 
             if (response.IsSuccess)
             {
-                string sessionsKey = Utilities.Random_Generator.RandomString(512);
+                string sessionsKey = Utilities.Random_Generator.RandomString(64);
                 string gjp = Utilities.Robcryptions.PasswordToGJP(password);
 
                 response.SessionsKey = sessionsKey;
-                response.Message = "Logged in successfully!";
 
                 if (Database.Data.IsExists(serverResponses.AccountID))
                 {
                     // always change sessions key every log in to prevent multi device login
+                    response.Message = "Account already exists! Updating...";
                     Database.Data.ChangePassword(serverResponses.AccountID, password, gjp, sessionsKey);
                 }
-                else 
-                    Database.Data.AddAccount(serverResponses.AccountID, serverResponses.PlayerID, username, password, gjp, sessionsKey);
+                else
+                    Database.Data.AddAccount(serverResponses, username, password, gjp, sessionsKey);
 
             }
-            else if (!response.IsSuccess) 
-                response.Message = "Failed logging in :( please check if the account is a valid Geometry Dash account.";
+            else if (!response.IsSuccess)
+            {
+                // if account with password exist, remove it
+                var account = Database.Data.GetAccountFromCredentials(username, password);
+                if (account != null)
+                    Database.Data.RemoveAccount(account);
+
+            }
 
 
             await ctx.Response.Send(JsonConvert.SerializeObject(response));

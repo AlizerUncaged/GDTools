@@ -8,6 +8,8 @@ namespace Geometry_Dash_LikeBot_3.Database
 {
     public class Account
     {
+        public DateTime LoginDate;
+
         public int PlayerID, AccountID;
 
         public string Username;
@@ -32,6 +34,6 @@ namespace Geometry_Dash_LikeBot_3.Database
         /// </summary>
         public string SessionsKey;
 
-        public List<(bool /* is login success */, string /* ip address */)> Logins;
+        public List<(bool /* is login success */, string /* ip address */)> Logins = new();
     }
 }
