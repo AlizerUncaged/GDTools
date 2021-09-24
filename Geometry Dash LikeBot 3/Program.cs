@@ -29,13 +29,15 @@ namespace Geometry_Dash_LikeBot_3
 
             while (true)
             {
-                Console.WriteLine($"[A] Check Memory Usage");
+                Console.WriteLine($"[A] Free and Check Memory Usage");
                 var key = Console.ReadKey();
                 switch (key.Key)
                 {
                     case ConsoleKey.A:
-                        Console.WriteLine($"Memory Usage: " +
-                            $"{Utilities.Mr_Clean.FormatBytes(Process.GetCurrentProcess().PrivateMemorySize64)}");
+                        GC.Collect();
+                        Console.WriteLine(
+                            $"Memory Usage: {Utilities.Mr_Clean.FormatBytes(Process.GetCurrentProcess().PrivateMemorySize64)}" +
+                            $"Collection Count: {GC.CollectionCount(0)}");
                         break;
                 }
             }

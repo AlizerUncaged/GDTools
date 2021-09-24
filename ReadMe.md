@@ -15,8 +15,8 @@ A like/dislike exchange web application for liking/disliking levels, comments an
 
 # 🏃 How to run?
 ## Requirements
-- Visual Studio 2022 x64
-- .NET 5.0
+- at least Visual Studio 2022 x64
+- .NET 5.0 
 - C# knowledge.
 ## Building
 1. Clone this repo.

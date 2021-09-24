@@ -50,7 +50,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             }
 
             // now check account fr
-            var result = checker.Check();
+            var result = await checker.Check();
             response.IsSuccess = result.Item1;
             var serverResponses = result.Item2;
 

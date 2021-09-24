@@ -14,10 +14,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
         public string Username, Password;
     }
 
-    // proxies from webshare.io
     public static class Proxies
     {
-        private static int currentProxyIndex = 0;
+        private static int currentProxyIndex = -1; // initial value
 
         public static List<Proxy> ProxyList = new();
         public static async Task<bool> InitializeProxies()
@@ -35,11 +34,17 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
                     Password = datas[3]
                 });
             }
-            
+
             // shuffle
-            ProxyList= ProxyList.OrderBy(x => Utilities.Random_Generator.Random.Next()).ToList();
+            ProxyList = ProxyList.OrderBy(x => Utilities.Random_Generator.Random.Next()).ToList();
 
             return true;
+        }
+
+        public static Proxy NextProxy()
+        {
+            currentProxyIndex = currentProxyIndex > ProxyList.Count ? 0 : currentProxyIndex + 1;
+            return ProxyList[currentProxyIndex];
         }
     }
 }

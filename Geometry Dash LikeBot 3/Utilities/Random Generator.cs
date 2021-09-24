@@ -18,9 +18,9 @@ namespace Geometry_Dash_LikeBot_3.Utilities
         }
         public static long RandomLong(long min, long max)
         {
-            long result = Random.Next((Int32)(min >> 32), (Int32)(max >> 32));
+            long result = Between((Int32)(min >> 32), (Int32)(max >> 32));
             result = (result << 32);
-            result = result | (long)Random.Next((Int32)min, (Int32)max);
+            result = result | (long)Between((Int32)min, (Int32)max);
             return result;
         }
         public static string RandomUUID()

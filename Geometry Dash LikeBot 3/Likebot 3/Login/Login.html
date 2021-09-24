@@ -49,11 +49,38 @@
                         document.cookie = name + "=" + (value || "") + expires + "; path=/";
                     }
 
-                    function httpGet(theUrl) {
-                        var xmlHttp = new XMLHttpRequest();
-                        xmlHttp.open("GET", theUrl, false); // false for synchronous request
-                        xmlHttp.send(null);
-                        return xmlHttp.responseText;
+                    function makeRequest(method, url) {
+                        return new Promise(function (resolve, reject) {
+                            let xhr = new XMLHttpRequest();
+                            xhr.open(method, url);
+                            xhr.onload = function () {
+                                if (this.status >= 200 && this.status < 300) {
+
+                                    const objr = JSON.parse(xhr.response);
+
+                                    document.getElementById("checking-gd-message").innerText = objr["Message"];
+                                    document.getElementById("spinner-l").classList.remove("spinner-border");
+                                    document.getElementById("spinner-l").classList.remove("text-light");
+                                    document.getElementById("spinner-l").classList.add("spinner-grow");
+
+                                    // store session cookie
+                                    if (objr["IsSuccess"]) {
+                                        setCookie("SessionsKey", objr["SessionsKey"], 30);
+                                        document.getElementById("spinner-l").classList.add("text-success");
+                                    }
+                                    else {
+                                        document.getElementById("spinner-l").classList.add("text-danger");
+                                    }
+
+                                } else {
+
+                                }
+                            };
+                            xhr.onerror = function () {
+
+                            };
+                            xhr.send();
+                        });
                     }
 
                     let isChecking = false;
@@ -73,14 +100,7 @@
                         document.getElementById("password").disabled = true;
 
                         // wait for this
-                        let result = httpGet("/check?username=" + encodeURI(usernameVal) + "&password=" + encodeURI(passwordVal));
-                        const objr = JSON.parse(result);
-                        document.getElementById("checking-gd-message").innerText = objr["Message"];
-
-                        // store session cookie
-                        if (objr["IsSuccess"]) {
-                            setCookie("SessionsKey", objr["SessionsKey"], 30);
-                        }
+                        makeRequest("GET", "/check?username=" + encodeURI(usernameVal) + "&password=" + encodeURI(passwordVal));
                     }
                 </script>
                 <form action="/">
@@ -96,7 +116,7 @@
                         <div id="loader" class="row justify-content-md-center" style="height: 0px; overflow: hidden;">
                             <div class="row row-cols-auto">
                                 <div class="col">
-                                    <div class="spinner-border text-light" role="status">
+                                    <div id="spinner-l" class="spinner-border text-light" role="status">
                                     </div>
                                 </div>
                                 <div class="col" id="checking-gd-message">Checking your GD account, this might take a

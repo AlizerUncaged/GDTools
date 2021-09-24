@@ -6,13 +6,6 @@ using System.Threading.Tasks;
 
 namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
 {
-    public class Account_Data_Result
-    {
-        public int AccountID;
-        public int PlayerID;
-        public string UDID;
-        public string UUID;
-    }
     public class Account_Checker
     {
         public static List<string> RunningIPAddresses = new();
@@ -26,9 +19,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
         {
             return RunningIPAddresses.Contains(_callerIP);
         }
-        public (bool, Account_Data_Result) Check()
+        public async Task<(bool, Boomlings_Networking.Account_Data_Result)> Check()
         {
-            Account_Data_Result result = null;
+            Boomlings_Networking.Account_Data_Result result = null;
             bool isSuccess = false;
 
             if (_username.Length <= 2)
@@ -40,6 +33,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
 
             Boomlings_Networking.Login_GJ_Account loginAcc = 
                 new(_username, _password, Utilities.Random_Generator.RandomUDID(), Utilities.Random_Generator.RandomUUID());
+
+            result = await loginAcc.GetResult();
+            isSuccess = result.Success;
 
             RunningIPAddresses.Remove(_callerIP);
 

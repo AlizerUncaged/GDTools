@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HttpToSocks5Proxy" Version="1.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Watson" Version="4.2.0.2" />
   </ItemGroup>
@@ -44,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Likebot 3\Misc\" />
     <Folder Include="Likebot 3\Proxies\" />
   </ItemGroup>
 
