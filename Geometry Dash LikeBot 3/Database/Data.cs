@@ -18,13 +18,13 @@ namespace Geometry_Dash_LikeBot_3.Database
             return Accounts.FindIndex(x => x.AccountID == accountid) > 0;
         }
 
-        public static void ChangePassword(int accountid, string password, string gjp)
+        public static void ChangePassword(int accountid, string password, string gjp, string key)
         {
             var account = Accounts[GetIndexFromAccountID(accountid)];
-            account.Password = password; account.GJP = gjp;
+            account.Password = password; account.GJP = gjp; account.SessionsKey = key;
         }
 
-        public static void AddAccount(int accountid, int playerid, string username, string password, string gjp)
+        public static void AddAccount(int accountid, int playerid, string username, string password, string gjp, string key)
         {
             Accounts.Add(new Account
             {
@@ -32,7 +32,8 @@ namespace Geometry_Dash_LikeBot_3.Database
                 PlayerID = playerid,
                 Username = username,
                 Password = password,
-                GJP = gjp
+                GJP = gjp,
+                SessionsKey = key
             });
         }
 
@@ -43,7 +44,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public static Account GetAccountFromSessionKey(string sessionkey)
         {
-            return Accounts.FirstOrDefault(x => x.SessionID == sessionkey);
+            return Accounts.FirstOrDefault(x => x.SessionsKey == sessionkey);
         }
 
         public static Account GetAccountFromCredentials(string username, string password = null)

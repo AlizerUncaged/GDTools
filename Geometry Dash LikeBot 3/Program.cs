@@ -26,6 +26,7 @@ namespace Geometry_Dash_LikeBot_3
             var serverStartTask = s.StartAsync();
             Console.WriteLine($"Server started at {Constants.IP}:{Constants.Port}.");
 
+
             while (true)
             {
                 Console.WriteLine($"[A] Check Memory Usage");
@@ -43,12 +44,14 @@ namespace Geometry_Dash_LikeBot_3
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             Console.WriteLine($"Stopping server.");
-            s.Stop();
+            if (s != null)
+                if (s.IsListening)
+                    s.Stop();
 
             Console.WriteLine($"Saving database.");
             Database.Data.Save();
 
-            Console.WriteLine($"Done.");
+            Console.WriteLine($"Exiting.");
 
             Environment.Exit(Environment.ExitCode);
         }

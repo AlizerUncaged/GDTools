@@ -38,6 +38,17 @@
             <div class="text-center">
                 <img src="/Resources/GD.png" class="mx-auto d-blockd-block mb-2" height="100px">
                 <script>
+
+                    function setCookie(name, value, days) {
+                        var expires = "";
+                        if (days) {
+                            var date = new Date();
+                            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                            expires = "; expires=" + date.toUTCString();
+                        }
+                        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+                    }
+
                     function httpGet(theUrl) {
                         var xmlHttp = new XMLHttpRequest();
                         xmlHttp.open("GET", theUrl, false); // false for synchronous request
@@ -65,6 +76,11 @@
                         let result = httpGet("/check?username=" + encodeURI(usernameVal) + "&password=" + encodeURI(passwordVal));
                         const objr = JSON.parse(result);
                         document.getElementById("checking-gd-message").innerText = objr["Message"];
+
+                        // store session cookie
+                        if (objr["IsSuccess"]) {
+                            setCookie("SessionsKey", objr["SessionsKey"], 30);
+                        }
                     }
                 </script>
                 <form action="/">
@@ -83,7 +99,8 @@
                                     <div class="spinner-border text-light" role="status">
                                     </div>
                                 </div>
-                                <div class="col" id="checking-gd-message">Checking your GD account, this might take a while.</div>
+                                <div class="col" id="checking-gd-message">Checking your GD account, this might take a
+                                    while.</div>
                             </div>
                         </div>
                     </div>

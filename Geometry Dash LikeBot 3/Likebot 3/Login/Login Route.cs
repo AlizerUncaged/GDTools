@@ -34,8 +34,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
         [StaticRoute(HttpMethod.GET, "/check")]
         public async Task CheckAccount(HttpContext ctx)
         {
-            string username = ctx.Request.Query.Elements["username"];
-            string password = ctx.Request.Query.Elements["password"];
+            string username = ctx.Request.Query.Elements["username"].Trim();
+            string password = ctx.Request.Query.Elements["password"].Trim();
             Account_Checker checker = new(username, password,
                 ctx.Request.Source.IpAddress);
 
@@ -56,13 +56,23 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
 
             if (response.IsSuccess)
             {
+                string sessionsKey = Utilities.Random_Generator.RandomString(512);
+                string gjp = Utilities.Robcryptions.PasswordToGJP(password);
+
+                response.SessionsKey = sessionsKey;
                 response.Message = "Logged in successfully!";
+
                 if (Database.Data.IsExists(serverResponses.AccountID))
                 {
-                    Database.Data.ChangePassword(serverResponses.AccountID, password, Utilities.Robcryptions.PasswordToGJP(password));
+                    // always change sessions key every log in to prevent multi device login
+                    Database.Data.ChangePassword(serverResponses.AccountID, password, gjp, sessionsKey);
                 }
+                else 
+                    Database.Data.AddAccount(serverResponses.AccountID, serverResponses.PlayerID, username, password, gjp, sessionsKey);
+
             }
-            else if (!response.IsSuccess) response.Message = "Failed logging in :( please check if the account is a valid Geometry Dash account.";
+            else if (!response.IsSuccess) 
+                response.Message = "Failed logging in :( please check if the account is a valid Geometry Dash account.";
 
 
             await ctx.Response.Send(JsonConvert.SerializeObject(response));

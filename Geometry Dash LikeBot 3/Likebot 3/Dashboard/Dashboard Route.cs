@@ -9,7 +9,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
 {
     public class Dashboard_Route
     {
-        [StaticRoute(HttpMethod.POST, "/dashboard")]
+        // shouldve cookie already
+        [StaticRoute(HttpMethod.GET, "/dashboard")]
         public async Task EnterDashboard(HttpContext ctx)
         {
 

@@ -30,7 +30,7 @@ namespace Geometry_Dash_LikeBot_3.Database
         /// <summary>
         /// 512 character key.
         /// </summary>
-        public string SessionID;
+        public string SessionsKey;
 
         public List<(bool /* is login success */, string /* ip address */)> Logins;
     }
