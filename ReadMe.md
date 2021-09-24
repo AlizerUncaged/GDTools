@@ -12,3 +12,16 @@
 
 # 👍 👎 What is GDL-3?
 A like/dislike exchange web application for liking/disliking levels, comments and everything to like and dislike about Geometry Dash.
+
+# 🏃 How to run?
+## Requirements
+- Visual Studio 2022 x64
+- .NET 5.0
+- C# knowledge.
+## Building
+1. Clone this repo.
+1. Modify [Constants.cs](https://github.com/AlizerUncaged/LikeBot-3/blob/master/Geometry%20Dash%20LikeBot%203/Constants.cs) to your own liking.
+1. Press F5, open 127.0.0.1:9000 on your browser.
+
+# 📝 License
+Doesn't fucking matter.
