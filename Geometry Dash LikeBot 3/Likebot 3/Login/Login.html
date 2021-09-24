@@ -49,6 +49,10 @@
                         document.cookie = name + "=" + (value || "") + expires + "; path=/";
                     }
 
+                    function isEmpty(str) {
+                        return !str.trim().length;
+                    }
+
                     function makeRequest(method, url) {
                         return new Promise(function (resolve, reject) {
                             let xhr = new XMLHttpRequest();
@@ -67,8 +71,9 @@
                                     if (objr["IsSuccess"]) {
                                         setCookie("SessionsKey", objr["SessionsKey"], 30);
                                         document.getElementById("spinner-l").classList.add("text-success");
-
                                         // redirect
+                                        if (!isEmpty(objr["Redirect"]))
+                                        window.location.href = objr["Redirect"];
                                     }
                                     else {
                                         document.getElementById("spinner-l").classList.add("text-danger");
@@ -88,10 +93,6 @@
                     }
 
                     let isChecking = false;
-                    function isEmpty(str) {
-                        return !str.trim().length;
-                    }
-
                     function checkAccount() {
 
                         document.getElementById("spinner-l").classList.remove("text-danger");

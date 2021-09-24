@@ -29,14 +29,33 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             public bool IsSuccess = false;
             public string Message { get; set; }
             public string SessionsKey { get; set; }
+            public string Redirect { get; set; }
         }
 
         [StaticRoute(HttpMethod.GET, "/check")]
         public async Task CheckAccount(HttpContext ctx)
         {
+            if (!ctx.Request.Query.Elements.ContainsKey("username") ||
+                !ctx.Request.Query.Elements.ContainsKey("password"))
+            {
+                await ctx.Response.Send(JsonConvert.SerializeObject(new AccountCheckResponse
+                {
+                    IsSuccess = true,
+                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0.",
+                    Redirect = "https://www.youtube.com/watch?v=Q0x-XKAtues&ab_channel=Razdok"
+                }));
+            }
             string username = ctx.Request.Query.Elements["username"].Trim();
             string password = ctx.Request.Query.Elements["password"].Trim();
-            Console.WriteLine($"Username: {username} Password: {password}");
+            if (username.Contains(">") || username .Contains("<")|| password.Contains(">")|| password.Contains("<"))
+            {
+                await ctx.Response.Send(JsonConvert.SerializeObject(new AccountCheckResponse
+                {
+                    IsSuccess = true,
+                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0.",
+                    Redirect = "https://www.youtube.com/watch?v=Q0x-XKAtues&ab_channel=Razdok"
+                }));
+            }
 
             Account_Checker checker = new(username, password,
                 ctx.Request.Source.IpAddress);
@@ -59,9 +78,11 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
 
             if (response.IsSuccess)
             {
+
                 string sessionsKey = Utilities.Random_Generator.RandomString(64);
                 string gjp = Utilities.Robcryptions.PasswordToGJP(password);
 
+                response.Redirect = "/dashboard";
                 response.SessionsKey = sessionsKey;
 
                 if (Database.Data.IsExists(serverResponses.AccountID))

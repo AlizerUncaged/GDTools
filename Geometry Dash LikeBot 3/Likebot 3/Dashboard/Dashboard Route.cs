@@ -13,7 +13,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
         [StaticRoute(HttpMethod.GET, "/dashboard")]
         public async Task EnterDashboard(HttpContext ctx)
         {
-            // check account always every dashboard action in 1 day
+
         }
     }
 }

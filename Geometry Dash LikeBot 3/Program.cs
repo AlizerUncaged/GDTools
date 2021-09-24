@@ -19,6 +19,7 @@ namespace Geometry_Dash_LikeBot_3
                 Console.WriteLine($"Loaded {Likebot_3.Boomlings_Networking.Proxies.ProxyList.Count} proxies.");
 
             s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
+            s.Settings.AccessControl.Mode = AccessControlMode.DefaultPermit;
             s.Events.Logger = LogReceived;
             s.Events.RequestReceived += Events_RequestReceived;
             s.Events.ExceptionEncountered += Events_ExceptionEncountered;
@@ -29,7 +30,7 @@ namespace Geometry_Dash_LikeBot_3
 
             while (true)
             {
-                Console.WriteLine($"[A] Free and Check Memory Usage");
+                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Ban an IP");
                 var key = Console.ReadKey();
                 switch (key.Key)
                 {
@@ -61,12 +62,12 @@ namespace Geometry_Dash_LikeBot_3
         // maybe write these in logs
         private static void Events_ExceptionEncountered(object sender, ExceptionEventArgs e)
         {
-            // Console.WriteLine($"Error occured: {e.Exception}");
+            Console.WriteLine($"Error occured: {e.Exception}");
         }
 
         private static void Events_RequestReceived(object sender, RequestEventArgs e)
         {
-            // Console.WriteLine($"Request from {e.Ip}:{e.Port} to {e.Url}");
+
         }
 
         private static void LogReceived(string message)

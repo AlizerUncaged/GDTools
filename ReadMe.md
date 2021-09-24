@@ -3,7 +3,7 @@
   <img width="250" align="left" src="https://i.ibb.co/b64qSpS/php-Iyceg-H.png" alt="LoveLetter"/>
   <br>
   <h1>GDL-3</h1>
-  <p>The complete anarchy bot for the oldest anarchy server in Geometry Dash, the Boomlings server themselves.</p>
+  <p>The complete anarchy bot for the oldest anarchy server in Geometry Dash, the Boomlings server itself.</p>
 </div>
 
 ![](https://img.shields.io/badge/Made%20in-💻%20C%23-97C9E0)

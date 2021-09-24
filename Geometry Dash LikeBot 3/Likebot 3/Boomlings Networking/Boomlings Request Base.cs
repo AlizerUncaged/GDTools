@@ -45,7 +45,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine($"Error Sending Request: {ex}");
             }
             return null;
         }
