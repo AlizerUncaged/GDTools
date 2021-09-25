@@ -19,5 +19,27 @@ namespace Geometry_Dash_LikeBot_3.Utilities
                 }
             });
         }
+        public static Dictionary<string, string> ParseCookie(string cookie) {
+            Dictionary<string, string> cookies = new();
+
+            if (string.IsNullOrWhiteSpace(cookie))
+                return cookies;
+
+            if (cookie.Contains(';'))
+            {
+                var keys = cookie.Split(';');
+                foreach (var key in keys)
+                {
+                    var keyandval = key.Split('=');
+                    cookies.Add(keyandval[0], keyandval[1]);
+                }
+            }
+            else
+            {
+                var keyandval = cookie.Split('=');
+                cookies.Add(keyandval[0], keyandval[1]);
+            }
+            return cookies;
+        }
     }
 }

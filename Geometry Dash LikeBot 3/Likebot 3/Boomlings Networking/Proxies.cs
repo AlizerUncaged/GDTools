@@ -37,7 +37,6 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
             // shuffle
             ProxyList = ProxyList.OrderBy(x => Utilities.Random_Generator.Random.Next()).ToList();
-
             return true;
         }
 

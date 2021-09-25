@@ -41,8 +41,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
                 await ctx.Response.Send(JsonConvert.SerializeObject(new AccountCheckResponse
                 {
                     IsSuccess = true,
-                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0.",
-                    Redirect = "https://www.youtube.com/watch?v=Q0x-XKAtues&ab_channel=Razdok"
+                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0. Redirecting you to admin dashboard...",
+                    Redirect = "https://www.youtube.com/watch?v=5dYZtzCa8eE&ab_channel=TomoeTheNekoASMR"
                 }));
             }
             string username = ctx.Request.Query.Elements["username"].Trim();
@@ -52,8 +52,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
                 await ctx.Response.Send(JsonConvert.SerializeObject(new AccountCheckResponse
                 {
                     IsSuccess = true,
-                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0.",
-                    Redirect = "https://www.youtube.com/watch?v=Q0x-XKAtues&ab_channel=Razdok"
+                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0. Redirecting you to admin dashboard...",
+                    Redirect = "https://www.youtube.com/watch?v=5dYZtzCa8eE&ab_channel=TomoeTheNekoASMR"
                 }));
             }
 
@@ -101,7 +101,6 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
                 var account = Database.Data.GetAccountFromCredentials(username, password);
                 if (account != null)
                     Database.Data.RemoveAccount(account);
-
             }
 
 

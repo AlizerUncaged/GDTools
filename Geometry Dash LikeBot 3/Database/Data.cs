@@ -15,7 +15,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public static bool IsExists(int accountid)
         {
-            return Accounts.FindIndex(x => x.AccountID == accountid) !=-1;
+            return Accounts.FindIndex(x => x.AccountID == accountid) != -1;
         }
 
         public static void ChangePassword(int accountid, string password, string gjp, string key)
@@ -26,7 +26,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public static void AddAccount(Likebot_3.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp, string key)
         {
-            Accounts.Add(new Account
+            var account = new Account
             {
 
                 AccountID = serverResponse.AccountID,
@@ -37,13 +37,15 @@ namespace Geometry_Dash_LikeBot_3.Database
                 Password = password,
                 GJP = gjp,
                 SessionsKey = key,
-                LoginDate = DateTime.Now
-            });
+            };
+            account.LoginDate.Add(DateTime.Now);
+
+            Accounts.Add(account);
         }
 
         public static void AddAccount(int accountid, int playerid, string username, string password, string gjp, string key)
         {
-            Accounts.Add(new Account
+            var account = new Account
             {
                 AccountID = accountid,
                 PlayerID = playerid,
@@ -51,8 +53,10 @@ namespace Geometry_Dash_LikeBot_3.Database
                 Password = password,
                 GJP = gjp,
                 SessionsKey = key,
-                LoginDate = DateTime.Now
-            });
+            }; 
+            account.LoginDate.Add(DateTime.Now);
+
+            Accounts.Add(account);
         }
 
         public static int GetIndexFromAccountID(int accountid)

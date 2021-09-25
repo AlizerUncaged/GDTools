@@ -8,7 +8,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 {
     public class Account
     {
-        public DateTime LoginDate;
+        public List<DateTime> LoginDate = new();
 
         public int PlayerID, AccountID;
 
@@ -18,6 +18,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         // generated
         public string UDID;
+
         // generated
         public string UUID;
 

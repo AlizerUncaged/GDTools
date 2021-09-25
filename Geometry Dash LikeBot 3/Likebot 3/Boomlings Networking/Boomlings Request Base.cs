@@ -38,7 +38,6 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
                 var postResult = await httpClient.PostAsync(Endpoint, content);
-
                 string dataResult = await postResult.Content.ReadAsStringAsync();
 
                 return dataResult;
