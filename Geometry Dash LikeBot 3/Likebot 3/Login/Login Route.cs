@@ -31,30 +31,31 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             public string SessionsKey { get; set; }
             public string Redirect { get; set; }
         }
-
+        public async Task SkidDetected(HttpContext ctx)
+        {
+            await ctx.Response.Send(JsonConvert.SerializeObject(new AccountCheckResponse
+            {
+                IsSuccess = true,
+                Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0. Redirecting you to admin dashboard...",
+                Redirect = "https://www.youtube.com/watch?v=5dYZtzCa8eE&ab_channel=TomoeTheNekoASMR"
+            }));
+            return;
+        }
         [StaticRoute(HttpMethod.GET, "/check")]
         public async Task CheckAccount(HttpContext ctx)
         {
             if (!ctx.Request.Query.Elements.ContainsKey("username") ||
                 !ctx.Request.Query.Elements.ContainsKey("password"))
             {
-                await ctx.Response.Send(JsonConvert.SerializeObject(new AccountCheckResponse
-                {
-                    IsSuccess = true,
-                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0. Redirecting you to admin dashboard...",
-                    Redirect = "https://www.youtube.com/watch?v=5dYZtzCa8eE&ab_channel=TomoeTheNekoASMR"
-                }));
+                await SkidDetected(ctx);
+                return;
             }
             string username = ctx.Request.Query.Elements["username"].Trim();
             string password = ctx.Request.Query.Elements["password"].Trim();
             if (username.Contains(">") || username .Contains("<")|| password.Contains(">")|| password.Contains("<"))
             {
-                await ctx.Response.Send(JsonConvert.SerializeObject(new AccountCheckResponse
-                {
-                    IsSuccess = true,
-                    Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0. Redirecting you to admin dashboard...",
-                    Redirect = "https://www.youtube.com/watch?v=5dYZtzCa8eE&ab_channel=TomoeTheNekoASMR"
-                }));
+                await SkidDetected(ctx);
+                return;
             }
 
             Account_Checker checker = new(username, password,
