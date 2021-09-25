@@ -38,6 +38,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             isSuccess = result.Success;
 
             RunningIPAddresses.Remove(_callerIP);
+
             return (isSuccess, result);
         }
     }

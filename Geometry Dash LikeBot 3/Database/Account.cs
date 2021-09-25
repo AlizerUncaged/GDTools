@@ -16,19 +16,22 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public string Password;
 
-        // generated
+        // server generated
         public string UDID;
 
-        // generated
+        // server generated
         public string UUID;
-
-        public int UseCount;
 
         public string GJP;
 
         public Tiers Tier = Tiers.Free;
 
         public bool Valid;
+
+        // the amount of likes the account gave
+        public int UseCount;
+
+        public int LikesLeft = 250;
 
         /// <summary>
         /// 512 character key.

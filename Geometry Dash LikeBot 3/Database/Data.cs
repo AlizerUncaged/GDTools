@@ -71,6 +71,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public static Account GetAccountFromSessionKey(string sessionkey)
         {
+            if (string.IsNullOrWhiteSpace(sessionkey)) return null;
             return Accounts.FirstOrDefault(x => x.SessionsKey == sessionkey);
         }
 

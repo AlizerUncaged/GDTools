@@ -31,14 +31,20 @@ namespace Geometry_Dash_LikeBot_3
             while (true)
             {
                 Console.WriteLine($"[A] Free and Check Memory Usage, [B] Ban an IP");
-                var key = Console.ReadKey();
+                var key = Console.ReadKey(true);
                 switch (key.Key)
                 {
                     case ConsoleKey.A:
+
                         GC.Collect();
+
                         Console.WriteLine(
-                            $"Memory Usage: {Utilities.Mr_Clean.FormatBytes(Process.GetCurrentProcess().PrivateMemorySize64)}" +
+                            $"Memory Usage: {Utilities.Mr_Clean.FormatBytes(Process.GetCurrentProcess().PrivateMemorySize64)} " +
                             $"Collection Count: {GC.CollectionCount(0)}");
+                        Console.WriteLine(
+                            $"Accounts: {Database.Data.Accounts.Count} " +
+                            $"Threads: {Process.GetCurrentProcess().Threads.Count}");
+
                         break;
                 }
             }
