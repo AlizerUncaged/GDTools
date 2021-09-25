@@ -42,7 +42,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
         public static Proxy NextProxy()
         {
-            currentProxyIndex = currentProxyIndex > ProxyList.Count ? 0 : currentProxyIndex + 1;
+            currentProxyIndex++;
+
+            if (currentProxyIndex > ProxyList.Count) currentProxyIndex = 0;
             return ProxyList[currentProxyIndex];
         }
     }

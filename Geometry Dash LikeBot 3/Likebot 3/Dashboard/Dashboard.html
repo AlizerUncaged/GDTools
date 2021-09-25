@@ -24,15 +24,87 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
         rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Source+Sans+Pro:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
 
     <link rel="icon" href="/Resources/Logo.ico?v=1">
+    <link rel="stylesheet" href="/Resources/Main.css?v=2">
+    <style>
+        :root {
+            --background: #24252D;
+            --backgroundLighter: #2A2D3A;
+            --foreground: rgba(255, 255, 255, 0.5);
+        }
 
-    <link rel="stylesheet" href="/Resources/Main.css">
+        .round-s {
+            font-size: 15px;
+            background-color: var(--backgroundLighter);
+            color: var(--foreground);
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2), 0px 0px 15px rgba(0, 0, 0, 0.19);
+        }
+
+        #addbot-button {
+            border-radius: 25px 25px;
+            font-family: 'Noto Sans', sans-serif;
+            transition: all 0.5s ease-out;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        #addbot-button:hover {
+            background-color: #fff;
+            color: var(--backgroundLighter);
+            padding-left: 30px;
+            padding-right: 30px;
+            box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.30), 0px 0px 25px rgba(255, 255, 255, 0.30);
+        }
+
+        #new-bot-section {
+            height: auto;
+            max-height: 0px;
+            overflow: hidden;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .showed {
+            max-height: 100px !important;
+        }
+    </style>
     <title>Dashboard | GDL3</title>
 </head>
 
 <body>
-    
+    <nav class="navbar navbar-light bg-dark">
+        <div class=" container align-items-center">
+            <a class="navbar-brand force-white" href="#">
+                <img src="/Resources/Logo.png" alt="" height="25px" class="me-2 d-inline-block align-text-top ">
+                <b> Likebot 3</b>
+            </a>
+            <script>
+                function showNewBot() {
+                    if (!document.getElementById("new-bot-section").classList.contains("showed"))
+                        document.getElementById("new-bot-section").classList.add("showed");
+                    else {
+                        document.getElementById("new-bot-section").classList.remove("showed");
+                    }
+                }
+            </script>
+            <div class="d-flex align-items-center m-0">
+                <div class="col me-2">{username}</div>
+                <div class=" me-2 round-s  p-2" style="width: auto; border-radius: 25px 25px !important;">
+                    Left: {left}</div>
+                <button onclick="showNewBot()" id="addbot-button" class="btn round-s" type="submit"> + Add Bot</button>
+            </div>
+        </div>
+        <div id="new-bot-section" class="container mt-2 p-0">
+            <div class="row container-fluid">
+                <div class="row mb-2">
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </nav>
 </body>
 
 </html>

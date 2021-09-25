@@ -37,8 +37,8 @@ namespace Geometry_Dash_LikeBot_3.Database
                 Password = password,
                 GJP = gjp,
                 SessionsKey = key,
+                LoginDate= DateTime.Now
             };
-            account.LoginDate.Add(DateTime.Now);
 
             Accounts.Add(account);
         }
@@ -53,8 +53,8 @@ namespace Geometry_Dash_LikeBot_3.Database
                 Password = password,
                 GJP = gjp,
                 SessionsKey = key,
+                LoginDate = DateTime.Now
             }; 
-            account.LoginDate.Add(DateTime.Now);
 
             Accounts.Add(account);
         }

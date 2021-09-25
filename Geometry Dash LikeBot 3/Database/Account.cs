@@ -8,7 +8,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 {
     public class Account
     {
-        public List<DateTime> LoginDate = new();
+        public DateTime LoginDate;
 
         public int PlayerID, AccountID;
 
@@ -31,7 +31,7 @@ namespace Geometry_Dash_LikeBot_3.Database
         // the amount of likes the account gave
         public int UseCount;
 
-        public int LikesLeft = 250;
+        public int LikesLeft = (int)Tiers.Free;
 
         /// <summary>
         /// 512 character key.

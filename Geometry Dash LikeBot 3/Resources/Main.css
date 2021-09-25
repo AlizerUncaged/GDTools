@@ -77,8 +77,12 @@
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
+            color: white;
             transition: background-color 5000s ease-in-out 0s;
-        }  ::-webkit-scrollbar
+            -webkit-text-fill-color: white;
+        }  
+        
+        ::-webkit-scrollbar
         {
           width: 12px;  /* for vertical scrollbars */
           height: 12px; /* for horizontal scrollbars */

@@ -34,11 +34,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
                 await MoveToLogin(ctx); return;
             }
 
-
             var keysAndCookies = Utilities.Quick_TCP.ParseCookie(cookies);
             string sessionKey;
             var sessionKeyFound = keysAndCookies.TryGetValue("SessionsKey", out sessionKey);
-
             if (!sessionKeyFound)
             {
                 await MoveToLogin(ctx); return;
@@ -51,9 +49,11 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
                 await MoveToLogin(ctx); return;
             }
 
-
-            await ctx.Response.Send(File.ReadAllBytes("Likebot 3/Dashboard/Dashboard.html"));
-
+            await ctx.Response.Send(
+                (await File.ReadAllTextAsync("Likebot 3/Dashboard/Dashboard.html"))
+                .Replace("{username}", account.Username)
+                .Replace("{left}", account.LikesLeft.ToString())
+                );
         }
     }
 }
