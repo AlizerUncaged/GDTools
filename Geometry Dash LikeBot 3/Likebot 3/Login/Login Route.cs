@@ -103,7 +103,6 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
                     Database.Data.RemoveAccount(account);
             }
 
-
             await ctx.Response.Send(JsonConvert.SerializeObject(response));
         }
     }

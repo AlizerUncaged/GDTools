@@ -17,6 +17,11 @@ namespace Geometry_Dash_LikeBot_3
 
             if (await Likebot_3.Boomlings_Networking.Proxies.InitializeProxies())
                 Console.WriteLine($"Loaded {Likebot_3.Boomlings_Networking.Proxies.ProxyList.Count} proxies.");
+            else
+            {
+                Console.WriteLine($"Proxies not loaded, please recheck your proxies.");
+                return;
+            }
 
             s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
             s.Settings.AccessControl.Mode = AccessControlMode.DefaultPermit;
