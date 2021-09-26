@@ -44,28 +44,21 @@
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2), 0px 0px 15px rgba(0, 0, 0, 0.19);
         }
 
-        #addbot-button {
+        .addbot-button {
             border-radius: 25px 25px;
             font-family: 'Noto Sans', sans-serif;
             transition: all 0.5s ease-out;
-            padding-left: 20px;
-            padding-right: 20px;
+            width: 150px;
+            margin-right: 15px;
         }
 
-        #addbot-button:hover {
+        .addbot-button:hover {
             background-color: #fff;
             color: var(--backgroundLighter);
-            padding-left: 30px;
-            padding-right: 30px;
+            width: 180px;
             box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.30), 0px 0px 25px rgba(255, 255, 255, 0.30);
         }
 
-        #new-bot-section {
-            height: auto;
-            max-height: 0px;
-            overflow: hidden;
-            transition: all 0.5s ease-in-out;
-        }
 
         .showed {
             max-height: 100px !important;
@@ -75,7 +68,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-light bg-dark">
+    <nav class="navbar navbar-light bg-dark mb-4">
         <div class=" container align-items-center">
             <a class="navbar-brand force-white" href="#">
                 <img src="/Resources/Logo.png" alt="" height="25px" class="me-2 d-inline-block align-text-top ">
@@ -83,28 +76,20 @@
             </a>
             <script>
                 function showNewBot() {
-                    if (!document.getElementById("new-bot-section").classList.contains("showed"))
-                        document.getElementById("new-bot-section").classList.add("showed");
-                    else {
-                        document.getElementById("new-bot-section").classList.remove("showed");
-                    }
                 }
             </script>
             <div class="d-flex align-items-center m-0">
                 <div class="col me-2">{username}</div>
-                <div class=" me-2 round-s  p-2" style="width: auto; border-radius: 25px 25px !important;">
-                    Left: {left}</div>
-                <button onclick="showNewBot()" id="addbot-button" class="btn round-s" type="submit"> + Add Bot</button>
-            </div>
-        </div>
-        <div id="new-bot-section" class="container mt-2 p-0">
-            <div class="row container-fluid">
-                <div class="row mb-2">
-                    <p></p>
-                </div>
-            </div>
+                <div class="me-2 round-s p-2" style="width: auto; border-radius: 25px 25px !important;">
+                    Left: {left}</div>  </div>
         </div>
     </nav>
+    <div class="container">
+        <div class="d-flex flex-row-reverse">
+            <button onclick="showNewBot()" class="btn round-s addbot-button" type="submit"> + Add Level</button>
+            <button onclick="showNewBot()" class="btn round-s addbot-button" type="submit"> + Add Comment</button>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -17,10 +17,12 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             await LoginForm(ctx);
         }
 
+        // just read it once
+        public readonly byte[] LoginPage = File.ReadAllBytes("Likebot 3/Login/Login.html");
         [StaticRoute(HttpMethod.GET, "/login")]
         public async Task LoginForm(HttpContext ctx)
         {
-            await ctx.Response.Send(File.ReadAllBytes("Likebot 3/Login/Login.html"));
+            await ctx.Response.Send(LoginPage);
         }
 
 

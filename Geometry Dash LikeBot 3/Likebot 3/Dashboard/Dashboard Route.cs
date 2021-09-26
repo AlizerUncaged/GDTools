@@ -19,6 +19,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
             await ctx.Response.Send();
             return;
         }
+
+        public readonly string DashboardPage =  File.ReadAllText("Likebot 3/Dashboard/Dashboard.html");
         // shouldve cookie already
         [StaticRoute(HttpMethod.GET, "/dashboard")]
         public async Task EnterDashboard(HttpContext ctx)
@@ -49,8 +51,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
                 await MoveToLogin(ctx); return;
             }
 
-            await ctx.Response.Send(
-                (await File.ReadAllTextAsync("Likebot 3/Dashboard/Dashboard.html"))
+            await ctx.Response.Send(DashboardPage
                 .Replace("{username}", account.Username)
                 .Replace("{left}", account.LikesLeft.ToString())
                 );
