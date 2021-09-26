@@ -26,7 +26,17 @@
         .navbar {
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         }
-
+        .modal-header {
+            border-bottom: 0 none;
+        }
+        
+        .modal-footer {
+            border-top: 0 none;
+        }
+.modal-content{
+    background-color: var(--background);
+}
+        
         .form-control {
             background-color: var(--backgroundLighter);
             color: var(--foreground);
