@@ -26,6 +26,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public Tiers Tier = Tiers.Free;
 
+        // false to disable account
         public bool Valid;
 
         // the amount of likes the account gave

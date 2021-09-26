@@ -9,8 +9,10 @@ namespace Geometry_Dash_LikeBot_3
     public static class Constants
     {
         // ip and port to run the web application
-        public const string IP = "127.0.0.1";
-        public const int Port = 8080;
+        public const string IP = 
+            "127.0.0.1";
+        public const int Port = 
+            8080;
 
         public const string BoomlingsHost = 
             "http://www.boomlings.com/";

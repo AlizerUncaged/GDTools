@@ -12,7 +12,7 @@ namespace Geometry_Dash_LikeBot_3.Resources
     {
 
         [ParameterRoute(HttpMethod.GET, "/Resources/{filename}")]
-        public static async Task PostBarRoute(HttpContext ctx)
+        public static async Task GetResource(HttpContext ctx)
         {
             await ctx.Response.Send(await File.ReadAllBytesAsync("Resources/"+ctx.Request.Url.Parameters["filename"]));
         }
