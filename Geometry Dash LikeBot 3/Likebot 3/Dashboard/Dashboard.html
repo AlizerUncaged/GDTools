@@ -66,6 +66,8 @@
             max-height: 100px !important;
         }
     </style>
+    <script>
+    </script>
     <title>Dashboard | GDL3</title>
 </head>
 
@@ -78,20 +80,24 @@
             </a>
             <script>
                 function showNewBot() {
+
                 }
             </script>
             <div class="d-flex align-items-center m-0">
                 <div class="col me-2"><b>{username}</b></div>
                 <div class="me-2  p-2" style="width: auto; border-radius: 25px 25px !important;"> {left} <i
-                        class="bi bi-hand-thumbs-down"></i><i class="bi bi-hand-thumbs-up"></i></div>
+                        class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i></div>
             </div>
         </div>
     </nav>
     <div class="container">
         <div class="d-flex flex-row-reverse">
-            <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-level" class="btn round-s addbot-button" type="submit"> + Add Level</button>
-            <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-comment" class="btn round-s addbot-button" type="submit"> + Add Comment</button>
-            <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-profilepost" class="btn round-s addbot-button" type="submit"> + Add Profile Post</button>
+            <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-level"
+                class="btn round-s addbot-button" type="submit"> + Add Level</button>
+            <button onclick="" data-bs-toggle="modal" data-bs-target="#new-comment"
+                class="btn round-s addbot-button" type="submit"> + Add Comment</button>
+            <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-profilepost"
+                class="btn round-s addbot-button" type="submit"> + Add Profile Post</button>
         </div>
     </div>
 
@@ -102,11 +108,12 @@
                     <h5 class="modal-title" id="exampleModalLabel"> <b>Levels</b></h5>
                 </div>
                 <div class="modal-body">
-
+                    <p>You can see the Level ID under the comments tab.</p>
+                    <input name="username" id="username" type="text" class="form-control mb-3" placeholder="Level ID">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Add</button>
+                    <button type="button" class="btn btn-primary shadowed">Add</button>
                 </div>
             </div>
         </div>
@@ -118,11 +125,49 @@
                     <h5 class="modal-title" id="exampleModalLabel"> <b>Comments</b></h5>
                 </div>
                 <div class="modal-body">
+                    <p>Username of the person who commented.</p>
+                    <input name="username" id="username" type="text" class="form-control mb-3"
+                        placeholder="Author Username">
+                    <div class="row container" id="comment-area">
 
+                    </div>
                 </div>
                 <div class="modal-footer">
+                    <script>
+                        let isSearchComments = false;
+                        function searchComments() {
+                            if (isSearchComments) return;
+                            isSearchComments = true; // find comments
+                            showSpinner();
+                            resetSpinner();
+                        }
+                        function showSpinner(){
+                            document.getElementById("search-comments-spinner-id").classList.add("search-comments-spinner-loading");
+                            document.getElementById("search-comments-spinner-id").classList.add("spinner-border");
+                        }
+                        function resetSpinner() {
+                            document.getElementById("search-comments-spinner-id").classList.remove("search-comments-spinner-loading");
+                            document.getElementById("search-comments-spinner-id").classList.remove("spinner-border");
+                        }
+                    </script>
                     <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Add</button>
+                    <button type="button" onclick="searchComments()" class="btn btn-primary shadowed">
+                        <style>
+                            .search-comments-spinner {
+                                height: 0;
+                                width: 0;
+                                transition: all 0.5s ease-in-out;
+                            }
+
+                            .search-comments-spinner-loading {
+                                height: 15px !important;
+                                width: 15px !important;
+                            }
+                        </style>
+                        <div id="search-comments-spinner-id" class="search-comments-spinner  text-light me-2"
+                            role="status">
+                        </div> Search for Comments
+                    </button>
                 </div>
             </div>
         </div>
@@ -134,7 +179,6 @@
                     <h5 class="modal-title" id="exampleModalLabel"> <b>Profile Posts</b></h5>
                 </div>
                 <div class="modal-body">
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>

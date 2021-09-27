@@ -39,7 +39,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
             {
                 IsSuccess = true,
                 Message = "MySQL-00911: Invalid character error on table 'Skid' line 8 logging in as account id 0. Redirecting you to admin dashboard...",
-                Redirect = "https://www.youtube.com/watch?v=5dYZtzCa8eE&ab_channel=TomoeTheNekoASMR"
+                Redirect = "https://www.youtube.com/watch?v=xjS6Z8kztq8&ab_channel=Rickrollingnoads"
             }));
             return;
         }
@@ -81,7 +81,6 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
 
             if (response.IsSuccess)
             {
-
                 string sessionsKey = Utilities.Random_Generator.RandomString(64);
                 string gjp = Utilities.Robcryptions.PasswordToGJP(password);
 

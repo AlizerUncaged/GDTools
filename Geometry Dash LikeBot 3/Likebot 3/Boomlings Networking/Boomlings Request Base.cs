@@ -18,6 +18,11 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
         public string Query { get; set; }
 
+        // declare this shit so it wont have to be reinitializwed
+        private static
+                readonly MediaTypeWithQualityHeaderValue AcceptAll = new MediaTypeWithQualityHeaderValue("*/*");
+        private static
+                readonly MediaTypeHeaderValue ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
         public async Task<string> SendAsync()
         {
             try
@@ -31,11 +36,11 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
                 HttpClient httpClient = new HttpClient(handler, true);
                 httpClient.Timeout = TimeSpan.FromSeconds(5);
 
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                httpClient.DefaultRequestHeaders.Accept.Add(AcceptAll);
                 httpClient.DefaultRequestVersion = HttpVersion.Version11;
 
                 var content = new StringContent(Query);
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                content.Headers.ContentType = ContentType;
 
                 var postResult = await httpClient.PostAsync(Endpoint, content);
                 string dataResult = await postResult.Content.ReadAsStringAsync();
