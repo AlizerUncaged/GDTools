@@ -61,9 +61,14 @@
             box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.30), 0px 0px 25px rgba(255, 255, 255, 0.30);
         }
 
-
         .showed {
             max-height: 100px !important;
+        }
+
+        @media all and (orientation:portrait) {
+            #information-area {
+                display: none;
+            }
         }
     </style>
     <script>
@@ -90,14 +95,54 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+    <div class="container mb-2">
         <div class="d-flex flex-row-reverse">
             <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-level"
                 class="btn round-s addbot-button" type="submit"> + Add Level</button>
-            <button onclick="" data-bs-toggle="modal" data-bs-target="#new-comment"
-                class="btn round-s addbot-button" type="submit"> + Add Comment</button>
+            <button onclick="" data-bs-toggle="modal" data-bs-target="#new-comment" class="btn round-s addbot-button"
+                type="submit"> + Add Comment</button>
             <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-profilepost"
                 class="btn round-s addbot-button" type="submit"> + Add Profile Post</button>
+        </div>
+    </div>
+
+    <div class="row container p-2">
+        <div id="information-area" class="col rounded container console ms-4 me-4 p-3">
+            <div class="row  mb-4">
+                <div class="row">
+                    <b>Information</b>
+                </div>
+                <div class="row">
+                    <span> Geometry Dash Server <b class="text-success">Online</b></span>
+                    <span> Likebot Server <b class="text-success">Online</b></span>
+                    <span> Gateway Server <b class="text-success">Online</b></span>
+                    <span> Likes refreshed every :00, :20 and :40</span>
+                    <br><br>
+                </div>
+                <div class="row">
+                    <b>Server Status (Server 1)</b>
+                </div>
+                <div class="row text-center mb-2">
+                    <div class="col">
+                        <h4>{used_memory}</h4>  
+                        RAM usage.
+                    </div>
+                    <div class="col">
+                        <h4>∞</h4>
+                        Slots available.
+                    </div>
+                </div>
+                <div class="row text-center">Refresh this page to update.</div>
+                <div class="row p-2"></div>
+            </div>
+            <!--
+            <div class="row shadow p-3 mb-4">
+                <b>Announcements</b>
+            </div>
+            -->
+        </div>
+        <div class="col">
+            <!-- IFRAME TO SESSIONS AND SHIT -->
         </div>
     </div>
 
@@ -141,7 +186,7 @@
                             showSpinner();
                             resetSpinner();
                         }
-                        function showSpinner(){
+                        function showSpinner() {
                             document.getElementById("search-comments-spinner-id").classList.add("search-comments-spinner-loading");
                             document.getElementById("search-comments-spinner-id").classList.add("spinner-border");
                         }

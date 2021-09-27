@@ -10,6 +10,8 @@ namespace Geometry_Dash_LikeBot_3
         private static Server s;
         static async Task Main(string[] args)
         {
+            Console.WriteLine(Utilities.Robcryptions.GetChk("1", "1", "1", "1", "1", "1", "1", "1"));
+
             Console.CancelKeyPress += Console_CancelKeyPress;
 
             Database.Data.Read();
