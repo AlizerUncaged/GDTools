@@ -37,7 +37,7 @@ namespace Geometry_Dash_LikeBot_3.Database
                 Password = password,
                 GJP = gjp,
                 SessionsKey = key,
-                LoginDate= DateTime.Now
+                LoginDate = DateTime.Now
             };
 
             Accounts.Add(account);
@@ -54,7 +54,7 @@ namespace Geometry_Dash_LikeBot_3.Database
                 GJP = gjp,
                 SessionsKey = key,
                 LoginDate = DateTime.Now
-            }; 
+            };
 
             Accounts.Add(account);
         }
@@ -89,6 +89,11 @@ namespace Geometry_Dash_LikeBot_3.Database
         public static Account GetAccountViaAccountID(int AccountID)
         {
             return Accounts.FirstOrDefault(x => x.AccountID == AccountID);
+        }
+
+        public static IEnumerable<Account> GetRandomAccounts(int howMany)
+        {
+            return Accounts.OrderBy(x => Utilities.Random_Generator.Random.Next()).Take(howMany);
         }
 
         public static void Read()
