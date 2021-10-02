@@ -29,13 +29,16 @@ namespace Geometry_Dash_LikeBot_3.Database
         // false to disable account
         public bool Valid;
 
+        // the last time the account gave likes
+        public DateTime LastUse;
+
         // the amount of likes the account gave
         public int UseCount;
 
         public int LikesLeft = (int)Tiers.Free;
 
         /// <summary>
-        /// 512 character key.
+        /// CSRF token.
         /// </summary>
         public string SessionsKey;
 
