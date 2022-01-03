@@ -1,6 +1,6 @@
 
 <div>
-  <img width="250" align="left" src="https://i.ibb.co/b64qSpS/php-Iyceg-H.png" alt="LoveLetter"/>
+  <img width="250" align="left" src="https://i.ibb.co/mNXsJzg/php-Iyceg-H.png"/>
   <br>
   <h1>GDL-3</h1>
   <p>The complete anarchy bot for the oldest anarchy server in Geometry Dash, the Boomlings server itself.</p>
