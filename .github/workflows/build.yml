@@ -1,36 +1,22 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
+name: dotnet package
 
-# This continuous integration pipeline is triggered anytime a user pushes code to the repo.
-# This pipeline builds the Wpf project, runs unit tests, then saves the MSIX build artifact.
-name:  Build Test
+on: [push]
 
-on:  
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+jobs:
+  build:
 
-jobs:  
-  build:    
-    runs-on: windows-latest
-    
-    steps:      
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: 5.0.x
+
+    steps:
       - uses: actions/checkout@v2
-      
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
-
-      - name: Navigate to Workspace
-        run: cd $GITHUB_WORKSPACE
-
-      - name: Restore Packages
-        run: nuget restore "Geometry Dash LikeBot 3.sln"
-
-      - name: Build Solution
-        run: |
-          msbuild.exe "Geometry Dash LikeBot 3.sln" /p:platform="Any CPU" /p:configuration="Release"
-        
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
