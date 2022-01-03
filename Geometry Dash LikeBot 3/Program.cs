@@ -30,21 +30,18 @@ namespace Geometry_Dash_LikeBot_3 {
                 var key = Console.ReadKey(true);
                 switch (key.Key) {
                     case ConsoleKey.A:
-
                         GC.Collect();
-
                         Console.WriteLine(
                             $"Memory Usage: {Utilities.Mr_Clean.FormatBytes(Process.GetCurrentProcess().PrivateMemorySize64)} " +
                             $"Collection Count: {GC.CollectionCount(0)}");
                         Console.WriteLine(
                             $"Accounts: {Database.Data.Accounts.Count} " +
                             $"Threads: {Process.GetCurrentProcess().Threads.Count}");
-
                         break;
                     case ConsoleKey.C:
                         var accounts = Database.Data.Accounts;
                         foreach (var account in accounts) {
-                            Console.WriteLine($"{account.Username} Session: {account.SessionsKey}");
+                            Console.WriteLine($"{accounts.IndexOf(account)}: {account.Username}'s Session: {account.SessionsKey}");
                         }
                         break;
                 }
@@ -60,7 +57,7 @@ namespace Geometry_Dash_LikeBot_3 {
             Console.WriteLine($"Saving database.");
             Database.Data.Save();
 
-            Console.WriteLine($"Exiting.");
+            Console.WriteLine($"Exiting...");
 
             Environment.Exit(Environment.ExitCode);
         }
@@ -75,7 +72,7 @@ namespace Geometry_Dash_LikeBot_3 {
         }
 
         private static void LogReceived(string message) {
-            // Console.WriteLine(message);
+
         }
 
         // 404
