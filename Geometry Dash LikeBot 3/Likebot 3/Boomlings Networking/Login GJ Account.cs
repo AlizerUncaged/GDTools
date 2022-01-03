@@ -50,7 +50,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
                 }
 
             if (response == null) result.Message = "An error occured with the request.";
-            if (response.Contains("-1")) result.Message = "Account rejected :( please make sure it's a valid Geometry Dash account.";
+            else if (response.Contains("-1")) result.Message = "Account rejected :( please make sure it's a valid Geometry Dash account.";
 
             return result;
         }

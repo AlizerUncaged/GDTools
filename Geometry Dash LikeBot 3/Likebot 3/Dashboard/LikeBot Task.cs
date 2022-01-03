@@ -28,6 +28,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
             _likers = Database.Data.GetRandomAccounts(_max);
         }
 
+        // comence likebot
         public async Task<int> LikeBotAll()
         {
             if (!Tasks.TryGetValue(_owner, out _))
@@ -51,9 +52,12 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
             return success;
         }
 
+        // adds one like
         public async Task<bool> AddLike()
         {
-            // create like gj item objects
+            // get random accounts
+            throw new NotImplementedException();
+            // add like
         }
     }
 }

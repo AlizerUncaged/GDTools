@@ -11,7 +11,6 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
 {
     public class Dashboard_Route
     {
-        
         public async Task MoveToLogin(HttpContext ctx)
         {
 
@@ -26,7 +25,6 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
         [StaticRoute(HttpMethod.GET, "/dashboard")]
         public async Task EnterDashboard(HttpContext ctx)
         {
-
             string cookies;
             var cookiesFound = ctx.Request.Headers.TryGetValue("Cookie", out cookies);
 

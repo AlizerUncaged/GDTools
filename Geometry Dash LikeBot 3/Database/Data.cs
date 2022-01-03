@@ -28,7 +28,6 @@ namespace Geometry_Dash_LikeBot_3.Database
         {
             var account = new Account
             {
-
                 AccountID = serverResponse.AccountID,
                 PlayerID = serverResponse.PlayerID,
                 UDID = serverResponse.UDID,

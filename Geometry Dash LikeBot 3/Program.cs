@@ -3,17 +3,14 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using WatsonWebserver;
 
-namespace Geometry_Dash_LikeBot_3
-{
-    internal class Program
-    {
+namespace Geometry_Dash_LikeBot_3 {
+    internal class Program {
         private static Server s;
-        static async Task Main(string[] args)
-        {
+        static async Task Main(string[] args) {
             Console.CancelKeyPress += Console_CancelKeyPress;
 
             Database.Data.Read();
-            Console.WriteLine($"Account list loaded {Database.Data.Accounts.Count} accounts.");
+            Console.WriteLine($"Account list loaded {Database.Data.Accounts.Count} accounts.\r\nLoading proxies...");
 
             if (await Likebot_3.Boomlings_Networking.Proxies.InitializeProxies())
                 Console.WriteLine($"Loaded {Likebot_3.Boomlings_Networking.Proxies.ProxyList.Count} proxies.");
@@ -28,12 +25,10 @@ namespace Geometry_Dash_LikeBot_3
             Console.WriteLine($"Server started at {Constants.IP}:{Constants.Port}.");
 
 
-            while (true)
-            {
-                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Ban an IP");
+            while (true) {
+                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Ban an IP, [C] Sessions");
                 var key = Console.ReadKey(true);
-                switch (key.Key)
-                {
+                switch (key.Key) {
                     case ConsoleKey.A:
 
                         GC.Collect();
@@ -46,12 +41,17 @@ namespace Geometry_Dash_LikeBot_3
                             $"Threads: {Process.GetCurrentProcess().Threads.Count}");
 
                         break;
+                    case ConsoleKey.C:
+                        var accounts = Database.Data.Accounts;
+                        foreach (var account in accounts) {
+                            Console.WriteLine($"{account.Username} Session: {account.SessionsKey}");
+                        }
+                        break;
                 }
             }
         }
 
-        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
-        {
+        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e) {
             Console.WriteLine($"Stopping server.");
             if (s != null)
                 if (s.IsListening)
@@ -66,24 +66,20 @@ namespace Geometry_Dash_LikeBot_3
         }
 
         // maybe write these in logs
-        private static void Events_ExceptionEncountered(object sender, ExceptionEventArgs e)
-        {
+        private static void Events_ExceptionEncountered(object sender, ExceptionEventArgs e) {
             Console.WriteLine($"Error occured: {e.Exception}");
         }
 
-        private static void Events_RequestReceived(object sender, RequestEventArgs e)
-        {
+        private static void Events_RequestReceived(object sender, RequestEventArgs e) {
 
         }
 
-        private static void LogReceived(string message)
-        {
+        private static void LogReceived(string message) {
             // Console.WriteLine(message);
         }
 
         // 404
-        static async Task DefaultRoute(HttpContext ctx)
-        {
+        static async Task DefaultRoute(HttpContext ctx) {
             ctx.Response.StatusCode = 302;
             ctx.Response.Headers["Location"] = "https://catgirlcare.org/";
 

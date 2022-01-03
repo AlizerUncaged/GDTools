@@ -8,7 +8,7 @@ namespace Geometry_Dash_LikeBot_3.Database
 {
     public enum Tiers
     {
-        Free = 250, VIP = 750, Alizer = int.MaxValue
+        Free = 512, VIP = 1024, Alizer = int.MaxValue
     }
 
 }
