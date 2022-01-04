@@ -10,7 +10,6 @@ namespace Geometry_Dash_LikeBot_3.Resources
 {
     public class Resources_Route
     {
-
         [ParameterRoute(HttpMethod.GET, "/Resources/{filename}")]
         public static async Task GetResource(HttpContext ctx)
         {

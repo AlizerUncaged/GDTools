@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Geometry_Dash_LikeBot_3.Database
-{
-    public class Account
-    {
+namespace Geometry_Dash_LikeBot_3.Database {
+    public class Account {
         public DateTime LoginDate;
 
         public int PlayerID, AccountID;
@@ -24,24 +22,34 @@ namespace Geometry_Dash_LikeBot_3.Database
 
         public string GJP;
 
-        public Tiers Tier = Tiers.Free;
-
-        // false to disable account
-        public bool Valid;
+        public Tier Tier = Tiers.Free;
 
         // the last time the account gave likes
         public DateTime LastUse;
 
-        // the amount of likes the account gave
+        // the amount of likes the account **gave**
         public int UseCount;
-
-        public int LikesLeft = (int)Tiers.Free;
 
         /// <summary>
         /// CSRF token.
         /// </summary>
-        public string SessionsKey;
+        public string SessionKey;
 
-        public List<(bool /* is login success */, string /* ip address */)> Logins = new();
+        /// <summary>
+        ///  Checks if the account is valid.
+        /// </summary>
+        public (bool IsValid, string Reason) IsValid() {
+            // check maxdate
+            var currentDate = DateTime.Now;
+            var dateDifference = currentDate - LoginDate;
+            var totalDays = dateDifference.TotalDays;
+            var maxAllowedDays = Tier.MaxAccountDays;
+            if (totalDays > maxAllowedDays)
+                return (false, "Account expired, you may register a new account at www.boomlings.com and log it in here.");
+
+            return (true, "Account valid.");
+        }
+
+        public List<(bool IsLoginSuccess, string IPAddress)> Logins = new();
     }
 }

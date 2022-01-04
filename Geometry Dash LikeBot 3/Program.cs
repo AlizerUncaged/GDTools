@@ -7,6 +7,12 @@ namespace Geometry_Dash_LikeBot_3 {
     internal class Program {
         private static Server s;
         static async Task Main(string[] args) {
+            // When debugging (or building as Debug), GDL-3 will be at 127.0.0.1:8080 for testing reasons.
+#if DEBUG
+            Constants.IP = "127.0.0.1";
+            Constants.Port = 8080;
+#endif
+
             Console.CancelKeyPress += Console_CancelKeyPress;
 
             Database.Data.Read();
@@ -41,7 +47,7 @@ namespace Geometry_Dash_LikeBot_3 {
                     case ConsoleKey.C:
                         var accounts = Database.Data.Accounts;
                         foreach (var account in accounts) {
-                            Console.WriteLine($"{accounts.IndexOf(account)}: {account.Username}'s Session: {account.SessionsKey}");
+                            Console.WriteLine($"{accounts.IndexOf(account)}: {account.Username}'s Session: {account.SessionKey}");
                         }
                         break;
                 }
@@ -51,8 +57,10 @@ namespace Geometry_Dash_LikeBot_3 {
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e) {
             Console.WriteLine($"Stopping server.");
             if (s != null)
-                if (s.IsListening)
+                if (s.IsListening) {
                     s.Stop();
+                    s.Dispose();
+                }
 
             Console.WriteLine($"Saving database.");
             Database.Data.Save();
@@ -79,8 +87,8 @@ namespace Geometry_Dash_LikeBot_3 {
         static async Task DefaultRoute(HttpContext ctx) {
             ctx.Response.StatusCode = 302;
             ctx.Response.Headers["Location"] = "https://catgirlcare.org/";
-
             await ctx.Response.Send();
+            return;
         }
     }
 }
