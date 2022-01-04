@@ -5,8 +5,26 @@ using WatsonWebserver;
 
 namespace Geometry_Dash_LikeBot_3 {
     internal class Program {
+
+        private const string Banner = @"
+     .-.
+   .'   `.
+   :g g   :
+   : o    `.         GDL-3
+  :         ``.     Git: github.com/AlizerUncaged/LikeBot-3
+ :             `.   
+:  :         .   `.
+:   :          ` . `.
+ `.. :            `. ``;
+    `:;             `:'
+       :              `.
+        `.              `.     .
+          `'`'`'`---..,___`;.-'
+";
+
         private static Server s;
         static async Task Main(string[] args) {
+            Console.WriteLine(Banner);
             // When debugging (or building as Debug), GDL-3 will be at 127.0.0.1:8080 for testing reasons.
 #if DEBUG
             Constants.IP = "127.0.0.1";

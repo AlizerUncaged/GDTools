@@ -85,13 +85,25 @@
             </a>
             <script>
                 function showNewBot() {
-
+                    
                 }
             </script>
-            <div class="d-flex align-items-center m-0">
+            <div class="d-flex align-items-center m-0 ">
                 <div class="col me-2"><b>{username}</b></div>
-                <div class="me-2  p-2" style="width: auto; border-radius: 25px 25px !important;"> {left} <i
-                        class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i></div>
+                <div class="me-2  p-2" style="width: auto; border-radius: 25px 25px !important;"> {left} <i class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i></div>
+                <div class="me-2 p-2 dropdown" style="cursor: pointer;" > 
+                    <i class="bi bi-three-dots-vertical"  id="accountContextButton" data-bs-toggle="dropdown" aria-expanded="false" >
+                    </i>
+                    <ul class="dropdown-menu dropdown-menu-dark bg-dark-lighter shadowed" aria-labelledby="accountContextButton">
+                        <script>
+                            function removeSessionKey(){
+                                document.cookie = "SessionsKey=;";
+                                location.reload();
+                            }
+                        </script>
+                      <li><a class="dropdown-item" onclick="removeSessionKey()" href="#">Logout</a></li>
+                    </ul>
+                 </div>
             </div>
         </div>
     </nav>
@@ -108,42 +120,13 @@
 
     <div class="row container p-2">
         <!--
-            <div id="information-area" class="col-4 rounded container console ms-4 me-4 p-3">
-            <div class="row  mb-4">
-                <div class="row">
-                    <b>Information</b>
-                </div>
-                <div class="row">
-                    <span> Geometry Dash Server <b class="text-success">Online</b></span>
-                    <span> Likebot Server <b class="text-success">Online</b></span>
-                    <span> Gateway Server <b class="text-success">Online</b></span>
-                    <span> Likes refreshed every :00, :20 and :40</span>
-                    <br><br>
-                </div>
-                <div class="row">
-                    <b>Server Status (Server 1)</b>
-                </div>
-                <div class="row text-center mb-2">
-                    <div class="col">
-                        <h4>{used_memory}</h4>  
-                        RAM usage.
-                    </div>
-                    <div class="col">
-                        <h4>∞</h4>
-                        Slots available.
-                    </div>
-                </div>
-                <div class="row text-center">Refresh this page to update.</div>
-                <div class="row p-2"></div>
-            </div>
-            <div class="row shadow p-3 mb-4">
-                <b>Announcements</b>
-            </div>
-        </div>
+            Information
             -->
         
         <div class="col">
-            <!-- IFRAME TO SESSIONS AND SHIT -->
+            <!-- 
+                Sessions
+             -->
         </div>
     </div>
 

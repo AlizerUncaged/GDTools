@@ -39,12 +39,16 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard {
             if (keysAndCookies == null) {
                 await MoveToLogin(ctx); return;
             }
+
             string sessionKey;
             var sessionKeyFound = keysAndCookies.TryGetValue("SessionsKey", out sessionKey);
             if (!sessionKeyFound) {
                 await MoveToLogin(ctx); return;
             }
-
+            // session keys are supposed to be fully lowercased
+            if (sessionKey.Any(char.IsUpper)) {
+                await MoveToLogin(ctx); return;
+            }
 
             // session key found!
             var account = Database.Data.GetAccountFromSessionKey(sessionKey);

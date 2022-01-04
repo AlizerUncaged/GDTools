@@ -19,7 +19,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
         {
             return RunningIPAddresses.Contains(_callerIP);
         }
-        public async Task<(bool, Boomlings_Networking.Account_Data_Result)> Check()
+        public async Task<(bool IsSuccess, Boomlings_Networking.Account_Data_Result ServerResult)> Check()
         {
             Boomlings_Networking.Account_Data_Result result = null;
             bool isSuccess = false;

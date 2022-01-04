@@ -9,7 +9,7 @@ namespace Geometry_Dash_LikeBot_3.Utilities
 {
     public static class Random_Generator
     {
-        public static Random Random = new(DateTime.Now.Second);
+        public static Random Random = new(int.Parse($"{DateTime.Now.Day}{DateTime.Now.Second}{DateTime.Now.Millisecond}"));
         public static string RandomString(int length)
         {
             const string chars = "123456789abcdefghjklmnopqrstuvwxyz";

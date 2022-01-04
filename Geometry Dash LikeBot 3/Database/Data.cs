@@ -61,8 +61,6 @@ namespace Geometry_Dash_LikeBot_3.Database {
         /// <summary>
         /// Get a <b>valid</b> account from the database.
         /// </summary>
-        /// <param name="sessionkey"></param>
-        /// <returns></returns>
         public static Account GetAccountFromSessionKey(string sessionkey) {
             if (string.IsNullOrWhiteSpace(sessionkey)) return null;
             return Accounts.FirstOrDefault(x => x.SessionKey == sessionkey && x.IsValid().IsValid);

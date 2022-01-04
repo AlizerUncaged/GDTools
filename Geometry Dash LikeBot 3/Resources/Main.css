@@ -67,6 +67,11 @@
             background-color: var(--background) !important;
         }
 
+        .bg-dark-lighter {
+            background-color: var(--backgroundLighter) !important;
+        }
+
+
         .btn-primary {
             background-color: var(--backgroundLighter);
             color: var(--foreground);

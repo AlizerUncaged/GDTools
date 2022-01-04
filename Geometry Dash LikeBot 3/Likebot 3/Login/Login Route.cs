@@ -83,8 +83,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
 
             // now check account fr
             var result = await checker.Check();
-            response.IsSuccess = result.Item1;
-            var serverResponses = result.Item2;
+            response.IsSuccess = result.IsSuccess;
+            var serverResponses = result.ServerResult;
             response.Message = serverResponses.Message;
             var loggedInAccountID = serverResponses.AccountID;
             if (response.IsSuccess) {
