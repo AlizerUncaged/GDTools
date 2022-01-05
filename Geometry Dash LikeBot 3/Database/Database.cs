@@ -1,14 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Geometry_Dash_LikeBot_3.Database {
-    // yes, database is a JSON file, who cares anyways
-    public class Data {
+    public class Database {
+
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public static List<Account> Accounts = new();
 
         public static bool IsExists(int accountid) {
@@ -33,11 +38,12 @@ namespace Geometry_Dash_LikeBot_3.Database {
             };
 
             Accounts.Add(account);
+            Logger.Debug($"{account.AccountID} - Account added: {account.Username}");
 
             return account;
         }
 
-        public static void AddAccount(int accountid, int playerid, string username, string password, string gjp, string key) {
+        public static void AddAccount(int accountid, int playerid, string username, string password, string gjp) {
             var account = new Account {
                 AccountID = accountid,
                 PlayerID = playerid,
@@ -48,6 +54,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
             };
 
             Accounts.Add(account);
+            Logger.Debug($"{account.AccountID} - Account added: {account.Username}");
         }
 
         public static int GetIndexFromAccountID(int accountid) {
@@ -63,7 +70,13 @@ namespace Geometry_Dash_LikeBot_3.Database {
         /// </summary>
         public static Account GetAccountFromSessionKey(string sessionkey) {
             if (string.IsNullOrWhiteSpace(sessionkey)) return null;
-            return Accounts.FirstOrDefault(x => x.CheckKey(sessionkey) && x.IsValid().IsValid);
+
+            var account = Accounts.FirstOrDefault(x => x.CheckKey(sessionkey) && x.IsValid().IsValid);
+            if (account != null)
+                Logger.Info($"{account.AccountID} - Account found with session key {sessionkey}");
+            else
+                Logger.Info($"Attempt to get non-existing account with key {sessionkey}");
+            return account;
         }
 
         public static Account GetAccountFromCredentials(string username, string password = null) {
@@ -84,17 +97,34 @@ namespace Geometry_Dash_LikeBot_3.Database {
             return Accounts.Take(howMany).OrderBy(x => Utilities.Random_Generator.Random.Next());
         }
 
-        public static void Read() {
-            if (!File.Exists(Constants.DatabaseFile)) {
-                File.Create(Constants.DatabaseFile).Close();
-                File.WriteAllText(Constants.DatabaseFile, JsonConvert.SerializeObject(Accounts));
-            }
+        private static FileStream _dbFileStream =
+            File.Open(Constants.DatabaseFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+        private static StreamReader _dbReadStream =
+            new(_dbFileStream);
+        private static StreamWriter _dbWriteStream =
+            new(_dbFileStream);
 
-            Accounts = JsonConvert.DeserializeObject<List<Account>>(File.ReadAllText(Constants.DatabaseFile));
+        /// <summary>
+        /// Refresh the database, reads the JSON file.
+        /// </summary>
+        public static async Task Read() {
+            Logger.Debug("Reading database file...");
+            var dbContents = await _dbReadStream.ReadToEndAsync();
+            if (string.IsNullOrWhiteSpace(dbContents))
+                Save();
+            else
+                Accounts = JsonConvert.DeserializeObject<List<Account>>(dbContents);
+            Logger.Info($"Account list loaded {Accounts.Count()} accounts...");
         }
 
+        /// <summary>
+        /// Saves the current database.
+        /// </summary>
         public static void Save() {
-            File.WriteAllText(Constants.DatabaseFile, JsonConvert.SerializeObject(Accounts, Formatting.Indented));
+            var defaultDb = JsonConvert.SerializeObject(Accounts, Formatting.Indented);
+            _dbFileStream.SetLength(0);
+            _dbWriteStream.Write(defaultDb);
+            _dbWriteStream.Flush();
         }
     }
 }

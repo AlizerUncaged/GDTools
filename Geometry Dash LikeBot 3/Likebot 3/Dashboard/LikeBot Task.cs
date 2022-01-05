@@ -25,7 +25,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard
         public LikeBot_Task(Database.Account owner, bool like, short max, int itemID, int specialID)
         {
             _owner = owner; _like = like; _max = max; _itemID = itemID; _specialID = specialID;
-            _likers = Database.Data.GetRandomAccounts(_max);
+            _likers = Database.Database.GetRandomAccounts(_max);
         }
 
         // comence likebot

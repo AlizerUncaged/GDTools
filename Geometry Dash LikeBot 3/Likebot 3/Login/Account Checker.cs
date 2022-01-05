@@ -8,6 +8,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login
 {
     public class Account_Checker
     {
+        /// <summary>
+        /// IPAddresses with accounts still logging in.
+        /// </summary>
         public static List<string> RunningIPAddresses = new();
         private string _username, _password, _callerIP;
 

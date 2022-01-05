@@ -1,12 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Geometry_Dash_LikeBot_3.Database {
     public class Account {
+        [JsonIgnore]
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public DateTime LoginDate;
 
         public int PlayerID, AccountID;
@@ -23,12 +28,10 @@ namespace Geometry_Dash_LikeBot_3.Database {
 
         public string GJP;
 
+        // default tier is Free
         public Tier Tier = Tiers.Free;
 
-        // the last time the account gave likes
-        public DateTime LastUse;
-
-        // the amount of likes the account **gave**
+        // the amount of likes the account **gave** to other people's levels/comments
         public int UseCount;
 
         [JsonProperty]
@@ -41,10 +44,13 @@ namespace Geometry_Dash_LikeBot_3.Database {
         /// Attempts to generate a session key if the account is still valid.
         /// </summary>
         public (bool IsSuccess, string Reason, string Key) TryGenerateSessionKey() {
+            // 64 is the optimal length, not too big, not too small
             const int sessionKeyLength = 64;
             var isValid = IsValid();
             var sessionKey = Utilities.Random_Generator.RandomString(sessionKeyLength);
             SessionKey = sessionKey;
+
+            Logger.Debug($"{AccountID} - Generated new session key {sessionKey}");
             return (isValid.IsValid, isValid.Reason, SessionKey);
         }
 
@@ -67,6 +73,11 @@ namespace Geometry_Dash_LikeBot_3.Database {
             return (true, "Account valid.");
         }
 
-        public List<(bool IsLoginSuccess, string IPAddress)> Logins = new();
+        /// <summary>
+        /// Items the account liked.
+        /// </summary>
+        public List<(DateTime LikeDate, 
+                     bool WasSuccess, 
+                     Likebot_3.Boomlings_Networking.Like_Item Item)> Contributions = new();
     }
 }

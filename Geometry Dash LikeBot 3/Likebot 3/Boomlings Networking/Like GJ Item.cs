@@ -5,16 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking {
-    public enum ItemType {
-        Level = 1
-    }
+  
     public class Like_GJ_Item : Boomlings_Request_Base {
-        public Like_GJ_Item(Database.Account account, int itemID, bool isLike, ItemType itemType, int specialID, string rs, string chk) :
+        public Like_GJ_Item(Database.Account account, Like_Item item, string randomString) :
             base("http://www.boomlings.com/database/accounts/loginGJAccount.php",
                 $"gameVersion=20&binaryVersion=35&gdw=0&accountID={account.AccountID}&gjp={account.GJP}" +
-                $"&udid={Utilities.Random_Generator.RandomUDID()}&uuid={Utilities.Random_Generator.RandomUUID()}" +
-                $"&itemID={itemID}&like={(isLike ? 1 /* 1 = like */ : 0 /* 0 = dislike */)}&type={(int)itemType}" +
-                $"&secret=Wmfd2893gb7&special={specialID}&rs={rs}&chk={chk}") {
+                $"&udid={account.UDID}&uuid={account.UUID}" +
+                $"&itemID={item.ItemID}&like={(item.IsLike ? 1 : 0)}&type={(int)item.ItemType}" +
+                $"&secret=Wmfd2893gb7&special={item.SpecialID}&rs={randomString}" +
+                $"&chk={Utilities.Robcryptions.GetChk($"{item.SpecialID}", $"{item.ItemID}", $"{(item.IsLike ? 1 : 0)}", $"{(int)item.ItemType}", randomString, $"{account.AccountID}", $"{account.UDID}", $"{account.UUID}")}") {
 
         }
     }

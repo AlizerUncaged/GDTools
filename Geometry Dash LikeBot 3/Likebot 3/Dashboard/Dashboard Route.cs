@@ -51,14 +51,16 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard {
             }
 
             // session key found!
-            var account = Database.Data.GetAccountFromSessionKey(sessionKey);
+            // get account from db which is Valid and has the key
+            var account = Database.Database.GetAccountFromSessionKey(sessionKey);
+            // else return to login screen
             if (account == null) {
                 await MoveToLogin(ctx); return;
             }
 
             await ctx.Response.Send(DashboardPage
                 .Replace("{username}", account.Username)
-                .Replace("{left}", account.Tier.MaxLikes.ToString())
+                .Replace("{left}", account.Tier.LikesLeft.ToString())
                 .Replace("{used_memory}", Utilities.Me_as_Process.FormatBytes(Utilities.Me_as_Process.MemoryUsage()))
                 );
         }

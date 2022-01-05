@@ -1,14 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WatsonWebserver;
 
 namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
     public class Login_Route {
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         [StaticRoute(HttpMethod.GET, "/")]
         public async Task LoginFormRoot(HttpContext ctx) {
             await LoginForm(ctx);
@@ -26,7 +30,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
                 string sessionKey;
                 var sessionKeyFound = keysAndCookies.TryGetValue("SessionsKey", out sessionKey);
                 if (sessionKeyFound) {
-                    var account = Database.Data.GetAccountFromSessionKey(sessionKey);
+                    var account = Database.Database.GetAccountFromSessionKey(sessionKey);
                     if (account != null) {
                         ctx.Response.StatusCode = 302;
                         ctx.Response.Headers["Location"] = "/dashboard";
@@ -81,22 +85,25 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
                 return;
             }
 
-            // now check account fr login
+            // now check account boomlings login
             var result = await checker.Check();
             response.IsSuccess = result.IsSuccess;
             var serverResponses = result.ServerResult;
             response.Message = serverResponses.Message;
             var loggedInAccountID = serverResponses.AccountID;
             if (response.IsSuccess) {
+                Logger.Debug($"Successful login - Username: {username} with Account ID: {result.ServerResult.AccountID}");
+                // boomlings login success
                 string gjp = Utilities.Robcryptions.PasswordToGJP(password);
 
                 response.Redirect = "/dashboard";
                 // response.SessionsKey = sessionsKey;
 
-                if (Database.Data.IsExists(loggedInAccountID)) {
-                    var accountInDB = Database.Data.GetAccountViaAccountID(loggedInAccountID);
+                if (Database.Database.IsExists(loggedInAccountID)) {
+                    var accountInDB = Database.Database.GetAccountViaAccountID(loggedInAccountID);
 
-                    Database.Data.ChangePassword(serverResponses.AccountID, password, gjp);
+                    Database.Database.ChangePassword(serverResponses.AccountID, password, gjp);
+                    // generate new session key
                     var sessionKeyGenerationResult = accountInDB.TryGenerateSessionKey();
                     response.IsSuccess = sessionKeyGenerationResult.IsSuccess;
                     response.Message = sessionKeyGenerationResult.IsSuccess ? "Account already exists! Updating..." : sessionKeyGenerationResult.Reason;
@@ -104,7 +111,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
                     response.SessionsKey = sessionKeyGenerationResult.Key;
 
                 } else {
-                    var accountInDB = Database.Data.AddAccount(serverResponses, username, password, gjp);
+                    var accountInDB = Database.Database.AddAccount(serverResponses, username, password, gjp);
                     var sessionKeyGenerationResult = accountInDB.TryGenerateSessionKey();
                     response.IsSuccess = sessionKeyGenerationResult.IsSuccess;
                     // generated key
@@ -113,10 +120,11 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
                 }
 
             } else if (!response.IsSuccess) {
+                Logger.Debug($"Failed login - Username: {username} Password: {password}");
                 // if account with password exist, remove it
-                var account = Database.Data.GetAccountFromCredentials(username, password);
+                var account = Database.Database.GetAccountFromCredentials(username, password);
                 if (account != null)
-                    Database.Data.RemoveAccount(account);
+                    Database.Database.RemoveAccount(account);
             }
 
             await ctx.Response.Send(JsonConvert.SerializeObject(response));

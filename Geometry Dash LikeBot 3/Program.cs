@@ -1,30 +1,31 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using WatsonWebserver;
 
 namespace Geometry_Dash_LikeBot_3 {
     internal class Program {
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private const string Banner = @"
-     .-.
-   .'   `.
-   :g g   :
-   : o    `.         GDL-3
-  :         ``.     Git: github.com/AlizerUncaged/LikeBot-3
- :             `.   
-:  :         .   `.
-:   :          ` . `.
- `.. :            `. ``;
-    `:;             `:'
-       :              `.
-        `.              `.     .
-          `'`'`'`---..,___`;.-'
+
+ _._     _,-'""""`-._
+(,-.`._,'(       |\`-/|  Geometry Dash Likebot - 3
+    `-.-' \ )-`( , o o)    Git: github.com/AlizerUncaged/LikeBot-3
+          `-    \`_`""'-
 ";
 
         private static Server s;
         static async Task Main(string[] args) {
             Console.WriteLine(Banner);
+
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
             // When debugging (or building as Debug), GDL-3 will be at 127.0.0.1:8080 for testing reasons.
 #if DEBUG
             Constants.IP = "127.0.0.1";
@@ -33,11 +34,9 @@ namespace Geometry_Dash_LikeBot_3 {
 
             Console.CancelKeyPress += Console_CancelKeyPress;
 
-            Database.Data.Read();
-            Console.WriteLine($"Account list loaded {Database.Data.Accounts.Count} accounts.\r\nLoading proxies...");
+            await Database.Database.Read();
 
-            if (await Likebot_3.Boomlings_Networking.Proxies.InitializeProxies())
-                Console.WriteLine($"Loaded {Likebot_3.Boomlings_Networking.Proxies.ProxyList.Count} proxies.");
+            await Likebot_3.Boomlings_Networking.Proxies.InitializeProxies();
 
             s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
             s.Settings.AccessControl.Mode = AccessControlMode.DefaultPermit;
@@ -46,26 +45,27 @@ namespace Geometry_Dash_LikeBot_3 {
             s.Events.ExceptionEncountered += Events_ExceptionEncountered;
 
             var serverStartTask = s.StartAsync();
-            Console.WriteLine($"Server started at {Constants.IP}:{Constants.Port}.");
+            Logger.Info($"Server started at {Constants.IP}:{Constants.Port}.");
 
 
             while (true) {
-                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Ban an IP, [C] Sessions");
+                Logger.Info($"[A] Free and Check Memory Usage, [B] Ban an IP, [C] Sessions");
                 var key = Console.ReadKey(true);
                 switch (key.Key) {
                     case ConsoleKey.A:
                         GC.Collect();
-                        Console.WriteLine(
+                        Logger.Info(
                             $"Memory Usage: {Utilities.Mr_Clean.FormatBytes(Process.GetCurrentProcess().PrivateMemorySize64)} " +
                             $"Collection Count: {GC.CollectionCount(0)}");
-                        Console.WriteLine(
-                            $"Accounts: {Database.Data.Accounts.Count} " +
+                        Logger.Info(
+                            $"Accounts: {Database.Database.Accounts.Count} " +
                             $"Threads: {Process.GetCurrentProcess().Threads.Count}");
                         break;
                     case ConsoleKey.C:
-                        var accounts = Database.Data.Accounts;
+                        var accounts = Database.Database.Accounts;
+                        Logger.Info($"Accounts (Total: {accounts.Count})");
                         foreach (var account in accounts) {
-                            Console.WriteLine($"{accounts.IndexOf(account)}: {account.Username}'s");
+                            Logger.Info($"{accounts.IndexOf(account)}: {account.Username} Last Login: {account.LastSuccessfulContribution}");
                         }
                         break;
                 }
@@ -73,24 +73,24 @@ namespace Geometry_Dash_LikeBot_3 {
         }
 
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e) {
-            Console.WriteLine($"Stopping server.");
+            Logger.Info($"Stopping server.");
             if (s != null)
                 if (s.IsListening) {
                     s.Stop();
                     s.Dispose();
                 }
 
-            Console.WriteLine($"Saving database.");
-            Database.Data.Save();
+            Logger.Info($"Saving database.");
+            Database.Database.Save();
 
-            Console.WriteLine($"Exiting...");
+            Logger.Info($"Exiting...");
 
             Environment.Exit(Environment.ExitCode);
         }
 
         // maybe write these in logs
         private static void Events_ExceptionEncountered(object sender, ExceptionEventArgs e) {
-            Console.WriteLine($"Error occured: {e.Exception}");
+            Logger.Info($"Error occured: {e.Exception}");
         }
 
         private static void Events_RequestReceived(object sender, RequestEventArgs e) {

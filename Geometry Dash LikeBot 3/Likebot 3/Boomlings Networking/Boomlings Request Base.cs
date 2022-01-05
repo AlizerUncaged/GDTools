@@ -4,14 +4,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 using MihaZupan;
 
 namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 {
-    public abstract class Boomlings_Request_Base
-    {
+    public abstract class Boomlings_Request_Base {
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private static readonly HttpClient _client = new HttpClient();
 
         public string Endpoint { get; set; }
@@ -49,7 +52,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Sending Request: {ex}");
+                Logger.Info($"Error Sending Request: {ex}");
             }
             return null;
         }

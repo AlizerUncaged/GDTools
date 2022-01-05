@@ -1,6 +1,10 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,11 +20,13 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
     public static class Proxies
     {
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private static int currentProxyIndex = -1; // initial value
 
         public static List<Proxy> ProxyList = new();
-        public static async Task<bool> InitializeProxies()
-        {
+        public static async Task<bool> InitializeProxies() {
+            Logger.Debug("Loading proxies...");
             string proxies = await Utilities.Quick_TCP.ReadURL(Constants.ProxyList);
             var lines = proxies.Split('\n').Where(x => x.Contains(":"));
             foreach (var line in lines)
@@ -37,6 +43,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
             // shuffle
             ProxyList = ProxyList.OrderBy(x => Utilities.Random_Generator.Random.Next()).ToList();
+            Logger.Info($"Loaded {ProxyList.Count()} proxies...");
             return true;
         }
 
