@@ -65,7 +65,7 @@ namespace Geometry_Dash_LikeBot_3 {
                     case ConsoleKey.C:
                         var accounts = Database.Data.Accounts;
                         foreach (var account in accounts) {
-                            Console.WriteLine($"{accounts.IndexOf(account)}: {account.Username}'s Session: {account.SessionKey}");
+                            Console.WriteLine($"{accounts.IndexOf(account)}: {account.Username}'s");
                         }
                         break;
                 }

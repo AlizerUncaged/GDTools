@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,10 +31,26 @@ namespace Geometry_Dash_LikeBot_3.Database {
         // the amount of likes the account **gave**
         public int UseCount;
 
+        [JsonProperty]
         /// <summary>
-        /// CSRF token.
+        /// CSRF token, very important.
         /// </summary>
-        public string SessionKey;
+        private string SessionKey;
+
+        /// <summary>
+        /// Attempts to generate a session key if the account is still valid.
+        /// </summary>
+        public (bool IsSuccess, string Reason, string Key) TryGenerateSessionKey() {
+            const int sessionKeyLength = 64;
+            var isValid = IsValid();
+            var sessionKey = Utilities.Random_Generator.RandomString(sessionKeyLength);
+            SessionKey = sessionKey;
+            return (isValid.IsValid, isValid.Reason, SessionKey);
+        }
+
+        public bool CheckKey(string key) {
+            return SessionKey == key;
+        }
 
         /// <summary>
         ///  Checks if the account is valid.

@@ -15,12 +15,12 @@ namespace Geometry_Dash_LikeBot_3.Database {
             return Accounts.FindIndex(x => x.AccountID == accountid) != -1;
         }
 
-        public static void ChangePassword(int accountid, string password, string gjp, string key) {
+        public static void ChangePassword(int accountid, string password, string gjp) {
             var account = Accounts[GetIndexFromAccountID(accountid)];
-            account.Password = password; account.GJP = gjp; account.SessionKey = key;
+            account.Password = password; account.GJP = gjp;
         }
 
-        public static void AddAccount(Likebot_3.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp, string key) {
+        public static Account AddAccount(Likebot_3.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp) {
             var account = new Account {
                 AccountID = serverResponse.AccountID,
                 PlayerID = serverResponse.PlayerID,
@@ -29,11 +29,12 @@ namespace Geometry_Dash_LikeBot_3.Database {
                 Username = username,
                 Password = password,
                 GJP = gjp,
-                SessionKey = key,
                 LoginDate = DateTime.Now
             };
 
             Accounts.Add(account);
+
+            return account;
         }
 
         public static void AddAccount(int accountid, int playerid, string username, string password, string gjp, string key) {
@@ -43,7 +44,6 @@ namespace Geometry_Dash_LikeBot_3.Database {
                 Username = username,
                 Password = password,
                 GJP = gjp,
-                SessionKey = key,
                 LoginDate = DateTime.Now
             };
 
@@ -63,7 +63,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
         /// </summary>
         public static Account GetAccountFromSessionKey(string sessionkey) {
             if (string.IsNullOrWhiteSpace(sessionkey)) return null;
-            return Accounts.FirstOrDefault(x => x.SessionKey == sessionkey && x.IsValid().IsValid);
+            return Accounts.FirstOrDefault(x => x.CheckKey(sessionkey) && x.IsValid().IsValid);
         }
 
         public static Account GetAccountFromCredentials(string username, string password = null) {

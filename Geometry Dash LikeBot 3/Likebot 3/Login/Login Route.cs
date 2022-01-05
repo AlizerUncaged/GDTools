@@ -81,27 +81,36 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
                 return;
             }
 
-            // now check account fr
+            // now check account fr login
             var result = await checker.Check();
             response.IsSuccess = result.IsSuccess;
             var serverResponses = result.ServerResult;
             response.Message = serverResponses.Message;
             var loggedInAccountID = serverResponses.AccountID;
             if (response.IsSuccess) {
-                string sessionsKey = Utilities.Random_Generator.RandomString(64);
                 string gjp = Utilities.Robcryptions.PasswordToGJP(password);
 
                 response.Redirect = "/dashboard";
-                response.SessionsKey = sessionsKey;
+                // response.SessionsKey = sessionsKey;
 
                 if (Database.Data.IsExists(loggedInAccountID)) {
                     var accountInDB = Database.Data.GetAccountViaAccountID(loggedInAccountID);
-                    var isValid = accountInDB.IsValid();
-                    response.IsSuccess = isValid.IsValid;
-                    response.Message = isValid.IsValid ? "Account already exists! Updating..." : isValid.Reason;
-                    Database.Data.ChangePassword(serverResponses.AccountID, password, gjp, sessionsKey);
-                } else
-                    Database.Data.AddAccount(serverResponses, username, password, gjp, sessionsKey);
+
+                    Database.Data.ChangePassword(serverResponses.AccountID, password, gjp);
+                    var sessionKeyGenerationResult = accountInDB.TryGenerateSessionKey();
+                    response.IsSuccess = sessionKeyGenerationResult.IsSuccess;
+                    response.Message = sessionKeyGenerationResult.IsSuccess ? "Account already exists! Updating..." : sessionKeyGenerationResult.Reason;
+                    // generated key
+                    response.SessionsKey = sessionKeyGenerationResult.Key;
+
+                } else {
+                    var accountInDB = Database.Data.AddAccount(serverResponses, username, password, gjp);
+                    var sessionKeyGenerationResult = accountInDB.TryGenerateSessionKey();
+                    response.IsSuccess = sessionKeyGenerationResult.IsSuccess;
+                    // generated key
+                    response.SessionsKey = sessionKeyGenerationResult.Key;
+
+                }
 
             } else if (!response.IsSuccess) {
                 // if account with password exist, remove it
