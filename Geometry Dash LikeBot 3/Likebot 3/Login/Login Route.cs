@@ -121,10 +121,9 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
 
             } else if (!response.IsSuccess) {
                 Logger.Debug($"Failed login - Username: {username} Password: {password}");
-                // if account with password exist, remove it
+                // if an account with the same password exist, remove it
                 var account = Database.Database.GetAccountFromCredentials(username, password);
-                if (account != null)
-                    Database.Database.RemoveAccount(account);
+                if (account != null) Database.Database.RemoveAccount(account);
             }
 
             await ctx.Response.Send(JsonConvert.SerializeObject(response));

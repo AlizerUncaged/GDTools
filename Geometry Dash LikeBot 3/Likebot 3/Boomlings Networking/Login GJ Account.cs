@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
-{
-    public class Account_Data_Result
-    {
+namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking {
+    public class Account_Data_Result {
         public string Message;
         public bool Success;
         public int AccountID;
@@ -15,22 +13,18 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
         public string UDID;
         public string UUID;
     }
-    public class Login_GJ_Account : Boomlings_Request_Base
-    {
+    public class Login_GJ_Account : Boomlings_Request_Base {
         private string _udid, _uuid;
         public Login_GJ_Account(string username, string password, string udid, string uuid)
             : base("http://www.boomlings.com/database/accounts/loginGJAccount.php",
                   $"udid={udid}&userName={username}&" +
                   $"password={password}&secret=Wmfv3899gc9&" +
-                  $"sID={uuid}")
-        {
+                  $"sID={uuid}") {
             _udid = udid; _uuid = uuid;
         }
 
-        public async Task<Account_Data_Result> GetResult()
-        {
-            var result = new Account_Data_Result
-            {
+        public async Task<Account_Data_Result> GetResult() {
+            var result = new Account_Data_Result {
                 UDID = _udid,
                 UUID = _uuid
             };
@@ -38,13 +32,13 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
             var response = await SendAsync();
 
             if (!string.IsNullOrWhiteSpace(response))
-                foreach (string line in response.Split('\n'))
-                {
-                    if (line.Contains(','))
-                    {
+                foreach (string line in response.Split('\n')) {
+                    if (line.Contains(',')) {
                         var IDs = line.Split(',');
+                        // accountid, playerid
                         result.Success = int.TryParse(IDs[0], out result.AccountID);
-                        result.Success = int.TryParse(IDs[0], out result.PlayerID);
+                        if (result.Success)
+                            result.Success = int.TryParse(IDs[1], out result.PlayerID);
                         result.Message = "Successfully logged in!";
                     }
                 }

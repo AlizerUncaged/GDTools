@@ -30,7 +30,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard {
 
             if (!cookiesFound) {
                 // we have to fucking return to save server resources because it doesnt
-                // automatically return after doing a .Send();
+                // automatically end the Task after doing a .Send();
                 await MoveToLogin(ctx); return;
             }
 

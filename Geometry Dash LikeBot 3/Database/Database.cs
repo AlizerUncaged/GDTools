@@ -14,15 +14,22 @@ namespace Geometry_Dash_LikeBot_3.Database {
 
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static List<Account> Accounts = new();
+        private static Data Data = new();
 
         public static bool IsExists(int accountid) {
-            return Accounts.FindIndex(x => x.AccountID == accountid) != -1;
+            return Data.Accounts.FindIndex(x => x.AccountID == accountid) != -1;
         }
 
         public static void ChangePassword(int accountid, string password, string gjp) {
-            var account = Accounts[GetIndexFromAccountID(accountid)];
+            var account = Data.Accounts[GetIndexFromAccountID(accountid)];
             account.Password = password; account.GJP = gjp;
+        }
+        public static List<Account> Accounts {
+            get {
+                if (Data != null)
+                    return Data.Accounts;
+                else return null;
+            }
         }
 
         public static Account AddAccount(Likebot_3.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp) {
@@ -33,12 +40,11 @@ namespace Geometry_Dash_LikeBot_3.Database {
                 UUID = serverResponse.UUID,
                 Username = username,
                 Password = password,
-                GJP = gjp,
-                LoginDate = DateTime.Now
+                GJP = gjp
             };
 
-            Accounts.Add(account);
-            Logger.Debug($"{account.AccountID} - Account added: {account.Username}");
+            Data.Accounts.Add(account);
+            Logger.Debug($"{account.Username} - Account added: {account.Username}");
 
             return account;
         }
@@ -49,20 +55,20 @@ namespace Geometry_Dash_LikeBot_3.Database {
                 PlayerID = playerid,
                 Username = username,
                 Password = password,
-                GJP = gjp,
-                LoginDate = DateTime.Now
+                GJP = gjp
             };
 
-            Accounts.Add(account);
-            Logger.Debug($"{account.AccountID} - Account added: {account.Username}");
+            Data.Accounts.Add(account);
+            Logger.Debug($"{account.Username} - Account added: {account.Username}");
         }
 
         public static int GetIndexFromAccountID(int accountid) {
-            return Accounts.FindIndex(x => x.AccountID == accountid);
+            return Data.Accounts.FindIndex(x => x.AccountID == accountid);
         }
 
         public static void RemoveAccount(Account account) {
-            Accounts.Remove(account);
+            Data.Accounts.Remove(account);
+            Logger.Debug($"{account.Username} - Removed from database.");
         }
 
         /// <summary>
@@ -71,9 +77,9 @@ namespace Geometry_Dash_LikeBot_3.Database {
         public static Account GetAccountFromSessionKey(string sessionkey) {
             if (string.IsNullOrWhiteSpace(sessionkey)) return null;
 
-            var account = Accounts.FirstOrDefault(x => x.CheckKey(sessionkey) && x.IsValid().IsValid);
+            var account = Data.Accounts.FirstOrDefault(x => x.CheckKey(sessionkey) && x.IsValid().IsValid);
             if (account != null)
-                Logger.Info($"{account.AccountID} - Account found with session key {sessionkey}");
+                Logger.Info($"{account.Username} - Account found with session key {sessionkey}");
             else
                 Logger.Info($"Attempt to get non-existing account with key {sessionkey}");
             return account;
@@ -81,22 +87,23 @@ namespace Geometry_Dash_LikeBot_3.Database {
 
         public static Account GetAccountFromCredentials(string username, string password = null) {
             if (password == null)
-                return Accounts.FirstOrDefault(x =>
+                return Data.Accounts.FirstOrDefault(x =>
                 x.Username.ToLower().Trim() == username.ToLower().Trim());
             else
-                return Accounts.FirstOrDefault(x =>
+                return Data.Accounts.FirstOrDefault(x =>
                 x.Username.ToLower().Trim() == username.ToLower().Trim() &&
                 x.Password.Trim() == password.Trim());
         }
 
         public static Account GetAccountViaAccountID(int AccountID) {
-            return Accounts.FirstOrDefault(x => x.AccountID == AccountID);
+            return Data.Accounts.FirstOrDefault(x => x.AccountID == AccountID);
         }
 
         public static IEnumerable<Account> GetRandomAccounts(int howMany) {
-            return Accounts.Take(howMany).OrderBy(x => Utilities.Random_Generator.Random.Next());
+            return Data.Accounts.Take(howMany).OrderBy(x => Utilities.Random_Generator.Random.Next());
         }
 
+        // file streams to db
         private static FileStream _dbFileStream =
             File.Open(Constants.DatabaseFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
         private static StreamReader _dbReadStream =
@@ -113,18 +120,22 @@ namespace Geometry_Dash_LikeBot_3.Database {
             if (string.IsNullOrWhiteSpace(dbContents))
                 Save();
             else
-                Accounts = JsonConvert.DeserializeObject<List<Account>>(dbContents);
-            Logger.Info($"Account list loaded {Accounts.Count()} accounts...");
+                Data = JsonConvert.DeserializeObject<Data>(dbContents);
+            Logger.Info($"Account list loaded {Data.Accounts.Count()} Accounts...");
         }
 
         /// <summary>
         /// Saves the current database.
         /// </summary>
         public static void Save() {
-            var defaultDb = JsonConvert.SerializeObject(Accounts, Formatting.Indented);
+            Logger.Debug($"Saving database...");
+            var defaultDb = JsonConvert.SerializeObject(Data, Formatting.Indented);
+            // clear database contents
             _dbFileStream.SetLength(0);
+            // rewrite database
             _dbWriteStream.Write(defaultDb);
             _dbWriteStream.Flush();
+            Logger.Info($"Database saved...");
         }
     }
 }

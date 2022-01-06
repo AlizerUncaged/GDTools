@@ -1,8 +1,10 @@
 ﻿using log4net;
 using log4net.Config;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using WatsonWebserver;
@@ -25,14 +27,14 @@ namespace Geometry_Dash_LikeBot_3 {
 
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
-
+            Logger.Info($"=================== Program Started ===================");
             // When debugging (or building as Debug), GDL-3 will be at 127.0.0.1:8080 for testing reasons.
 #if DEBUG
             Constants.IP = "127.0.0.1";
             Constants.Port = 8080;
 #endif
 
-            Console.CancelKeyPress += Console_CancelKeyPress;
+            Console.CancelKeyPress += ConsoleExiting;
 
             await Database.Database.Read();
 
@@ -47,32 +49,54 @@ namespace Geometry_Dash_LikeBot_3 {
             var serverStartTask = s.StartAsync();
             Logger.Info($"Server started at {Constants.IP}:{Constants.Port}.");
 
-
             while (true) {
-                Logger.Info($"[A] Free and Check Memory Usage, [B] Ban an IP, [C] Sessions");
-                var key = Console.ReadKey(true);
-                switch (key.Key) {
-                    case ConsoleKey.A:
-                        GC.Collect();
-                        Logger.Info(
-                            $"Memory Usage: {Utilities.Mr_Clean.FormatBytes(Process.GetCurrentProcess().PrivateMemorySize64)} " +
-                            $"Collection Count: {GC.CollectionCount(0)}");
-                        Logger.Info(
-                            $"Accounts: {Database.Database.Accounts.Count} " +
-                            $"Threads: {Process.GetCurrentProcess().Threads.Count}");
-                        break;
-                    case ConsoleKey.C:
-                        var accounts = Database.Database.Accounts;
-                        Logger.Info($"Accounts (Total: {accounts.Count})");
-                        foreach (var account in accounts) {
-                            Logger.Info($"{accounts.IndexOf(account)}: {account.Username} Last Login: {account.LastSuccessfulContribution}");
+                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Ban an IP, [C] Sessions, [X] Exit");
+                var ckey = Console.ReadKey(true).KeyChar;
+                ckey = char.ToUpper(ckey);
+
+                var sceneClass = typeof(Scenes.Scene);
+                foreach (Type type in Assembly.GetAssembly(sceneClass).GetTypes().Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(sceneClass))) {
+                    var sceneInstance = (Scenes.Scene)Activator.CreateInstance(type);
+                    if (sceneInstance.Key == ckey) {
+                        // pause loggers
+                        List<log4net.Core.Level> originalLoggingLevels = new();
+                        var activeLoggers = logRepository.GetAppenders().Where(x => x is log4net.Appender.ConsoleAppender);
+                        foreach (var logger in activeLoggers) {
+                            var appenderSkeleton = logger as log4net.Appender.AppenderSkeleton;
+                            originalLoggingLevels.Add(appenderSkeleton.Threshold);
+                            appenderSkeleton.Threshold = log4net.Core.Level.Off;
                         }
-                        break;
+
+                        await sceneInstance.StartAsync();
+
+                        int i = 0;
+                        foreach (var logger in activeLoggers) {
+                            var appenderSkeleton = logger as log4net.Appender.AppenderSkeleton;
+                            appenderSkeleton.Threshold = originalLoggingLevels[i];
+                            i++;
+                        }
+
+                        Console.Clear();
+                    }
                 }
+
+                //switch (key.Key) {
+                //    case ConsoleKey.C:
+                //        var accounts = Database.Database.Accounts;
+                //        Logger.Info($"Accounts (Total: {accounts.Count})");
+                //        foreach (var account in accounts) {
+                //            Logger.Info($"{accounts.IndexOf(account)}: {account.Username} Created: {account.LoginDate}");
+                //        }
+                //        break;
+                //    case ConsoleKey.X:
+                //        ConsoleExiting(null, null);
+                //        break;
+                // }
             }
+
         }
 
-        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e) {
+        private static void ConsoleExiting(object sender, ConsoleCancelEventArgs e) {
             Logger.Info($"Stopping server.");
             if (s != null)
                 if (s.IsListening) {
@@ -80,7 +104,6 @@ namespace Geometry_Dash_LikeBot_3 {
                     s.Dispose();
                 }
 
-            Logger.Info($"Saving database.");
             Database.Database.Save();
 
             Logger.Info($"Exiting...");

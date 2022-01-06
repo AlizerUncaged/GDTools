@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,33 +13,42 @@ namespace Geometry_Dash_LikeBot_3.Database {
         [JsonIgnore]
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public DateTime LoginDate;
-
         public int PlayerID, AccountID;
 
         public string Username;
 
         public string Password;
 
-        // server generated
+        /// <summary>
+        /// The account's UDID, the only UDID to be used in this account.
+        /// </summary>
         public string UDID;
 
-        // server generated
+        /// <summary>
+        /// The account's UUID, the only UUID to be used in this account.
+        /// </summary>
         public string UUID;
 
         public string GJP;
 
+        /// <summary>
+        /// The first date the account is logged in.
+        /// </summary>
+        public DateTime LoginDate = DateTime.UtcNow;
+
         // default tier is Free
         public Tier Tier = Tiers.Free;
-
-        // the amount of likes the account **gave** to other people's levels/comments
-        public int UseCount;
 
         [JsonProperty]
         /// <summary>
         /// CSRF token, very important.
         /// </summary>
         private string SessionKey;
+
+        /// <summary>
+        /// Items the account liked, total contributions to other accounts.
+        /// </summary>
+        public List<Contribution> Contributions = new();
 
         /// <summary>
         /// Attempts to generate a session key if the account is still valid.
@@ -50,7 +60,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
             var sessionKey = Utilities.Random_Generator.RandomString(sessionKeyLength);
             SessionKey = sessionKey;
 
-            Logger.Debug($"{AccountID} - Generated new session key {sessionKey}");
+            Logger.Debug($"{Username} - Generated new session key {sessionKey}");
             return (isValid.IsValid, isValid.Reason, SessionKey);
         }
 
@@ -68,16 +78,9 @@ namespace Geometry_Dash_LikeBot_3.Database {
             var totalDays = dateDifference.TotalDays;
             var maxAllowedDays = Tier.MaxAccountDays;
             if (totalDays > maxAllowedDays)
-                return (false, "Account expired, you may register a new account at www.boomlings.com and log it in here.");
+                return (false, "Account expired, you may register a new account at www.boomlings.com and log it in here. Or buy VIP.");
 
             return (true, "Account valid.");
         }
-
-        /// <summary>
-        /// Items the account liked.
-        /// </summary>
-        public List<(DateTime LikeDate, 
-                     bool WasSuccess, 
-                     Likebot_3.Boomlings_Networking.Like_Item Item)> Contributions = new();
     }
 }
