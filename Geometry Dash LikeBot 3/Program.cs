@@ -121,6 +121,7 @@ namespace Geometry_Dash_LikeBot_3 {
         }
 
         private static void LogReceived(string message) {
+            Logger.Debug($"{message}");
 
         }
 
