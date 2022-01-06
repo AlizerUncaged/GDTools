@@ -8,7 +8,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking {
   
     public class Like_GJ_Item : Boomlings_Request_Base {
         public Like_GJ_Item(Database.Account account, Like_Item item, string randomString) :
-            base("http://www.boomlings.com/database/accounts/loginGJAccount.php",
+            base($"/database/accounts/loginGJAccount.php",
                 $"gameVersion=20&binaryVersion=35&gdw=0&accountID={account.AccountID}&gjp={account.GJP}" +
                 $"&udid={account.UDID}&uuid={account.UUID}" +
                 $"&itemID={item.ItemID}&like={(item.IsLike ? 1 : 0)}&type={(int)item.ItemType}" +

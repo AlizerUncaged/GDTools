@@ -47,10 +47,12 @@
         }
 
         .addbot-button {
+            
             border-radius: 25px 25px;
             font-family: 'Noto Sans', sans-serif;
             transition: all 0.5s ease-out;
-            margin-right: 15px;
+            margin-right: 15px;white-space: nowrap;
+            margin-bottom: 10px;
         }
 
         .addbot-button:hover {
@@ -78,7 +80,7 @@
 
 <body>
     <nav class="navbar navbar-light bg-dark mb-4">
-        <div class=" container align-items-center">
+        <div class="container align-items-center">
             <a class="navbar-brand force-white" href="#">
                 <img src="/Resources/Logo.png" alt="" height="25px" class="me-2 d-inline-block align-text-top ">
                 <b> Likebot 3</b>
@@ -88,7 +90,7 @@
                     
                 }
             </script>
-            <div class="d-flex align-items-center m-0 ">
+            <div class="d-flex align-items-center m-0">
                 <div class="col me-2"><b>{username}</b></div>
                 <div class="me-2  p-2" style="width: auto; border-radius: 25px 25px !important;"> {left} <i class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i></div>
                 <div class="me-2 p-2 dropdown" style="cursor: pointer;" > 
@@ -108,7 +110,10 @@
         </div>
     </nav>
     <div class="container mb-2">
-        <div class="d-flex flex-row-reverse">
+        <div class="align-items-center d-flex flex-row-reverse flex-wrap">
+            <div style="margin-bottom: 10px;">
+                Add Likes
+            </div>
             <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-level"
                 class="btn round-s addbot-button" type="submit"> + Add Level</button>
             <button onclick="" data-bs-toggle="modal" data-bs-target="#new-comment" class="btn round-s addbot-button"

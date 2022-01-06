@@ -14,8 +14,8 @@ namespace Geometry_Dash_LikeBot_3
         public static int Port = 
             8080;
 
-        public const string BoomlingsHost = 
-            "http://172.104.26.87/";
+        public const string BoomlingsHost =
+            "http://www.boomlings.com";
 
         public const string DatabaseFile = 
             "Database.json";

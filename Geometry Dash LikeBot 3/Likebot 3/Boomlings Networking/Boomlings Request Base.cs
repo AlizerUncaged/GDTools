@@ -59,7 +59,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking
 
         public Boomlings_Request_Base(string endpoint, string payload)
         {
-            Endpoint = endpoint; Query = payload;
+            Endpoint = $"{Constants.BoomlingsHost}{endpoint}"; Query = payload;
         }
     }
 }
