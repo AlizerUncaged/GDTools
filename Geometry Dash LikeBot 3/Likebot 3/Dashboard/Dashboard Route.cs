@@ -63,6 +63,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard {
                 .Replace("{left}", account.Tier.LikesLeft.ToString())
                 .Replace("{used_memory}", Utilities.Me_as_Process.FormatBytes(Utilities.Me_as_Process.MemoryUsage()))
                 );
+            return;
         }
     }
 }

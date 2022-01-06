@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Geometry_Dash_LikeBot_3.Scenes {
     public class Sessions : Scene {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        public Sessions() : base('D', "Sessions") {
+        public Sessions() : base('C', "Sessions") {
         }
 
         public override async Task StartAsync() {

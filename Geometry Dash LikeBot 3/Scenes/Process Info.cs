@@ -14,9 +14,10 @@ namespace Geometry_Dash_LikeBot_3.Scenes {
 
         }
         public override async Task StartAsync() {
-
-            GC.Collect();
             Console.Clear();
+            GC.Collect();
+
+            List<PropertyInfo> invalidInfos = new();
 
             while (true) {
                 await Task.Delay(100);
@@ -35,10 +36,12 @@ namespace Geometry_Dash_LikeBot_3.Scenes {
                 Console.WriteLine(
                     $"Press ESC to exit.");
                 var currentProc = Process.GetCurrentProcess();
-                List<PropertyInfo> invalidInfos = new();
                 // display all properties of current process
+                StringBuilder sb = new();
                 foreach (var prop in currentProc.GetType().GetProperties()) {
+
                     if (invalidInfos.Contains(prop)) continue;
+
                     try {
                         var name = prop.Name;
                         string value = $"{prop.GetValue(currentProc, null)}";
@@ -47,11 +50,13 @@ namespace Geometry_Dash_LikeBot_3.Scenes {
                             var isLong = long.TryParse($"{value}", out longVal);
                             value = Utilities.Mr_Clean.FormatBytes(longVal);
                         }
-                        Console.WriteLine($"{name} : {(string.IsNullOrWhiteSpace(value) ? "<Unkown>" : value)}");
+                        sb.AppendLine($"{name} : {(string.IsNullOrWhiteSpace(value) ? "<Unkown>" : value)} ");
                     } catch {
                         invalidInfos.Add(prop);
                     }
                 }
+
+                Console.WriteLine(($"{sb}").Trim());
             }
         }
     }
