@@ -38,18 +38,34 @@ namespace Geometry_Dash_LikeBot_3.Scenes {
                 var currentProc = Process.GetCurrentProcess();
                 // display all properties of current process
                 StringBuilder sb = new();
-                foreach (var prop in currentProc.GetType().GetProperties()) {
+                var propType = currentProc.GetType();
+                foreach (var prop in propType.GetProperties()) {
+
+                    var fType = prop.PropertyType;
+
+                    if (fType.IsClass) {
+                        invalidInfos.Contains(prop);
+                        continue;
+                    }
 
                     if (invalidInfos.Contains(prop)) continue;
 
                     try {
                         var name = prop.Name;
                         string value = $"{prop.GetValue(currentProc, null)}";
+
+                        long longVal;
+                        var isLong = long.TryParse($"{value}", out longVal);
+
+                        //// if default value dont bother showing it
+                        //if (isLong && longVal == 0) {
+                        //    continue;
+                        //}
+
                         if (name.Contains("Memory")) {
-                            long longVal;
-                            var isLong = long.TryParse($"{value}", out longVal);
                             value = Utilities.Mr_Clean.FormatBytes(longVal);
                         }
+
                         sb.AppendLine($"{name} : {(string.IsNullOrWhiteSpace(value) ? "<Unkown>" : value)} ");
                     } catch {
                         invalidInfos.Add(prop);

@@ -10,9 +10,9 @@ namespace Geometry_Dash_LikeBot_3
     {
         // ip and port to run the web application
         public static string IP = 
-            "localhost";
+            "*";
         public static int Port = 
-            80;
+            8080;
 
         public const string BoomlingsHost = 
             "http://172.104.26.87/";

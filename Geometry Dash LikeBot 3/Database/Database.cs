@@ -23,6 +23,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
         public static void ChangePassword(int accountid, string password, string gjp) {
             var account = Data.Accounts[GetIndexFromAccountID(accountid)];
             account.Password = password; account.GJP = gjp;
+            Save();
         }
         public static List<Account> Accounts {
             get {
@@ -45,6 +46,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
 
             Data.Accounts.Add(account);
             Logger.Debug($"{account.Username} - Account added: {account.Username}");
+            Save();
 
             return account;
         }
@@ -60,6 +62,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
 
             Data.Accounts.Add(account);
             Logger.Debug($"{account.Username} - Account added: {account.Username}");
+            Save();
         }
 
         public static int GetIndexFromAccountID(int accountid) {
@@ -69,6 +72,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
         public static void RemoveAccount(Account account) {
             Data.Accounts.Remove(account);
             Logger.Debug($"{account.Username} - Removed from database.");
+            Save();
         }
 
         /// <summary>

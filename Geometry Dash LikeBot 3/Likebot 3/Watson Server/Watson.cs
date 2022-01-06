@@ -29,11 +29,15 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Watson_Server {
         }
 
         public async Task StartAsync() {
-            Logger.Debug($"Running web server...");
+            try {
+                Logger.Debug($"Running web server...");
 
-            _ = s.StartAsync();
+                _ = s.StartAsync();
 
-            Logger.Info($"Server running at {Constants.IP}:{Constants.Port}.");
+                Logger.Info($"Server running at {Constants.IP}:{Constants.Port}.");
+            } catch (Exception ex) {
+                Logger.Fatal(ex);
+            }
 
         }
         public void Stop() {
@@ -66,7 +70,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Watson_Server {
         // 404
         static async Task DefaultRoute(HttpContext ctx) {
             ctx.Response.StatusCode = 302;
-            ctx.Response.Headers["Location"] = "https://catgirlcare.org/";
+            ctx.Response.Headers["Location"] = "/";
             await ctx.Response.Send();
             return;
         }
