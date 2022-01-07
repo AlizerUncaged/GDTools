@@ -42,7 +42,6 @@ namespace Geometry_Dash_LikeBot_3 {
                 var ckeyChar = char.ToUpper(ckey.KeyChar);
                 var ckeyKey = ckey.Key;
 
-
                 switch (ckeyKey) {
                     case ConsoleKey.X:
                         Exit();
@@ -70,11 +69,9 @@ namespace Geometry_Dash_LikeBot_3 {
 
         private static void Exit() {
             webServer.Stop();
-
             Database.Database.Save();
 
             Logger.Info($"Exiting...");
-
             Environment.Exit(Environment.ExitCode);
 
         }

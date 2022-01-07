@@ -127,6 +127,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
             }
 
             await ctx.Response.Send(JsonConvert.SerializeObject(response));
+            return;
         }
     }
 }

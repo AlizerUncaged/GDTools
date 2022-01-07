@@ -8,11 +8,6 @@ using System.Threading.Tasks;
 using WatsonWebserver;
 
 namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard {
-
-    ///  Setting a cookie
-    // Header
-    // Set-Cookie: <cookie-name>=<cookie-value>
-
     public class Dashboard_Route {
         public async Task MoveToLogin(HttpContext ctx) {
             ctx.Response.StatusCode = 302;
@@ -22,7 +17,7 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Dashboard {
         }
 
         public readonly string DashboardPage = File.ReadAllText("Likebot 3/Dashboard/Dashboard.html");
-        // shouldve cookie already
+
         [StaticRoute(HttpMethod.GET, "/dashboard")]
         public async Task EnterDashboard(HttpContext ctx) {
             string cookies;

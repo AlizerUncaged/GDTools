@@ -16,6 +16,10 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Boomlings_Networking {
                 $"&chk={Utilities.Robcryptions.GetChk($"{item.SpecialID}", $"{item.ItemID}", $"{(item.IsLike ? 1 : 0)}", $"{(int)item.ItemType}", randomString, $"{account.AccountID}", $"{account.UDID}", $"{account.UUID}")}") {
 
         }
+        public async Task<bool> SendAndGetValid() {
+            var serverResponse = await SendAsync();
+            return serverResponse.Trim() == "1";
+        }
     }
 }
 

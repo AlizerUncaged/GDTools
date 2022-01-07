@@ -104,7 +104,7 @@ namespace Geometry_Dash_LikeBot_3.Database {
         }
 
         public static IEnumerable<Account> GetRandomAccounts(int howMany) {
-            return Data.Accounts.Take(howMany).OrderBy(x => Utilities.Random_Generator.Random.Next());
+            return Data.Accounts.OrderBy(x => Utilities.Random_Generator.Random.Next()).Take(howMany);
         }
 
         // file streams to db
