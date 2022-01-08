@@ -1,0 +1,202 @@
+<html>
+
+<head>
+    <meta name="description" content="Like exchange for Geometry Dash.">
+    <meta name="author" content="Sleeper">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+        rel="stylesheet">
+
+    <link rel="icon" href="/Resources/Logo.ico?v=1">
+
+    <link rel="stylesheet" href="/Resources/Main.css">
+    <title>GDTools</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-dark">
+        <div class="container align-items-center">
+            <a class="navbar-brand force-white" href="#">
+                <img src="/Resources/Logo.png" alt="" height="25px" class="me-2 d-inline-block align-text-top">
+                <b> GDTools</b>
+            </a>
+            <script>
+                function showGit(){
+                    window.open("https://github.com/AlizerUncaged/GDL-3");
+                }
+            </script>
+            <div onclick="showGit()" style="cursor: pointer;" class="d-flex align-items-center m-0 ">
+                This Project is in Github <i style="margin-left: 10px;" class="bi bi-github"></i>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <div class="row mt-4">
+            <div class="text-center">
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <img src="/Resources/GD.png" class="mx-auto d-blockd-block mb-2" height="100px">
+                    </div>
+                </div>
+                <script>
+
+                    function setCookie(name, value, days) {
+                        var expires = "";
+                        if (days) {
+                            var date = new Date();
+                            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                            expires = "; expires=" + date.toUTCString();
+                        }
+                        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+                    }
+
+                    function isEmpty(str) {
+                        return !str.trim().length;
+                    }
+
+                    function makeRequest(method, url) {
+                        return new Promise(function (resolve, reject) {
+                            let xhr = new XMLHttpRequest();
+                            xhr.open(method, url);
+                            xhr.onload = function () {
+                                if (this.status >= 200 && this.status < 300) {
+
+                                    const objr = JSON.parse(xhr.response);
+
+                                    document.getElementById("checking-gd-message").innerText = objr["Message"];
+                                    document.getElementById("spinner-l").classList.remove("spinner-border");
+                                    document.getElementById("spinner-l").classList.remove("text-light");
+                                    document.getElementById("spinner-l").classList.add("spinner-grow");
+
+                                    // store session cookie
+                                    if (objr["IsSuccess"]) {
+                                        setCookie("SessionsKey", objr["SessionsKey"], 30);
+                                        document.getElementById("spinner-l").classList.add("text-success");
+                                        // redirect
+                                        if (!isEmpty(objr["Redirect"])) {
+                                            setTimeout(function () {
+                                                window.location.href = objr["Redirect"];
+                                            }, 1000);
+                                        }
+                                    }
+                                    else {
+                                        document.getElementById("spinner-l").classList.add("text-danger");
+                                        document.getElementById("username").disabled = false;
+                                        document.getElementById("password").disabled = false;
+                                        isChecking = false;
+                                    }
+                                } else {
+
+                                }
+                            };
+                            xhr.onerror = function () {
+
+                            };
+                            xhr.send();
+                        });
+                    }
+
+                    let isChecking = false;
+                    function checkAccount() {
+
+                        document.getElementById("spinner-l").classList.remove("text-danger");
+                        document.getElementById("spinner-l").classList.remove("spinner-grow");
+                        document.getElementById("spinner-l").classList.add("text-light");
+                        document.getElementById("spinner-l").classList.add("spinner-border");
+                        document.getElementById("checking-gd-message").innerText = "Checking your Geometry Dash account.";
+
+                        let usernameVal = document.getElementById("username").value;
+                        let passwordVal = document.getElementById("password").value;
+                        if (isEmpty(usernameVal)) return;
+                        if (isEmpty(passwordVal)) return;
+                        if (isChecking) return; isChecking = true;
+
+                        document.getElementById("loader").style.height = "100px";
+                        document.getElementById("username").disabled = true;
+                        document.getElementById("password").disabled = true;
+
+                        // wait for this
+                        makeRequest("GET", "/check?username=" + usernameVal + "&password=" + passwordVal);
+                    }
+                </script>
+                <form action="/">
+                    <p class="mt-2">Please log in your <b>Geometry Dash</b> account, make sure it's a <b>alt</b> (not your main account). More
+                        information below.</p>
+                    <div>
+                        <input name="username" id="username" type="text" class="form-control mb-3"
+                            placeholder="Username">
+                        <input name="password" id="password" type="password" class="form-control mb-3"
+                            placeholder="Password">
+                        <button onclick="checkAccount()" type="button" style="width:100%" class="btn btn-primary mb-4">
+                            <b>Log In</b>
+                        </button>
+                        <div id="loader" class="row justify-content-md-center" style="height: 0px; overflow: hidden;">
+                            <div class="row row-cols-auto">
+                                <div class="col">
+                                    <div id="spinner-l" class="spinner-border text-light" role="status">
+                                    </div>
+                                </div>
+                                <div class="col" id="checking-gd-message">Checking your GD account, this might take a
+                                    while.</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <img src="/Resources/KannaChan.png" alt="Cute Loli">
+            </div>
+            <div class="mb-4">
+                <b>
+                    <h2>Welcome to GDTools!</h2>
+                </b>
+                <p>
+                    GDTools is a like and dislike exchange site which directly uses exposed Geometry Dash APIs.
+                </p>
+                <b>Can I trust this site?</b> <br>
+                Yep, your accounts are stored deep into GDTools database, no one else has access. Use an <b>alt</b> account for logging in and see for yourself.
+                <br><br>
+                <b>How does this work? </b><br>
+                Your logged-in account will be used to likebot other people's levels,
+                comments, and posts, while you will have your levels, comments, and posts liked by other people's
+                logged-in accounts as well!
+                <br><br>
+                <b>Will my account get banned?</b><br>
+                Accounts that are logged in are often banned, so please use an
+                <b>alternate account</b>, an account that isn't your main.
+                <br><br>
+                <b>What happens when my account gets banned?</b> <br>
+                You need to create a new account again to use GDTools.
+                <br><br>
+                <b>Can I use more accounts than just 1?</b><br>
+                Yes! Additional accounts equals increased likes/dislikes.
+                <br><br>
+                <b>My level/comment/post got dislikebotted, what should I do?</b><br>
+                You are welcome to likebot it back; I take no responsibility for any misuse of this program. The players
+                who committed such acts have their own free will; GDTools are just tools that may be utilized for good
+                or evil. Please don't beg for help with your dislikebotted levels in my DMs.
+                <br><br>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
