@@ -30,8 +30,8 @@
         href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Source+Sans+Pro:ital,wght@0,600;1,600&display=swap"
         rel="stylesheet">
 
-    <link rel="icon" href="/Resources/Logo.ico?v=1">
-    <link rel="stylesheet" href="/Resources/Main.css?v=2">
+    <link rel="icon" href="/resources/Logo.ico?v=1">
+    <link rel="stylesheet" href="/resources/Main.css?v=2">
     <style>
         :root {
             --background: #24252D;
@@ -77,6 +77,26 @@
             height: 300px; 
             margin: 15px;
         }
+        
+        input[type=radio] ~ label {
+            cursor:pointer;
+        }
+        input[type=radio] {
+            position: absolute;
+            visibility: hidden;
+        }
+                
+        input[type=radio]:checked ~ .check {
+            border: 5px solid #0DFF92;
+        }
+
+        input[type=radio]:checked ~ .check::before{
+            background: #0DFF92;
+        }
+
+        input[type=radio]:checked ~ label{
+            color: #0DFF92;
+        }
 
         @media all and (orientation:portrait) {
             #information-area {
@@ -93,7 +113,7 @@
     <nav class="navbar navbar-light bg-dark mb-4">
         <div class="container align-items-center">
             <a class="navbar-brand force-white" href="#">
-                <img src="/Resources/Logo.png" alt="" height="25px" class="me-2 d-inline-block align-text-top ">
+                <img src="/resources/Logo.png" alt="" height="25px" class="me-2 d-inline-block align-text-top ">
                 <b> GDTools</b>
             </a>
             <script>
@@ -121,8 +141,8 @@
         </div>
     </nav>
     <div class="container mb-2">
-        <div class="align-items-center d-flex flex-row-reverse flex-wrap">
-            <div style="margin-bottom: 10px;">
+        <div class="align-items-center d-flex flex-wrap">
+            <div style="margin-bottom: 10px; margin-right: 15px;">
                 Add Likes
             </div>
             <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-level"
@@ -151,71 +171,106 @@
     <div class="modal fade" id="new-level" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"> <b>Levels</b></h5>
-                </div>
-                <div class="modal-body">
-                    <p>You can see the Level ID at the bottom of the comments tab.</p>
-                    <input name="username" id="username" type="text" class="form-control mb-3" placeholder="Level ID">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary shadowed">Add</button>
-                </div>
+                <form method="post" action="/actions/like">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> <b>Level Likes</b></h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>You can see the Level ID at the bottom of the comments tab.</p>
+                        <input name="specialid" id="specialid" type="hidden" class="form-control mb-3" placeholder="Special ID">
+                        <input name="itemid" id="itemid" type="text" class="form-control mb-3" placeholder="Level ID">
+                        <fieldset  class="row"> 
+                            <div class="col">
+                                <input class="form-check-input" type="radio" name="isLike" value="false" id="levelDislikeRadio">
+                                <label class="text-center" for="levelDislikeRadio">
+                                    <i class="bi bi-hand-thumbs-down"></i>
+                                    Dislike</label>
+                            </div>
+                            <div class="col">
+                                <input class="form-check-input" type="radio" name="isLike" value="true" id="levelLikeRadio" checked>
+                                <label class="text-center" for="levelLikeRadio">
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                    Like</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary shadowed">Add</button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
     <div class="modal fade" id="new-comment" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"> <b>Comments</b></h5>
-                </div>
-                <div class="modal-body">
-                    <p>Username of the person who commented.</p>
-                    <input name="username" id="username" type="text" class="form-control mb-3"
-                        placeholder="Author Username">
-                    <div class="row container" id="comment-area">
-
+                <form action="" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> <b>Comment Likes</b></h5>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <script>
-                        let isSearchComments = false;
-                        function searchComments() {
-                            if (isSearchComments) return;
-                            isSearchComments = true; // find comments
-                            showSpinner();
-                            resetSpinner();
-                        }
-                        function showSpinner() {
-                            document.getElementById("search-comments-spinner-id").classList.add("search-comments-spinner-loading");
-                            document.getElementById("search-comments-spinner-id").classList.add("spinner-border");
-                        }
-                        function resetSpinner() {
-                            document.getElementById("search-comments-spinner-id").classList.remove("search-comments-spinner-loading");
-                            document.getElementById("search-comments-spinner-id").classList.remove("spinner-border");
-                        }
-                    </script>
-                    <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" onclick="searchComments()" class="btn btn-primary shadowed">
-                        <style>
-                            .search-comments-spinner {
-                                height: 0;
-                                width: 0;
-                                transition: all 0.5s ease-in-out;
+                    <div class="modal-body">
+                        <p>Username of the person who commented.</p>
+                        <input name="username" id="username" type="text" class="form-control mb-3" placeholder="Author Username">
+                        <div class="row container" id="comment-area">
+    
+                        </div>
+                              <fieldset  class="row"> 
+                                <div class="col">
+                                    <input class="form-check-input" type="radio" name="isLike" value="false" id="commentDislikeRadio">
+                                    <label class="text-center" for="commentDislikeRadio">
+                                        <i class="bi bi-hand-thumbs-down"></i>
+                                        Dislike</label>
+                                </div>
+                                <div class="col">
+                                    <input class="form-check-input" type="radio" name="isLike" value="true" id="commentLikeRadio" checked>
+                                    <label class="text-center" for="commentLikeRadio">
+                                        <i class="bi bi-hand-thumbs-up"></i>
+                                        Like</label>
+                                </div>
+                            </fieldset>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <script>
+                            let isSearchComments = false;
+                            function searchComments() {
+                                if (isSearchComments) return;
+                                isSearchComments = true; // find comments
+                                showSpinner();
+                                resetSpinner();
                             }
-
-                            .search-comments-spinner-loading {
-                                height: 15px !important;
-                                width: 15px !important;
+                            function showSpinner() {
+                                document.getElementById("search-comments-spinner-id").classList.add("search-comments-spinner-loading");
+                                document.getElementById("search-comments-spinner-id").classList.add("spinner-border");
                             }
-                        </style>
-                        <div id="search-comments-spinner-id" class="search-comments-spinner  text-light me-2"
-                            role="status">
-                        </div> Search for Comments
-                    </button>
-                </div>
+                            function resetSpinner() {
+                                document.getElementById("search-comments-spinner-id").classList.remove("search-comments-spinner-loading");
+                                document.getElementById("search-comments-spinner-id").classList.remove("spinner-border");
+                            }
+                        </script>
+                        <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" onclick="searchComments()" class="btn btn-primary shadowed">
+                            <style>
+                                .search-comments-spinner {
+                                    height: 0;
+                                    width: 0;
+                                    transition: all 0.5s ease-in-out;
+                                }
+    
+                                .search-comments-spinner-loading {
+                                    height: 15px !important;
+                                    width: 15px !important;
+                                }
+                            </style>
+                            <div id="search-comments-spinner-id" class="search-comments-spinner  text-light me-2"
+                                role="status">
+                            </div> Search for Comments
+                        </button>
+                    </div>
+                </form>
+                
             </div>
         </div>
     </div>
@@ -223,7 +278,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"> <b>Profile Posts</b></h5>
+                    <h5 class="modal-title" id="exampleModalLabel"> <b>Profile Post Likes</b></h5>
                 </div>
                 <div class="modal-body">
                 </div>

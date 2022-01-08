@@ -21,7 +21,8 @@ namespace GDTools {
     `-.-' \ )-`( , o o)    Git: github.com/AlizerUncaged/LikeBot-3
           `-    \`_`""'-
 ";
-        private static Likebot_3.Watson_Server.Watson webServer = new();
+        private static Core.Watson_Server.Watson webServer = new();
+
         static async Task Main(string[] args) {
             Console.WriteLine(Banner);
             Utilities.Logging.Initialize();
@@ -32,23 +33,9 @@ namespace GDTools {
 
             await Database.Database.Read();
 
-            await Likebot_3.Boomlings_Networking.Proxies.InitializeProxies();
+            await Core.Boomlings_Networking.Proxies.InitializeProxies();
 
             _ = webServer.StartAsync();
-
-            // test likebot
-            {
-                var account = Database.Database.GetRandomAccounts(1).FirstOrDefault();
-                var likebotTask = new Likebot_3.Dashboard.LikeBot_Task(account,
-                    new Likebot_3.Boomlings_Networking.Like_Item {
-                        IsLike = true,
-                        ItemID = 77092280,
-                        ItemType = Likebot_3.Boomlings_Networking.ItemType.Level,
-                        SpecialID = 0
-                    }, 20);
-                await likebotTask.LikeBotAll();
-                Logger.Info("Done");
-            }
 
 
             while (true) {

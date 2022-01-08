@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GDTools.Likebot_3.Dashboard {
+namespace GDTools.Core.Dashboard {
     public class LikeBot_Task {
-        public static Dictionary<Database.Account, List<Task<bool>>>
-            Tasks = new();
+        public static Dictionary<Database.Account, List<Task<bool>>> Tasks = new();
 
         public static bool HasTask(Database.Account acc) {
             return Tasks.ContainsKey(acc);
@@ -24,9 +23,11 @@ namespace GDTools.Likebot_3.Dashboard {
             var ownerLikesLeft = this.owner.Tier.LikesLeft;
             this.maxLikes = max > ownerLikesLeft ? ownerLikesLeft : max;
             likeItem = item;
-            likers = Database.Database.GetRandomAccounts(
-                // gd servers accept likes more than once lmao
-                ownerLikesLeft > 512 ? 512 : ownerLikesLeft).ToArray();
+
+            likers = Database.Database.GetRandomAccounts(ownerLikesLeft > 512 ? 512 : ownerLikesLeft).ToArray();
+
+            // negate maximum likes that can be given on the account.
+            this.owner.Tier.LikesLeft -= max;
         }
 
         // comence likebot
@@ -42,12 +43,14 @@ namespace GDTools.Likebot_3.Dashboard {
             }
 
             foreach (var task in Tasks[owner]) {
-
                 var result = await task;
                 if (result) success++;
 
             }
+            var failures = maxLikes - success;
 
+            // add likes that were not sent
+            owner.Tier.LikesLeft += failures;
             // tasks done, remove it from tasks list
             Tasks.Remove(owner);
 
@@ -74,9 +77,7 @@ namespace GDTools.Likebot_3.Dashboard {
 
             var doLike = await likeReq.SendAndGetValid();
 
-            Debug.WriteLine($"Account {toLike.Username} was valid {doLike}");
-            if (doLike)
-                toLike.Tier.LikesLeft--;
+            // Debug.WriteLine($"Account {toLike.Username} was valid {doLike}");
 
             return doLike;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GDTools.Likebot_3.Boomlings_Networking {
+namespace GDTools.Core.Boomlings_Networking {
     public class Account_Data_Result {
         public string Message;
         public bool Success;

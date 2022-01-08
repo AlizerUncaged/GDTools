@@ -7,13 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using WatsonWebserver;
 
-namespace GDTools.Likebot_3.Watson_Server {
+namespace GDTools.Core.Watson_Server {
     public class Watson {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private Server s;
 
-        private bool isClosing = false;
         public Watson() {
             // When debugging (or building as Debug), GDL-3 will be at 127.0.0.1:8080 for testing reasons.
 #if DEBUG
@@ -23,6 +22,8 @@ namespace GDTools.Likebot_3.Watson_Server {
 
             s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
             s.Settings.AccessControl.Mode = AccessControlMode.DefaultPermit;
+            s.Settings.IO.MaxRequests = int.MaxValue;
+
             s.Events.Logger = LogReceived;
             s.Events.RequestReceived += RequestReceived;
             s.Events.ExceptionEncountered += ErrorOccured;
@@ -42,7 +43,6 @@ namespace GDTools.Likebot_3.Watson_Server {
         }
         public void Stop() {
             Logger.Debug($"Stopping webserver...");
-            isClosing = true;
             if (s != null) {
                 s.Stop();
                 s.Dispose();

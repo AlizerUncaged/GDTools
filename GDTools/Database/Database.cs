@@ -33,7 +33,7 @@ namespace GDTools.Database {
             }
         }
 
-        public static Account AddAccount(Likebot_3.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp) {
+        public static Account AddAccount(Core.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp) {
             var account = new Account {
                 AccountID = serverResponse.AccountID,
                 PlayerID = serverResponse.PlayerID,

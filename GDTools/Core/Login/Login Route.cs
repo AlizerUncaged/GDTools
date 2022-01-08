@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WatsonWebserver;
 
-namespace GDTools.Likebot_3.Login {
+namespace GDTools.Core.Login {
     public class Login_Route {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -20,7 +20,7 @@ namespace GDTools.Likebot_3.Login {
         }
 
         // just read it once
-        public readonly byte[] LoginPage = File.ReadAllBytes("Likebot 3/Login/Login.html");
+        public readonly byte[] LoginPage = File.ReadAllBytes("Core/Login/Login.html");
         [StaticRoute(HttpMethod.GET, "/login")]
         public async Task LoginForm(HttpContext ctx) {
             string cookies;

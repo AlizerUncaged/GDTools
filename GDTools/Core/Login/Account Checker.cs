@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GDTools.Likebot_3.Login {
+namespace GDTools.Core.Login {
     public class Account_Checker {
         /// <summary>
         /// IPAddresses with accounts still logging in.

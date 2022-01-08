@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using log4net;
 using MihaZupan;
 
-namespace GDTools.Likebot_3.Boomlings_Networking {
+namespace GDTools.Core.Boomlings_Networking {
     public abstract class Boomlings_Request_Base {
 
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
