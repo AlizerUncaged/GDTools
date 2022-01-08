@@ -19,12 +19,16 @@ namespace GDTools.Scenes {
                 $"Press ESC to exit.");
 
             var accounts = Database.Database.Accounts;
-            Console.WriteLine($"Accounts (Total: {accounts.Count})");
+            Console.WriteLine($"Accounts (Total: {accounts.Count()})");
 
-            foreach (var account in accounts) {
-                Console.WriteLine($"{accounts.IndexOf(account)}: {account.Username} Created: {account.LoginDate}");
+            foreach (var owner in Database.Database.Owners) {
+                Console.WriteLine($"{Database.Database.Owners.IndexOf(owner)}, {owner.Username}'s GD Accounts: ");
+                var ownerAccounts = owner.GDAccounts;
+                foreach (var account in ownerAccounts) {
+                    Console.WriteLine($"\t {ownerAccounts.IndexOf(account)}: {account.Username}");
+                }
+
             }
-
             while (Console.ReadKey(true).Key != ConsoleKey.Escape) ;
         }
     }

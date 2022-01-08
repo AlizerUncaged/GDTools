@@ -61,7 +61,9 @@ namespace GDTools.Core.Boomlings_Networking
         private static
                 readonly MediaTypeWithQualityHeaderValue AcceptAll = new MediaTypeWithQualityHeaderValue("*/*");
 
-        // generate an http client for each proxy to save hardware resources
+        // generate an http client for each proxy to save hardware resources because each HttpClient generates
+        // its own socket for some reason and i dont want to create a new instance of HttpClient each request
+        // when we can generate for each proxies.
         private static HttpClient generateHttpClient(Proxy proxy) {
             var socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port, proxy.Username, proxy.Password);
             socks5.ResolveHostnamesLocally = true;

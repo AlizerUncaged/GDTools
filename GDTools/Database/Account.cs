@@ -36,54 +36,9 @@ namespace GDTools.Database {
         /// </summary>
         public DateTime LoginDate = DateTime.UtcNow;
 
-        // default tier is Free
-        public Tier Tier = Tiers.Free;
-
-        [JsonProperty]
-        /// <summary>
-        /// CSRF token, very important.
-        /// </summary>
-        private string SessionKey;
-
         /// <summary>
         /// Items the account liked, total contributions to other accounts.
         /// </summary>
         public List<Contribution> Contributions = new();
-
-        /// <summary>
-        /// Attempts to generate a session key if the account is still valid.
-        /// </summary>
-        public (bool IsSuccess, string Reason, string Key) TryGenerateSessionKey() {
-            // 64 is the optimal length, not too big, not too small
-            const int sessionKeyLength = 64;
-            var isValid = IsValid();
-            var sessionKey = Utilities.Random_Generator.RandomString(sessionKeyLength);
-            SessionKey = sessionKey;
-
-            if (isValid.IsValid)
-                Logger.Debug($"{Username} - Generated new session key {sessionKey}");
-            else
-                Logger.Debug($"{Username} - Is invalid.");
-            return (isValid.IsValid, isValid.Reason, SessionKey);
-        }
-
-        public bool CheckKey(string key) {
-            return SessionKey == key;
-        }
-
-        /// <summary>
-        ///  Checks if the account is valid.
-        /// </summary>
-        public (bool IsValid, string Reason) IsValid() {
-            // check maxdate
-            var currentDate = DateTime.Now;
-            var dateDifference = currentDate - LoginDate;
-            var totalDays = dateDifference.TotalDays;
-            var maxAllowedDays = Tier.MaxAccountDays;
-            if (totalDays > maxAllowedDays)
-                return (false, "Account expired, you may register a new account at www.boomlings.com and log it in here. Or buy VIP.");
-
-            return (true, "Account valid.");
-        }
     }
 }

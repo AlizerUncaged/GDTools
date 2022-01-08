@@ -17,23 +17,42 @@ namespace GDTools.Database {
         private static Data Data = new();
 
         public static bool IsExists(int accountid) {
-            return Data.Accounts.FindIndex(x => x.AccountID == accountid) != -1;
+            return Accounts.Any(x => x.AccountID == accountid);
         }
 
         public static void ChangePassword(int accountid, string password, string gjp) {
-            var account = Data.Accounts[GetIndexFromAccountID(accountid)];
+            var account = Accounts.FirstOrDefault(x => x.AccountID == accountid);
+            if (account == null) return;
             account.Password = password; account.GJP = gjp;
             Save();
         }
-        public static List<Account> Accounts {
+
+        public static IEnumerable<Account> Accounts {
             get {
                 if (Data != null)
-                    return Data.Accounts;
+                    return Data.Owners.SelectMany(x => x.GDAccounts);
                 else return null;
             }
         }
+        public static List<User> Owners {
+            get {
+                if (Data != null)
+                    return Data.Owners;
+                else return null;
+            }
+        }
+        public static User GetOwnerFromAccountID(int accID) {
+            foreach (var owner in Data.Owners) {
+                foreach (var account in owner.GDAccounts) {
+                    if (account.AccountID == accID)
+                        return owner;
+                }
+            }
+            return null;
+        }
 
         public static Account AddAccount(Core.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp) {
+            var ownerID = Data.Owners.Count;
             var account = new Account {
                 AccountID = serverResponse.AccountID,
                 PlayerID = serverResponse.PlayerID,
@@ -41,36 +60,35 @@ namespace GDTools.Database {
                 UUID = serverResponse.UUID,
                 Username = username,
                 Password = password,
-                GJP = gjp
+                GJP = gjp,
             };
 
-            Data.Accounts.Add(account);
+            var owner = GetOwnerViaID(ownerID);
+            if (owner == null) {
+                owner = GenerateNewOwner(username);
+            }
+            owner.GDAccounts.Add(account);
+
             Logger.Debug($"{account.Username} - Account added: {account.Username}");
             Save();
 
             return account;
         }
-
-        public static void AddAccount(int accountid, int playerid, string username, string password, string gjp) {
-            var account = new Account {
-                AccountID = accountid,
-                PlayerID = playerid,
-                Username = username,
-                Password = password,
-                GJP = gjp
-            };
-
-            Data.Accounts.Add(account);
-            Logger.Debug($"{account.Username} - Account added: {account.Username}");
-            Save();
+        public static User GenerateNewOwner(string username) {
+            var newUser = new User(Data.Owners.Count);
+            newUser.Username = username;
+            Data.Owners.Add(newUser);
+            return newUser;
         }
 
-        public static int GetIndexFromAccountID(int accountid) {
-            return Data.Accounts.FindIndex(x => x.AccountID == accountid);
+        public static User GetOwnerViaID(int ownerID) {
+            return Data.Owners.FirstOrDefault(x => x.OwnerID == ownerID);
         }
 
         public static void RemoveAccount(Account account) {
-            Data.Accounts.Remove(account);
+            var accountOwner = Data.Owners.Where(x => x.GDAccounts.Any(y => y.AccountID == account.AccountID)).FirstOrDefault();
+            if (accountOwner == null) return;
+            accountOwner.GDAccounts.Remove(account);
             Logger.Debug($"{account.Username} - Removed from database.");
             Save();
         }
@@ -78,10 +96,11 @@ namespace GDTools.Database {
         /// <summary>
         /// Get a <b>valid</b> account from the database.
         /// </summary>
-        public static Account GetAccountFromSessionKey(string sessionkey) {
+        public static User GetUserFromSessionKey(string sessionkey) {
             if (string.IsNullOrWhiteSpace(sessionkey)) return null;
 
-            var account = Data.Accounts.FirstOrDefault(x => x.CheckKey(sessionkey) && x.IsValid().IsValid);
+            var account = Data.Owners.FirstOrDefault(x => x.CheckKey(sessionkey));
+            // var account = Data.Owners.acc.FirstOrDefault(x => x.CheckKey(sessionkey) && x.IsValid().IsValid);
             if (account != null)
                 Logger.Info($"{account.Username} - Account found with session key {sessionkey}");
             else
@@ -91,20 +110,21 @@ namespace GDTools.Database {
 
         public static Account GetAccountFromCredentials(string username, string password = null) {
             if (password == null)
-                return Data.Accounts.FirstOrDefault(x =>
+                return Accounts.FirstOrDefault(x =>
                 x.Username.ToLower().Trim() == username.ToLower().Trim());
             else
-                return Data.Accounts.FirstOrDefault(x =>
+                return Accounts.FirstOrDefault(x =>
                 x.Username.ToLower().Trim() == username.ToLower().Trim() &&
                 x.Password.Trim() == password.Trim());
         }
 
+
         public static Account GetAccountViaAccountID(int AccountID) {
-            return Data.Accounts.FirstOrDefault(x => x.AccountID == AccountID);
+            return Accounts.FirstOrDefault(x => x.AccountID == AccountID);
         }
 
         public static IEnumerable<Account> GetRandomAccounts(int howMany) {
-            return Data.Accounts.OrderBy(x => Utilities.Random_Generator.Random.Next()).Take(howMany);
+            return Accounts.OrderBy(x => Utilities.Random_Generator.Random.Next()).Take(howMany);
         }
 
         public static bool IsUserAgentBanned(string ua) {
@@ -129,7 +149,7 @@ namespace GDTools.Database {
                 Save();
             else
                 Data = JsonConvert.DeserializeObject<Data>(dbContents);
-            Logger.Info($"Account list loaded {Data.Accounts.Count()} Accounts...");
+            Logger.Info($"Account list loaded {Accounts.Count()} Accounts...");
 
             Logger.Debug("Fetching banned User-Agents...");
             const string botUserAgentsSource = "https://raw.githubusercontent.com/monperrus/crawler-user-agents/master/crawler-user-agents.json";

@@ -119,8 +119,3 @@
         {
           background: rgba(0, 0, 0, 0.5);
         }
-
-        
-input[type=radio]:checked ~ .check::before{
-    background: #0DFF92 !important;
-  }

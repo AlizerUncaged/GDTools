@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GDTools.Database {
     public static class Tiers {
-        public static Tier Free { get { return new Tier(256, 1); } }
-        public static Tier VIP { get { return new Tier(1024, 7); } }
+        public static Tier Free { get { return new Tier(100, int.MaxValue); } }
+        public static Tier VIP { get { return new Tier(500, int.MaxValue); } }
 
         /// <summary>
         /// Accounts with access to admin interface.

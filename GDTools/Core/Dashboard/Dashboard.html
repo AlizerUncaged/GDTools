@@ -47,11 +47,12 @@
         }
 
         .addbot-button {
-            
+
             border-radius: 25px 25px;
             font-family: 'Noto Sans', sans-serif;
             transition: all 0.5s ease-out;
-            margin-right: 15px;white-space: nowrap;
+            margin-right: 15px;
+            white-space: nowrap;
             margin-bottom: 10px;
         }
 
@@ -62,7 +63,7 @@
             padding-right: 20px;
             box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.30), 0px 0px 25px rgba(255, 255, 255, 0.30);
         }
-        
+
         .dropdown-menu {
             right: 0 !important;
             left: auto !important;
@@ -74,27 +75,32 @@
 
         .session-card {
             width: 200px;
-            height: 300px; 
+            height: 300px;
             margin: 15px;
         }
-        
-        input[type=radio] ~ label {
-            cursor:pointer;
+
+        input[type=radio]~label {
+            cursor: pointer;
         }
+
         input[type=radio] {
             position: absolute;
             visibility: hidden;
         }
-                
-        input[type=radio]:checked ~ .check {
+
+        input[type=radio]:checked~.check {
             border: 5px solid #0DFF92;
         }
 
-        input[type=radio]:checked ~ .check::before{
+        input[type=radio]:checked~.check::before {
             background: #0DFF92;
         }
 
-        input[type=radio]:checked ~ label{
+        input[type=radio]:checked~label {
+            color: #0DFF92;
+        }
+        
+        .activated {
             color: #0DFF92;
         }
 
@@ -116,41 +122,47 @@
                 <img src="/resources/Logo.png" alt="" height="25px" class="me-2 d-inline-block align-text-top ">
                 <b> GDTools</b>
             </a>
-            <script>
-                function showNewBot() {
-                    
-                }
-            </script>
             <div class="d-flex align-items-center m-0">
+
                 <div class="col me-2 d-none d-sm-block"><b>{username}</b></div>
-                <div class="me-2  p-2" style="width: auto; border-radius: 25px 25px !important;"> {left} <i class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i></div>
-                <div class="me-2 p-2 dropdown"> 
-                    <i class="bi bi-three-dots-vertical" style="cursor: pointer;" id="accountContextButton" data-bs-toggle="dropdown" aria-expanded="false" >
+                <div class="me-2  p-2" style="width: auto; border-radius: 25px 25px !important;"> {left} <i
+                        class="bi bi-hand-thumbs-up"></i> <i class="bi bi-hand-thumbs-down"></i></div>
+
+                <div class="me-2 p-2 dropdown">
+                    <i class="bi bi-three-dots-vertical" style="cursor: pointer;" id="accountContextButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
                     </i>
-                    <ul class="dropdown-menu dropdown-menu-right dropdown-menu-dark bg-dark-lighter shadowed" aria-labelledby="accountContextButton">
+                    <ul class="dropdown-menu dropdown-menu-right dropdown-menu-dark bg-dark-lighter shadowed"
+                        aria-labelledby="accountContextButton">
                         <script>
-                            function removeSessionKey(){
+                            function removeSessionKey() {
                                 document.cookie = "SessionsKey=;";
                                 location.reload();
                             }
                         </script>
-                      <li><a class="dropdown-item" onclick="removeSessionKey()" href="#">Logout</a></li>
+                        <li><a class="dropdown-item"  href="#" data-bs-toggle="modal" data-bs-target="#more-likes" >
+                                <div class="me-2" style="cursor: pointer;" >
+                                    <i class="bi bi-plus-lg"></i> Add Likes
+                                </div>
+                            </a>
+                        </li>
+                        <li><a class="dropdown-item" onclick="removeSessionKey()" href="#">Logout</a></li>
                     </ul>
-                 </div>
+                </div>
             </div>
         </div>
     </nav>
     <div class="container mb-2">
         <div class="align-items-center d-flex flex-wrap">
             <div style="margin-bottom: 10px; margin-right: 15px;">
-                Add Likes
+                Likebot
             </div>
-            <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-level"
-                class="btn round-s addbot-button" type="submit"> + Add Level</button>
-            <button onclick="" data-bs-toggle="modal" data-bs-target="#new-comment" class="btn round-s addbot-button"
+            <button data-bs-toggle="modal" data-bs-target="#new-level" class="btn round-s addbot-button" type="submit">
+                + Add Level</button>
+            <button data-bs-toggle="modal" data-bs-target="#new-comment" class="btn round-s addbot-button"
                 type="submit"> + Add Comment</button>
-            <button onclick="showNewBot()" data-bs-toggle="modal" data-bs-target="#new-profilepost"
-                class="btn round-s addbot-button" type="submit"> + Add Profile Post</button>
+            <button data-bs-toggle="modal" data-bs-target="#new-profilepost" class="btn round-s addbot-button"
+                type="submit"> + Add Profile Post</button>
         </div>
     </div>
 
@@ -159,13 +171,40 @@
             <!-- 
                 Sessions
              -->
-             <div class="flex no-padding session-card shadow"> 
-                <div style="height: 125px;" class="container-fluid bg-dark-lighter" ></div>
+            <div class="flex no-padding session-card shadow">
+                <div style="height: 125px;" class="container-fluid bg-dark-lighter"></div>
                 <div style="margin: 5px; padding: 10px;">
                     <div>6028591</div>
                     <div>Epico</div>
                 </div>
-             </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="more-likes" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> <b>Add More Likes</b></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card bg-dark shadow" style="width: 200px; border: 0;">
+                            <img src="https://i.ibb.co/Gv1NDS8/image.png" class="card-img-top" alt="...">
+                            <div class="card-body">
+                              <h5 class="card-title">GD Account</h5>
+                              <p class="card-text">
+                                  <h6 class="activated">+ 100 Likes/Dislikes</h6>
+                                  <p style="font-size: small;">
+                                    You may login via the added account and keep your current amount of likes!</p>
+                                </p>
+                              <a href="#" class="btn btn-primary">Add Account</a>
+                            </div>
+                          </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+
+            </div>
         </div>
     </div>
     <div class="modal fade" id="new-level" tabindex="-1" aria-hidden="true">
@@ -177,17 +216,20 @@
                     </div>
                     <div class="modal-body">
                         <p>You can see the Level ID at the bottom of the comments tab.</p>
-                        <input name="specialid" id="specialid" type="hidden" class="form-control mb-3" placeholder="Special ID">
+                        <input name="specialid" id="specialid" type="hidden" class="form-control mb-3"
+                            placeholder="Special ID">
                         <input name="itemid" id="itemid" type="text" class="form-control mb-3" placeholder="Level ID">
-                        <fieldset  class="row"> 
+                        <fieldset class="row">
                             <div class="col">
-                                <input class="form-check-input" type="radio" name="isLike" value="false" id="levelDislikeRadio">
+                                <input class="form-check-input" type="radio" name="isLike" value="false"
+                                    id="levelDislikeRadio">
                                 <label class="text-center" for="levelDislikeRadio">
                                     <i class="bi bi-hand-thumbs-down"></i>
                                     Dislike</label>
                             </div>
                             <div class="col">
-                                <input class="form-check-input" type="radio" name="isLike" value="true" id="levelLikeRadio" checked>
+                                <input class="form-check-input" type="radio" name="isLike" value="true"
+                                    id="levelLikeRadio" checked>
                                 <label class="text-center" for="levelLikeRadio">
                                     <i class="bi bi-hand-thumbs-up"></i>
                                     Like</label>
@@ -212,26 +254,29 @@
                     </div>
                     <div class="modal-body">
                         <p>Username of the person who commented.</p>
-                        <input name="username" id="username" type="text" class="form-control mb-3" placeholder="Author Username">
+                        <input name="username" id="username" type="text" class="form-control mb-3"
+                            placeholder="Author Username">
                         <div class="row container" id="comment-area">
-    
+
                         </div>
-                              <fieldset  class="row"> 
-                                <div class="col">
-                                    <input class="form-check-input" type="radio" name="isLike" value="false" id="commentDislikeRadio">
-                                    <label class="text-center" for="commentDislikeRadio">
-                                        <i class="bi bi-hand-thumbs-down"></i>
-                                        Dislike</label>
-                                </div>
-                                <div class="col">
-                                    <input class="form-check-input" type="radio" name="isLike" value="true" id="commentLikeRadio" checked>
-                                    <label class="text-center" for="commentLikeRadio">
-                                        <i class="bi bi-hand-thumbs-up"></i>
-                                        Like</label>
-                                </div>
-                            </fieldset>
+                        <fieldset class="row">
+                            <div class="col">
+                                <input class="form-check-input" type="radio" name="isLike" value="false"
+                                    id="commentDislikeRadio">
+                                <label class="text-center" for="commentDislikeRadio">
+                                    <i class="bi bi-hand-thumbs-down"></i>
+                                    Dislike</label>
+                            </div>
+                            <div class="col">
+                                <input class="form-check-input" type="radio" name="isLike" value="true"
+                                    id="commentLikeRadio" checked>
+                                <label class="text-center" for="commentLikeRadio">
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                    Like</label>
+                            </div>
+                        </fieldset>
                     </div>
-                    
+
                     <div class="modal-footer">
                         <script>
                             let isSearchComments = false;
@@ -258,7 +303,7 @@
                                     width: 0;
                                     transition: all 0.5s ease-in-out;
                                 }
-    
+
                                 .search-comments-spinner-loading {
                                     height: 15px !important;
                                     width: 15px !important;
@@ -270,7 +315,7 @@
                         </button>
                     </div>
                 </form>
-                
+
             </div>
         </div>
     </div>

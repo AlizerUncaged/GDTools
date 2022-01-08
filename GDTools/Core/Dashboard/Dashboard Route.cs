@@ -24,7 +24,7 @@ namespace GDTools.Core.Dashboard {
             var sessionKey = cookies.GetSessionKey();
             // session key found!
             // get account from db which is Valid and has the key
-            var account = Database.Database.GetAccountFromSessionKey(sessionKey);
+            var account = Database.Database.GetUserFromSessionKey(sessionKey);
             // else return to login screen
             if (account == null) {
                 await cookies.MoveToLogin(ctx); 

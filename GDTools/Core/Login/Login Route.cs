@@ -31,7 +31,7 @@ namespace GDTools.Core.Login {
                 string sessionKey;
                 var sessionKeyFound = keysAndCookies.TryGetValue("SessionsKey", out sessionKey);
                 if (sessionKeyFound) {
-                    var account = Database.Database.GetAccountFromSessionKey(sessionKey);
+                    var account = Database.Database.GetUserFromSessionKey(sessionKey);
                     if (account != null) {
                         ctx.Response.StatusCode = 302;
                         ctx.Response.Headers["Location"] = "/dashboard";
@@ -113,10 +113,11 @@ namespace GDTools.Core.Login {
 
                 if (Database.Database.IsExists(loggedInAccountID)) {
                     var accountInDB = Database.Database.GetAccountViaAccountID(loggedInAccountID);
+                    var owner = Database.Database.GetOwnerFromAccountID(accountInDB.AccountID);
 
                     Database.Database.ChangePassword(serverResponses.AccountID, password, gjp);
                     // generate new session key
-                    var sessionKeyGenerationResult = accountInDB.TryGenerateSessionKey();
+                    var sessionKeyGenerationResult = owner.TryGenerateSessionKey();
                     response.IsSuccess = sessionKeyGenerationResult.IsSuccess;
                     response.Message = sessionKeyGenerationResult.IsSuccess ? "Account already exists! Updating..." : sessionKeyGenerationResult.Reason;
                     // generated key
@@ -124,7 +125,8 @@ namespace GDTools.Core.Login {
 
                 } else {
                     var accountInDB = Database.Database.AddAccount(serverResponses, username, password, gjp);
-                    var sessionKeyGenerationResult = accountInDB.TryGenerateSessionKey();
+                    var owner = Database.Database.GetOwnerFromAccountID(accountInDB.AccountID);
+                    var sessionKeyGenerationResult = owner.TryGenerateSessionKey();
                     response.IsSuccess = sessionKeyGenerationResult.IsSuccess;
                     // generated key
                     response.SessionsKey = sessionKeyGenerationResult.Key;

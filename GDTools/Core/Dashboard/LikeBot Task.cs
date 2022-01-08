@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace GDTools.Core.Dashboard {
     public class LikeBot_Task {
-        public static Dictionary<Database.Account, List<Task<bool>>> Tasks = new();
+        public static Dictionary<Database.User, List<Task<bool>>> Tasks = new();
 
-        public static bool HasTask(Database.Account acc) {
+        public static bool HasTask(Database.User acc) {
             return Tasks.ContainsKey(acc);
         }
 
         private int maxLikes;
-        private Database.Account owner;
+        private Database.User owner;
         private Database.Account[] likers;
         private Boomlings_Networking.Like_Item likeItem;
-        public LikeBot_Task(Database.Account owner, Boomlings_Networking.Like_Item item, int max) {
+        public LikeBot_Task(Database.User owner, Boomlings_Networking.Like_Item item, int max) {
             this.owner = owner;
             var ownerLikesLeft = this.owner.Tier.LikesLeft;
             this.maxLikes = max > ownerLikesLeft ? ownerLikesLeft : max;

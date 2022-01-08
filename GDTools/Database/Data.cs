@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GDTools.Database {
     public class Data {
 
-        public List<Account> Accounts = new();
+        public List<User> Owners = new();
 
         public List<string> BannedIPAddresses = new();
 

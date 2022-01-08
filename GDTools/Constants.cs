@@ -10,7 +10,7 @@ namespace GDTools
     {
         // ip and port to run the web application
         public static string IP = 
-            "127.0.0.1";
+            "*";
         public static int Port = 
             8080;
 
