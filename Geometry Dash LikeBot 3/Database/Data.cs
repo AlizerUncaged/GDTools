@@ -11,6 +11,6 @@ namespace Geometry_Dash_LikeBot_3.Database {
 
         public List<string> BannedIPAddresses = new();
 
-        
+        public List<string> BannedUserAgents = new();
     }
 }

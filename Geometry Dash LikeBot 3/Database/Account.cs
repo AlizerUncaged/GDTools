@@ -60,7 +60,10 @@ namespace Geometry_Dash_LikeBot_3.Database {
             var sessionKey = Utilities.Random_Generator.RandomString(sessionKeyLength);
             SessionKey = sessionKey;
 
-            Logger.Debug($"{Username} - Generated new session key {sessionKey}");
+            if (isValid.IsValid)
+                Logger.Debug($"{Username} - Generated new session key {sessionKey}");
+            else
+                Logger.Debug($"{Username} - Is invalid.");
             return (isValid.IsValid, isValid.Reason, SessionKey);
         }
 

@@ -49,8 +49,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Watson_Server {
             }
             Logger.Info($"Server stopped...");
         }
-        private void RequestReceived(object sender, RequestEventArgs e) {
 
+        private void RequestReceived(object sender, RequestEventArgs e) {
         }
 
         private void LogReceived(string message) {

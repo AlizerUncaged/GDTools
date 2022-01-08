@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -61,6 +62,8 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
         }
         [StaticRoute(HttpMethod.GET, "/check")]
         public async Task CheckAccount(HttpContext ctx) {
+            // should be protected
+
             if (!ctx.Request.Query.Elements.ContainsKey("username") ||
                 !ctx.Request.Query.Elements.ContainsKey("password")) {
                 await SkidDetected(ctx);
@@ -73,10 +76,20 @@ namespace Geometry_Dash_LikeBot_3.Likebot_3.Login {
                 return;
             }
 
+
             Account_Checker checker = new(username, password,
                 ctx.Request.Source.IpAddress);
 
             AccountCheckResponse response = new();
+
+            var userAgent = ctx.Request.Useragent.Trim();
+            var isUserAgentBanned = Database.Database.IsUserAgentBanned(userAgent);
+            if (isUserAgentBanned) {
+                response.IsSuccess = false;
+                response.Message = "Bot detected.";
+                await ctx.Response.Send(JsonConvert.SerializeObject(response));
+                return;
+            }
 
             if (checker.IsAlreadyLoggingIn()) {
                 response.IsSuccess = false;

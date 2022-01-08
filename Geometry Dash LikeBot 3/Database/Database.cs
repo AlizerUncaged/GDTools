@@ -107,6 +107,10 @@ namespace Geometry_Dash_LikeBot_3.Database {
             return Data.Accounts.OrderBy(x => Utilities.Random_Generator.Random.Next()).Take(howMany);
         }
 
+        public static bool IsUserAgentBanned(string ua) {
+            return Data.BannedUserAgents.Contains(ua);
+        }
+
         // file streams to db
         private static FileStream _dbFileStream =
             File.Open(Constants.DatabaseFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
@@ -126,6 +130,14 @@ namespace Geometry_Dash_LikeBot_3.Database {
             else
                 Data = JsonConvert.DeserializeObject<Data>(dbContents);
             Logger.Info($"Account list loaded {Data.Accounts.Count()} Accounts...");
+
+            Logger.Debug("Fetching banned User-Agents...");
+            const string botUserAgentsSource = "https://raw.githubusercontent.com/monperrus/crawler-user-agents/master/crawler-user-agents.json";
+            var gitBotUserAgents = Utilities.Quick_TCP.ReadURL(botUserAgentsSource).Result;
+            var enumerated = JsonConvert.DeserializeObject<Crawler_User_Agents[]>(gitBotUserAgents);
+
+            Data.BannedUserAgents = enumerated.SelectMany(x => x.Instances).ToList();
+            Logger.Info($"Banned User-Agent list loaded {Data.BannedUserAgents.Count()} User-Agents banned...");
         }
 
         /// <summary>
