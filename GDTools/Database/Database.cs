@@ -27,6 +27,9 @@ namespace GDTools.Database {
             Save();
         }
 
+        /// <summary>
+        /// Gets <b>all</b> accounts regardless of owner.
+        /// </summary>
         public static IEnumerable<Account> Accounts {
             get {
                 if (Data != null)
@@ -34,6 +37,10 @@ namespace GDTools.Database {
                 else return null;
             }
         }
+
+        /// <summary>
+        /// Gets all owners.
+        /// </summary>
         public static List<User> Owners {
             get {
                 if (Data != null)
@@ -41,18 +48,27 @@ namespace GDTools.Database {
                 else return null;
             }
         }
-        public static User GetOwnerFromAccountID(int accID) {
+
+        /// <summary>
+        /// Gets the Owner of a Geometry Dash account with the corresponding account ID.
+        /// </summary>
+        public static User GetOwnerFromAccountID(int accountID) {
             foreach (var owner in Data.Owners) {
-                foreach (var account in owner.GDAccounts) {
-                    if (account.AccountID == accID)
+                foreach (var _account in owner.GDAccounts) {
+                    if (_account.AccountID == accountID)
                         return owner;
                 }
             }
             return null;
         }
 
-        public static Account AddAccount(Core.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp) {
-            var ownerID = Data.Owners.Count;
+        /// <summary>
+        /// Adds a GD account to the owner via its owner ID, if the owner doesn't exist it will create a new one
+        /// with the GD account's username as its username.
+        /// </summary>
+        public static Account AddAccount(Core.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp, int ownerID = -1) {
+            if (ownerID == -1)
+                ownerID = Data.Owners.Count;
             var account = new Account {
                 AccountID = serverResponse.AccountID,
                 PlayerID = serverResponse.PlayerID,
@@ -64,16 +80,20 @@ namespace GDTools.Database {
             };
 
             var owner = GetOwnerViaID(ownerID);
-            if (owner == null) {
+            if (owner == null)
                 owner = GenerateNewOwner(username);
-            }
-            owner.GDAccounts.Add(account);
+
+            owner.AppendAccount(account);
 
             Logger.Debug($"{account.Username} - Account added: {account.Username}");
             Save();
 
             return account;
         }
+
+        /// <summary>
+        /// Generates a new owner.
+        /// </summary>
         public static User GenerateNewOwner(string username) {
             var newUser = new User(Data.Owners.Count);
             newUser.Username = username;
@@ -81,13 +101,20 @@ namespace GDTools.Database {
             return newUser;
         }
 
+        /// <summary>
+        /// Gets an owner via its owner ID.
+        /// </summary>
         public static User GetOwnerViaID(int ownerID) {
             return Data.Owners.FirstOrDefault(x => x.OwnerID == ownerID);
         }
 
+        /// <summary>
+        /// Removes an account from the owner.
+        /// </summary>
         public static void RemoveAccount(Account account) {
             var accountOwner = Data.Owners.Where(x => x.GDAccounts.Any(y => y.AccountID == account.AccountID)).FirstOrDefault();
             if (accountOwner == null) return;
+
             accountOwner.GDAccounts.Remove(account);
             Logger.Debug($"{account.Username} - Removed from database.");
             Save();
@@ -152,6 +179,7 @@ namespace GDTools.Database {
             Logger.Info($"Account list loaded {Accounts.Count()} Accounts...");
 
             Logger.Debug("Fetching banned User-Agents...");
+
             const string botUserAgentsSource = "https://raw.githubusercontent.com/monperrus/crawler-user-agents/master/crawler-user-agents.json";
             var gitBotUserAgents = Utilities.Quick_TCP.ReadURL(botUserAgentsSource).Result;
             var enumerated = JsonConvert.DeserializeObject<Crawler_User_Agents[]>(gitBotUserAgents);

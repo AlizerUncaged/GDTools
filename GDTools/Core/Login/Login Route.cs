@@ -48,6 +48,7 @@ namespace GDTools.Core.Login {
 
         public class AccountCheckResponse {
             public bool IsSuccess = false;
+            public bool WasError = false;
             public string Message { get; set; }
             public string SessionsKey { get; set; }
             public string Redirect { get; set; }
@@ -58,9 +59,14 @@ namespace GDTools.Core.Login {
             // should be protected
 
             if (!ctx.Request.Query.Elements.ContainsKey("username") ||
-                !ctx.Request.Query.Elements.ContainsKey("password")) 
+                !ctx.Request.Query.Elements.ContainsKey("password"))
                 return;
-            
+
+            string ownerIDString = "";
+            int ownerID = -1;
+            if (ctx.Request.Query.Elements.TryGetValue("ownerID", out ownerIDString))
+                int.TryParse(ownerIDString.Trim(), out ownerID);
+
             string username = ctx.Request.Query.Elements["username"].Trim();
             string password = ctx.Request.Query.Elements["password"].Trim();
 
@@ -112,8 +118,7 @@ namespace GDTools.Core.Login {
                 // response.SessionsKey = sessionsKey;
 
                 if (Database.Database.IsExists(loggedInAccountID)) {
-                    var accountInDB = Database.Database.GetAccountViaAccountID(loggedInAccountID);
-                    var owner = Database.Database.GetOwnerFromAccountID(accountInDB.AccountID);
+                    var owner = Database.Database.GetOwnerFromAccountID(loggedInAccountID);
 
                     Database.Database.ChangePassword(serverResponses.AccountID, password, gjp);
                     // generate new session key
@@ -124,7 +129,7 @@ namespace GDTools.Core.Login {
                     response.SessionsKey = sessionKeyGenerationResult.Key;
 
                 } else {
-                    var accountInDB = Database.Database.AddAccount(serverResponses, username, password, gjp);
+                    var accountInDB = Database.Database.AddAccount(serverResponses, username, password, gjp, ownerID);
                     var owner = Database.Database.GetOwnerFromAccountID(accountInDB.AccountID);
                     var sessionKeyGenerationResult = owner.TryGenerateSessionKey();
                     response.IsSuccess = sessionKeyGenerationResult.IsSuccess;
@@ -136,8 +141,10 @@ namespace GDTools.Core.Login {
             } else if (!response.IsSuccess) {
                 Logger.Debug($"Failed login - Username: {username} Password: {password}");
                 // if an account with the same password exist, remove it
-                var account = Database.Database.GetAccountFromCredentials(username, password);
-                if (account != null) Database.Database.RemoveAccount(account);
+                if (!response.WasError) { // if the login was an actual -1 remove it
+                    var account = Database.Database.GetAccountFromCredentials(username, password);
+                    if (account != null) Database.Database.RemoveAccount(account);
+                }
             }
 
             await ctx.Response.Send(JsonConvert.SerializeObject(response));

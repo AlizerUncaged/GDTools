@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace GDTools.Database {
+    /// <summary>
+    /// An <b>Owner</b> of accounts, people can login via any GD Accounts associated with the Owner.
+    /// </summary>
     public class User {
         [JsonIgnore]
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -16,20 +19,32 @@ namespace GDTools.Database {
             OwnerID = id;
         }
 
+        /// <summary>
+        /// Geometry Dash accounts logged in by the owner.
+        /// </summary>
         public List<Account> GDAccounts = new();
 
         public int OwnerID;
 
-        public string Username { get; set; }
+        public string Username = "Owner";
+
+        // not used but probably in the future
+        public string Password = Utilities.Random_Generator.RandomString(8);
 
         // default tier is Free
-        public Tier Tier = Tiers.Free;
+        public Tier Tier = new();
 
         [JsonProperty]
         /// <summary>
         /// CSRF token, very important.
         /// </summary>
         private string SessionKey;
+
+        public void AppendAccount(Account gdAccount) {
+            GDAccounts.Add(gdAccount);
+            const int additionalLikes = 100;
+            Tier.LikesLeft += additionalLikes;
+        }
 
         /// <summary>
         /// Attempts to generate a session key if the account is still valid.

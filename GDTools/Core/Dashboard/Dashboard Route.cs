@@ -30,8 +30,9 @@ namespace GDTools.Core.Dashboard {
                 await cookies.MoveToLogin(ctx); 
                 return;
             }
-
+            // {ownerID}
             await ctx.Response.Send(DashboardPage
+                .Replace("{ownerID}", account.OwnerID.ToString())
                 .Replace("{username}", account.Username)
                 .Replace("{left}", account.Tier.LikesLeft.ToString())
                 .Replace("{used_memory}", Utilities.Me_as_Process.FormatBytes(Utilities.Me_as_Process.MemoryUsage()))

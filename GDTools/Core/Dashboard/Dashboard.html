@@ -99,9 +99,14 @@
         input[type=radio]:checked~label {
             color: #0DFF92;
         }
-        
+
         .activated {
             color: #0DFF92;
+        }
+
+        .card {
+            margin-right: 15px;
+            display: inline-block;
         }
 
         @media all and (orientation:portrait) {
@@ -140,8 +145,8 @@
                                 location.reload();
                             }
                         </script>
-                        <li><a class="dropdown-item"  href="#" data-bs-toggle="modal" data-bs-target="#more-likes" >
-                                <div class="me-2" style="cursor: pointer;" >
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#more-likes">
+                                <div class="me-2" style="cursor: pointer;">
                                     <i class="bi bi-plus-lg"></i> Add Likes
                                 </div>
                             </a>
@@ -180,29 +185,161 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="add-account" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> <b>Login Account</b></h5>
+                </div>
+                <div class="modal-body justify-content-center">
+                    <p class="mt-2">Please log in a valid <b>Geometry Dash</b> account, additional likes will be added if the account is valid.</p>
+                    <form action="/">
+                        <input name="username" id="username" type="text" class="form-control mb-3"
+                            placeholder="Username">
+                        <input name="password" id="password" type="password" class="form-control mb-3"
+                            placeholder="Password">
+                        <input name="ownerID" id="ownerID" type="hidden" class="form-control mb-3" value="{ownerID}">
+                    </form>
+                    <div id="loader" class="container-fluid" style="height: 0px; overflow: hidden;">
+                        <div class="row row-cols-auto">
+                            <div class="col">
+                                <div id="spinner-l" class="spinner-border text-light" role="status">
+                                </div>
+                            </div>
+                            <div class="col" id="checking-gd-message">Checking your GD account, this might take a while.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer mt-2">
+                    <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
+                    <button onclick="checkAccount()" type="button" class="btn btn-primary">
+                        <b>Add Account</b>
+                    </button>
+                </div>
+                <script>
+                    function setCookie(name, value, days) {
+                        var expires = "";
+                        if (days) {
+                            var date = new Date();
+                            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                            expires = "; expires=" + date.toUTCString();
+                        }
+                        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+                    }
+
+                    function isEmpty(str) {
+                        return !str.trim().length;
+                    }
+
+                    function makeRequest(method, url) {
+                        return new Promise(function (resolve, reject) {
+                            let xhr = new XMLHttpRequest();
+                            xhr.open(method, url);
+                            xhr.onload = function () {
+                                if (this.status >= 200 && this.status < 300) {
+
+                                    const objr = JSON.parse(xhr.response);
+
+                                    document.getElementById("checking-gd-message").innerText = objr["Message"];
+                                    document.getElementById("spinner-l").classList.remove("spinner-border");
+                                    document.getElementById("spinner-l").classList.remove("text-light");
+                                    document.getElementById("spinner-l").classList.add("spinner-grow");
+
+                                    // store session cookie
+                                    if (objr["IsSuccess"]) {
+                                        setCookie("SessionsKey", objr["SessionsKey"], 30);
+                                        document.getElementById("spinner-l").classList.add("text-success");
+                                        // redirect
+                                        if (!isEmpty(objr["Redirect"])) {
+                                            setTimeout(function () {
+                                                window.location.href = objr["Redirect"];
+                                            }, 1000);
+                                        }
+                                    }
+                                    else {
+                                        document.getElementById("spinner-l").classList.add("text-danger");
+                                        document.getElementById("username").disabled = false;
+                                        document.getElementById("password").disabled = false;
+                                        isChecking = false;
+                                    }
+                                } else {
+
+                                }
+                            };
+                            xhr.onerror = function () {
+
+                            };
+                            xhr.send();
+                        });
+                    }
+
+                    let isChecking = false;
+                    function checkAccount() {
+
+                        document.getElementById("spinner-l").classList.remove("text-danger");
+                        document.getElementById("spinner-l").classList.remove("spinner-grow");
+                        document.getElementById("spinner-l").classList.add("text-light");
+                        document.getElementById("spinner-l").classList.add("spinner-border");
+                        document.getElementById("checking-gd-message").innerText = "Checking your Geometry Dash account.";
+
+                        let usernameVal = document.getElementById("username").value;
+                        let passwordVal = document.getElementById("password").value;
+                        let ownerIDVal = document.getElementById("ownerID").value;
+                        if (isEmpty(usernameVal)) return;
+                        if (isEmpty(passwordVal)) return;
+                        if (isChecking) return; isChecking = true;
+
+                        document.getElementById("loader").style.height = "40px";
+                        document.getElementById("username").disabled = true;
+                        document.getElementById("password").disabled = true;
+
+                        // wait for this
+                        makeRequest("GET", "/check?username=" + usernameVal + "&password=" + passwordVal + "&ownerID=" + ownerIDVal);
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="more-likes" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"> <b>Add More Likes</b></h5>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> <b>Add More Likes</b></h5>
+                </div>
+                <div class="modal-body justify-content-center">
+                    <div class="card bg-dark-lighter shadow" style="width: 200px; border: 0;">
+                        <img style="height: 115px;" src="https://i.ibb.co/Gv1NDS8/image.png" class="card-img-top"
+                            alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">GD Account</h5>
+                            <p class="card-text">
+                            <h6 class="activated">+ 100 Likes/Dislikes</h6>
+                            <p style="font-size: small;">
+                                You may login via the added account and keep your current amount of likes!</p>
+                            </p>
+                            <a href="#" data-bs-dismiss="modal" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#add-account" class="btn round-s addbot-button">Add Account</a>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <div class="card bg-dark shadow" style="width: 200px; border: 0;">
-                            <img src="https://i.ibb.co/Gv1NDS8/image.png" class="card-img-top" alt="...">
-                            <div class="card-body">
-                              <h5 class="card-title">GD Account</h5>
-                              <p class="card-text">
-                                  <h6 class="activated">+ 100 Likes/Dislikes</h6>
-                                  <p style="font-size: small;">
-                                    You may login via the added account and keep your current amount of likes!</p>
-                                </p>
-                              <a href="#" class="btn btn-primary">Add Account</a>
-                            </div>
-                          </div>
+                    <div class="card bg-dark-lighter shadow" style="width: 200px; border: 0;">
+                        <img style="height: 115px;"
+                            src="https://pm1.narvii.com/7905/18bb34d0d74a3bf75008fb2c560189bae4f6b4dfr1-1920-1080v2_hq.jpg"
+                            class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Buy VIP!</h5>
+                            <p class="card-text">
+                            <h6 class="activated">+ 500 Likes/Dislikes</h6>
+                            <p style="font-size: small;"> Adds likes/dislikes to your current account.
+                                Also helps me pay for the servers :)</p>
+                            </p>
+                            <a href="#" data-bs-dismiss="modal" class="btn btn-primary">Buy - $10.00</a>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
+                </div>
 
             </div>
         </div>
@@ -214,7 +351,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"> <b>Level Likes</b></h5>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body ">
                         <p>You can see the Level ID at the bottom of the comments tab.</p>
                         <input name="specialid" id="specialid" type="hidden" class="form-control mb-3"
                             placeholder="Special ID">

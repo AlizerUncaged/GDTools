@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace GDTools.Core.Boomlings_Networking {
     public class Account_Data_Result {
+        public bool Error;
         public string Message;
         public bool Success;
         public int AccountID;
@@ -30,7 +31,7 @@ namespace GDTools.Core.Boomlings_Networking {
             };
 
             var response = await SendAsync();
-
+            response = response.Trim();
             if (!string.IsNullOrWhiteSpace(response))
                 foreach (string line in response.Split('\n')) {
                     if (line.Contains(',')) {
@@ -43,8 +44,12 @@ namespace GDTools.Core.Boomlings_Networking {
                     }
                 }
 
-            if (response == null) result.Message = "An error occured with the request.";
-            else if (response.Contains("-1")) result.Message = "Account rejected :( please make sure it's a valid Geometry Dash account.";
+
+            if (response == null) {
+                result.Error = true;
+                result.Message = "An error occured with the request.";
+            } else if (response.Contains("-1"))
+                result.Message = "Account rejected :( please make sure it's a valid Geometry Dash account.";
 
             return result;
         }

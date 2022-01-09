@@ -18,17 +18,17 @@ namespace GDTools.Core.Login {
         public bool IsAlreadyLoggingIn() {
             return RunningIPAddresses.Contains(callerIP);
         }
-        public async Task<((bool isSuccess, bool wasRouge) Result, Boomlings_Networking.Account_Data_Result ServerResult)> Check() {
+        public async Task<((bool isSuccess, bool wasRouge, bool wasError) Result, Boomlings_Networking.Account_Data_Result ServerResult)> Check() {
 
-            if (IsAlreadyLoggingIn()) return ((false, false), null);
+            if (IsAlreadyLoggingIn()) return ((false, false, false), null);
 
             Boomlings_Networking.Account_Data_Result result = null;
             bool isSuccess = false;
 
             if (username.Length <= 2)
-                return ((isSuccess, false), result);
+                return ((isSuccess, false, false), result);
             if (password.Length <= 2)
-                return ((isSuccess, false), result);
+                return ((isSuccess, false, false), result);
 
 
             RunningIPAddresses.Add(callerIP);
@@ -41,7 +41,7 @@ namespace GDTools.Core.Login {
 
             RunningIPAddresses.Remove(callerIP);
 
-            return ((isSuccess, false), result);
+            return ((isSuccess, false, result.Error), result);
         }
     }
 }
