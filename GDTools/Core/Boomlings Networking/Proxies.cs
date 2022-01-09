@@ -13,12 +13,24 @@ using System.Text;
 using System.Threading.Tasks;
 
 using GDTools.Utilities;
+using System.Diagnostics;
+
 namespace GDTools.Core.Boomlings_Networking {
     // socks only 
     public class Proxy {
         public string IP;
         public int Port;
         public string Username, Password;
+        public override string ToString() {
+            return $"{IP}:{Port}";
+        }
+    }
+
+    public class ProxiedHttpClient : HttpClient {
+        public ProxiedHttpClient(HttpClientHandler handler, bool reuse) : base(handler, reuse) { }
+
+        public Proxy Proxy;
+
     }
 
     public static class Proxies {
@@ -28,7 +40,7 @@ namespace GDTools.Core.Boomlings_Networking {
 
         public static List<Proxy> ProxyList = new();
 
-        public static List<HttpClient> ProxiedHttpClients = new();
+        public static List<ProxiedHttpClient> ProxiedHttpClients = new();
         public static async Task<bool> InitializeProxies() {
             Logger.Debug("Loading proxies...");
             string proxies = await Utilities.Quick_TCP.ReadURL(Constants.ProxyList);
@@ -61,12 +73,12 @@ namespace GDTools.Core.Boomlings_Networking {
         // generate an http client for each proxy to save hardware resources because each HttpClient generates
         // its own socket for some reason and i dont want to create a new instance of HttpClient each request
         // when we can generate for each proxies.
-        private static HttpClient generateHttpClient(Proxy proxy) {
+        private static ProxiedHttpClient generateHttpClient(Proxy proxy) {
             var socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port, proxy.Username, proxy.Password);
             socks5.ResolveHostnamesLocally = true;
 
             var handler = new HttpClientHandler { Proxy = socks5 };
-            var httpClient = new HttpClient(handler, true);
+            var httpClient = new ProxiedHttpClient(handler, true);
 
             // timeout of clients in seconds
             const int timeout = 40;
@@ -74,14 +86,19 @@ namespace GDTools.Core.Boomlings_Networking {
             httpClient.Timeout = TimeSpan.FromSeconds(timeout);
             httpClient.DefaultRequestHeaders.Accept.Add(AcceptAll);
             httpClient.DefaultRequestVersion = HttpVersion.Version11;
-
+            httpClient.Proxy = proxy;
             return httpClient;
         }
 
         public static HttpClient NextProxy() {
             currentProxyIndex++;
             currentProxyIndex = currentProxyIndex >= ProxiedHttpClients.Count() ? 0 : currentProxyIndex;
-            return ProxiedHttpClients[currentProxyIndex];
+            if (currentProxyIndex <= 0) {
+                ProxiedHttpClients.Shuffle();
+            }
+            var proxiedHttpClient = ProxiedHttpClients[currentProxyIndex];
+            Debug.WriteLine($"Took proxy: {proxiedHttpClient.Proxy}");
+            return proxiedHttpClient;
         }
     }
 }

@@ -176,7 +176,7 @@
         <div class="row justify-content-center">
             <!-- 
                 SESSION HISTORY BECAUSE PROXIES ARE BLAZING FAST
-             -->
+
             <div class="flex no-padding session-card shadow">
                 <div style="height: 125px;" class="container-fluid bg-dark-lighter"></div>
                 <div style="margin: 5px; padding: 10px;">
@@ -184,8 +184,10 @@
                     <div>Epico</div>
                 </div>
             </div>
+             -->
         </div>
     </div>
+    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
     <div class="modal fade" id="add-account" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -193,7 +195,8 @@
                     <h5 class="modal-title" id="exampleModalLabel"> <b>Login Account</b></h5>
                 </div>
                 <div class="modal-body justify-content-center">
-                    <p class="mt-2">Please log in a valid <b>Geometry Dash</b> account, additional likes will be added if the account is valid.</p>
+                    <p class="mt-2">Please log in a valid <b>Geometry Dash</b> account, additional likes will be added
+                        if the account is valid.</p>
                     <form action="/">
                         <input name="username" id="username" type="text" class="form-control mb-3"
                             placeholder="Username">
@@ -207,11 +210,12 @@
                                 <div id="spinner-l" class="spinner-border text-light" role="status">
                                 </div>
                             </div>
-                            <div class="col" id="checking-gd-message">Checking your GD account, this might take a while.</div>
+                            <div class="col" id="checking-gd-message">Checking your GD account, this might take a while.
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="modal-footer mt-2">
                     <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
                     <button onclick="checkAccount()" type="button" class="btn btn-primary">
@@ -348,7 +352,7 @@
     <div class="modal fade" id="new-level" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" action="/actions/like">
+                <form method="post" action="/actions/like" target="dummyframe">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"> <b>Level Likes</b></h5>
                     </div>
@@ -358,7 +362,8 @@
                             placeholder="Special ID">
                         <input name="itemid" id="itemid" type="text" class="form-control mb-3" placeholder="Level ID">
                         <input name="itemType" id="itemType" type="hidden" class="form-control mb-3" value="1">
-                        <input name="maxLikes" id="maxLikes" type="number" class="form-control mb-3" value="{left}" placeholder="Max Likes/Dislikes">
+                        <input name="maxLikes" id="maxLikes" type="number" class="form-control mb-3" value="{left}"
+                            placeholder="Max Likes/Dislikes">
                         <fieldset class="row">
                             <div class="col">
                                 <input class="form-check-input" type="radio" name="isLike" value="false"
@@ -378,7 +383,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary shadowed">Add</button>
+                        <button type="submit" class="btn btn-primary shadowed"
+                            onclick="addAlert('Task added!', 'Likes/Dislikes will be added shortly.')"
+                            data-bs-dismiss="modal">Add</button>
                     </div>
 
                 </form>
@@ -388,70 +395,23 @@
     <div class="modal fade" id="new-comment" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="" method="post">
+                <form action="/actions/getComments" method="get" target="comments-iframe">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"> <b>Comment Likes</b></h5>
                     </div>
                     <div class="modal-body">
                         <p>Username of the person who commented.</p>
                         <input name="username" id="username" type="text" class="form-control mb-3"
-                            placeholder="Author Username">
+                            placeholder="Author Username ex. Robtop">
                         <div class="row container" id="comment-area">
-
+                            <iframe name="comments-iframe" style="height: 400px;"></iframe>
                         </div>
-                        <fieldset class="row">
-                            <div class="col">
-                                <input class="form-check-input" type="radio" name="isLike" value="false"
-                                    id="commentDislikeRadio">
-                                <label class="text-center" for="commentDislikeRadio">
-                                    <i class="bi bi-hand-thumbs-down"></i>
-                                    Dislike</label>
-                            </div>
-                            <div class="col">
-                                <input class="form-check-input" type="radio" name="isLike" value="true"
-                                    id="commentLikeRadio" checked>
-                                <label class="text-center" for="commentLikeRadio">
-                                    <i class="bi bi-hand-thumbs-up"></i>
-                                    Like</label>
-                            </div>
-                        </fieldset>
                     </div>
 
                     <div class="modal-footer">
-                        <script>
-                            let isSearchComments = false;
-                            function searchComments() {
-                                if (isSearchComments) return;
-                                isSearchComments = true; // find comments
-                                showSpinner();
-                                resetSpinner();
-                            }
-                            function showSpinner() {
-                                document.getElementById("search-comments-spinner-id").classList.add("search-comments-spinner-loading");
-                                document.getElementById("search-comments-spinner-id").classList.add("spinner-border");
-                            }
-                            function resetSpinner() {
-                                document.getElementById("search-comments-spinner-id").classList.remove("search-comments-spinner-loading");
-                                document.getElementById("search-comments-spinner-id").classList.remove("spinner-border");
-                            }
-                        </script>
                         <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" onclick="searchComments()" class="btn btn-primary shadowed">
-                            <style>
-                                .search-comments-spinner {
-                                    height: 0;
-                                    width: 0;
-                                    transition: all 0.5s ease-in-out;
-                                }
-
-                                .search-comments-spinner-loading {
-                                    height: 15px !important;
-                                    width: 15px !important;
-                                }
-                            </style>
-                            <div id="search-comments-spinner-id" class="search-comments-spinner  text-light me-2"
-                                role="status">
-                            </div> Search for Comments
+                        <button type="submit"  class="btn btn-primary shadowed">
+                            Search for Comments
                         </button>
                     </div>
                 </form>
@@ -473,6 +433,34 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="position-absolute bottom-0 end-0" id="notifications">
+        <script>
+            function addAlert(title, message) {
+                var element = document.createElement("div");
+                element.className = "alert alert-primary alert-dismissible fade show";
+                element.setAttribute("role", "alert");
+
+                var titleLabel = document.createElement("strong");
+                titleLabel.style.marginRight = "10px";
+                titleLabel.innerHTML = title;
+                element.appendChild(titleLabel);
+
+                var paragraph = document.createElement("p");
+                paragraph.innerHTML = message;
+                element.appendChild(paragraph);
+
+                var closeButton = document.createElement("button");
+                closeButton.type = "button";
+                closeButton.classList = "btn-close";
+                closeButton.setAttribute("data-bs-dismiss", "alert");
+                closeButton.setAttribute("aria-label", "Close");
+
+                element.appendChild(closeButton);
+                document.getElementById("notifications").appendChild(element);
+            }
+        </script>
+
     </div>
 </body>
 

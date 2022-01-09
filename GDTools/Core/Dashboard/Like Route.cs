@@ -41,8 +41,15 @@ namespace GDTools.Core.Dashboard {
             int itemID, specialID = 0, itemType = 1, maxLikes;
             bool isLike = true;
 
+            var itemAndSpecial = fieldsAndValues.Get("itemAndSpecial");
             var itemIDString = fieldsAndValues.Get("itemid");
             var specialIDString = fieldsAndValues.Get("specialid");
+
+            if (!string.IsNullOrWhiteSpace(itemAndSpecial)) {
+                var splitted = itemAndSpecial.Split(':');
+                itemIDString = splitted[0];
+                specialIDString = splitted[1];
+            }
             var isLikeString = fieldsAndValues.Get("isLike");
             var itemTypeString = fieldsAndValues.Get("itemType");
             var maxLikesString = fieldsAndValues.Get("maxLikes");

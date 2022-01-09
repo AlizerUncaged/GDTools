@@ -66,9 +66,8 @@ namespace GDTools.Database {
         /// Adds a GD account to the owner via its owner ID, if the owner doesn't exist it will create a new one
         /// with the GD account's username as its username.
         /// </summary>
-        public static Account AddAccount(Core.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp, int ownerID = -1) {
-            if (ownerID == -1)
-                ownerID = Data.Owners.Count;
+        public static Account AddAccount(Core.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp, string ownerID = null) {
+      
             var account = new Account {
                 AccountID = serverResponse.AccountID,
                 PlayerID = serverResponse.PlayerID,
@@ -95,7 +94,8 @@ namespace GDTools.Database {
         /// Generates a new owner.
         /// </summary>
         public static User GenerateNewOwner(string username) {
-            var newUser = new User(Data.Owners.Count);
+            const int ownerIDLength = 8;
+            var newUser = new User(Utilities.Random_Generator.RandomString(ownerIDLength));
             newUser.Username = username;
             Data.Owners.Add(newUser);
             return newUser;
@@ -104,7 +104,8 @@ namespace GDTools.Database {
         /// <summary>
         /// Gets an owner via its owner ID.
         /// </summary>
-        public static User GetOwnerViaID(int ownerID) {
+        public static User GetOwnerViaID(string ownerID) {
+            if (ownerID == null) return null;
             return Data.Owners.FirstOrDefault(x => x.OwnerID == ownerID);
         }
 

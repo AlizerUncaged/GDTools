@@ -15,7 +15,7 @@ namespace GDTools.Database {
         [JsonIgnore]
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public User(int id) {
+        public User(string id) {
             OwnerID = id;
         }
 
@@ -24,7 +24,7 @@ namespace GDTools.Database {
         /// </summary>
         public List<Account> GDAccounts = new();
 
-        public int OwnerID;
+        public string OwnerID;
 
         public string Username = "Owner";
 

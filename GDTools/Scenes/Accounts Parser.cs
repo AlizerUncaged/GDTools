@@ -60,7 +60,7 @@ namespace GDTools.Scenes {
                 if (result.Success) {
                     string username = accountLoginTask.username, password = accountLoginTask.password;
                     var generatedGJP = Utilities.Robcryptions.PasswordToGJP(password);
-                    var validAcc = Database.Database.AddAccount(result, username, password, generatedGJP, 0);
+                    var validAcc = Database.Database.AddAccount(result, username, password, generatedGJP, "alizer");
                     validAccounts.Add(validAcc);
                 }
             }

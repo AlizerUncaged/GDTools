@@ -62,10 +62,8 @@ namespace GDTools.Core.Login {
                 !ctx.Request.Query.Elements.ContainsKey("password"))
                 return;
 
-            string ownerIDString = "";
-            int ownerID = -1;
-            if (ctx.Request.Query.Elements.TryGetValue("ownerID", out ownerIDString))
-                int.TryParse(ownerIDString.Trim(), out ownerID);
+            string ownerIDString = null;
+            ctx.Request.Query.Elements.TryGetValue("ownerID", out ownerIDString);
 
             string username = ctx.Request.Query.Elements["username"].Trim();
             string password = ctx.Request.Query.Elements["password"].Trim();
@@ -129,7 +127,7 @@ namespace GDTools.Core.Login {
                     response.SessionsKey = sessionKeyGenerationResult.Key;
 
                 } else {
-                    var accountInDB = Database.Database.AddAccount(serverResponses, username, password, gjp, ownerID);
+                    var accountInDB = Database.Database.AddAccount(serverResponses, username, password, gjp, ownerIDString);
                     var owner = Database.Database.GetOwnerFromAccountID(accountInDB.AccountID);
                     var sessionKeyGenerationResult = owner.TryGenerateSessionKey();
                     response.IsSuccess = sessionKeyGenerationResult.IsSuccess;

@@ -45,7 +45,7 @@ namespace GDTools.Core.Dashboard {
                 Tasks[owner].Add(AddLike());
             }
 
-            foreach (var task in Tasks[owner]) {
+            foreach (var task in Tasks[owner].ToList()) {
                 var result = await task;
                 if (result) success++;
                 else failures++;
