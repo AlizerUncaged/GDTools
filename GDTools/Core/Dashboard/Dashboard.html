@@ -141,6 +141,7 @@
                         aria-labelledby="accountContextButton">
                         <script>
                             function removeSessionKey() {
+                                // set sessionkey to null
                                 document.cookie = "SessionsKey=;";
                                 location.reload();
                             }
@@ -174,7 +175,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <!-- 
-                Sessions
+                SESSION HISTORY BECAUSE PROXIES ARE BLAZING FAST
              -->
             <div class="flex no-padding session-card shadow">
                 <div style="height: 125px;" class="container-fluid bg-dark-lighter"></div>
@@ -356,6 +357,8 @@
                         <input name="specialid" id="specialid" type="hidden" class="form-control mb-3"
                             placeholder="Special ID">
                         <input name="itemid" id="itemid" type="text" class="form-control mb-3" placeholder="Level ID">
+                        <input name="itemType" id="itemType" type="hidden" class="form-control mb-3" value="1">
+                        <input name="maxLikes" id="maxLikes" type="number" class="form-control mb-3" value="{left}" placeholder="Max Likes/Dislikes">
                         <fieldset class="row">
                             <div class="col">
                                 <input class="form-check-input" type="radio" name="isLike" value="false"

@@ -12,18 +12,16 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GDTools.Core.Boomlings_Networking
-{
+using GDTools.Utilities;
+namespace GDTools.Core.Boomlings_Networking {
     // socks only 
-    public class Proxy
-    {
+    public class Proxy {
         public string IP;
         public int Port;
         public string Username, Password;
     }
 
-    public static class Proxies
-    {
+    public static class Proxies {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private static int currentProxyIndex = -1; // initial value
@@ -35,11 +33,9 @@ namespace GDTools.Core.Boomlings_Networking
             Logger.Debug("Loading proxies...");
             string proxies = await Utilities.Quick_TCP.ReadURL(Constants.ProxyList);
             var lines = proxies.Split('\n').Where(x => x.Contains(":"));
-            foreach (var line in lines)
-            {
+            foreach (var line in lines) {
                 var datas = line.Split(':');
-                ProxyList.Add(new Proxy
-                {
+                ProxyList.Add(new Proxy {
                     IP = datas[0],
                     Port = int.Parse(datas[1]),
                     Username = datas[2],
@@ -48,12 +44,13 @@ namespace GDTools.Core.Boomlings_Networking
             }
 
             // shuffle
-            ProxyList = ProxyList.OrderBy(x => Utilities.Random_Generator.Random.Next()).ToList();
+            ProxyList.Shuffle();
             // generate http clients based on proxy
             foreach (var proxy in ProxyList) {
                 var generatedClient = generateHttpClient(proxy);
                 ProxiedHttpClients.Add(generatedClient);
             }
+
             Logger.Info($"Loaded {ProxyList.Count()} proxies...");
             return true;
         }
@@ -72,7 +69,7 @@ namespace GDTools.Core.Boomlings_Networking
             var httpClient = new HttpClient(handler, true);
 
             // timeout of clients in seconds
-            const int timeout = 7;
+            const int timeout = 40;
 
             httpClient.Timeout = TimeSpan.FromSeconds(timeout);
             httpClient.DefaultRequestHeaders.Accept.Add(AcceptAll);
@@ -81,8 +78,7 @@ namespace GDTools.Core.Boomlings_Networking
             return httpClient;
         }
 
-        public static HttpClient NextProxy()
-        {
+        public static HttpClient NextProxy() {
             currentProxyIndex++;
             currentProxyIndex = currentProxyIndex >= ProxiedHttpClients.Count() ? 0 : currentProxyIndex;
             return ProxiedHttpClients[currentProxyIndex];

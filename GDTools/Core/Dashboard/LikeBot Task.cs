@@ -25,18 +25,21 @@ namespace GDTools.Core.Dashboard {
             likeItem = item;
 
             likers = Database.Database.GetRandomAccounts(ownerLikesLeft > 512 ? 512 : ownerLikesLeft).ToArray();
-
-            // negate maximum likes that can be given on the account.
-            this.owner.Tier.LikesLeft -= max;
+            int likersCount = likers.Count();
+            // if the maximum likes are too many nerf it
+            maxLikes = likersCount < maxLikes ? likersCount : maxLikes;
         }
 
         // comence likebot
         public async Task<int> LikeBotAll() {
+            // negate maximum likes that can be given on the account.
+            this.owner.Tier.LikesLeft -= maxLikes;
+
             if (!Tasks.TryGetValue(owner, out _))
                 Tasks.Add(owner, new List<Task<bool>>());
 
-            int success = 0;
-            Console.WriteLine($"Max likes {maxLikes}.");
+            int success = 0, 
+                failures = 0;
 
             for (int i = 0; i < maxLikes; i++) {
                 Tasks[owner].Add(AddLike());
@@ -45,9 +48,8 @@ namespace GDTools.Core.Dashboard {
             foreach (var task in Tasks[owner]) {
                 var result = await task;
                 if (result) success++;
-
+                else failures++;
             }
-            var failures = maxLikes - success;
 
             // add likes that were not sent
             owner.Tier.LikesLeft += failures;
@@ -76,9 +78,6 @@ namespace GDTools.Core.Dashboard {
             var likeReq = new Boomlings_Networking.Like_GJ_Item(toLike, likeItem, randS);
 
             var doLike = await likeReq.SendAndGetValid();
-
-            // Debug.WriteLine($"Account {toLike.Username} was valid {doLike}");
-
             return doLike;
         }
     }

@@ -39,7 +39,7 @@ namespace GDTools {
 
 
             while (true) {
-                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Ban an IP, [C] Sessions, [X] Exit");
+                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Parse Accounts, [C] Sessions, [X] Exit");
                 var ckey = Console.ReadKey(true);
                 var ckeyChar = char.ToUpper(ckey.KeyChar);
                 var ckeyKey = ckey.Key;

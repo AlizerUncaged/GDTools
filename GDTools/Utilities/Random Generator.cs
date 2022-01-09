@@ -16,6 +16,21 @@ namespace GDTools.Utilities
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
+
+        /// <summary>
+        /// Shuffles a list securely.
+        /// </summary>
+        public static void Shuffle<T>(this IList<T> list) {
+            int n = list.Count;
+            while (n > 1) {
+                n--;
+                int k = Random.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
         public static long RandomLong(long min, long max)
         {
             long result = Between((Int32)(min >> 32), (Int32)(max >> 32));

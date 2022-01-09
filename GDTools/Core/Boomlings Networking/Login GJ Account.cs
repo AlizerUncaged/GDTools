@@ -27,10 +27,13 @@ namespace GDTools.Core.Boomlings_Networking {
         public async Task<Account_Data_Result> GetResult() {
             var result = new Account_Data_Result {
                 UDID = _udid,
-                UUID = _uuid
+                UUID = _uuid, Success = false
             };
 
             var response = await SendAsync();
+
+            if (response == null) return result;
+
             response = response.Trim();
             if (!string.IsNullOrWhiteSpace(response))
                 foreach (string line in response.Split('\n')) {
