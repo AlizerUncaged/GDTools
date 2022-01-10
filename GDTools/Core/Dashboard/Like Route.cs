@@ -16,6 +16,7 @@ namespace GDTools.Core.Dashboard {
         // returns 
         [StaticRoute(HttpMethod.POST, "/actions/like")]
         public async Task LikeItem(HttpContext ctx) {
+
             var cookies = new Cookie_Parser(ctx);
 
             if (!cookies.Parse()) {

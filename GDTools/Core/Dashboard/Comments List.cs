@@ -9,6 +9,7 @@ using WatsonWebserver;
 namespace GDTools.Core.Dashboard {
     public class Comments_List {
 
+        private static Dictionary<string, int> cachedUsernameAndPlayerID = new();
         public readonly string PostsPage = File.ReadAllText("Core/Dashboard/Find Posts.html");
 
         [StaticRoute(HttpMethod.GET, "/actions/getComments")]
@@ -18,13 +19,18 @@ namespace GDTools.Core.Dashboard {
             if (!ctx.Request.Query.Elements.ContainsKey("username"))
                 return;
 
-            string targetAccountIDString;
-            ctx.Request.Query.Elements.TryGetValue("username", out targetAccountIDString);
+            string username;
+            ctx.Request.Query.Elements.TryGetValue("username", out username);
+            username = username.ToLower().Trim();
 
-            var usernameToIDsParser = new Boomlings_Networking.Username_To_IDs(targetAccountIDString.Trim());
-            var IDs = await usernameToIDsParser.GetIDs();
+            int targetPlayerID = 0;
 
-            int targetPlayerID = IDs.playerID;
+            if (!cachedUsernameAndPlayerID.TryGetValue(username, out targetPlayerID)) {
+                // if dictionary doesnt contain value
+                var usernameToIDsParser = new Boomlings_Networking.Username_To_IDs(username.Trim());
+                var IDs = await usernameToIDsParser.GetIDs();
+                targetPlayerID = IDs.playerID;
+            }
 
             List<string> forms = new();
             var commentRequest = new Boomlings_Networking.Get_GJ_Comment_History(targetPlayerID);

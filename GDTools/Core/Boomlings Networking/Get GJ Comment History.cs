@@ -60,8 +60,15 @@ namespace GDTools.Core.Boomlings_Networking {
                 }
             }
 
+            var commentBase64String = keyAndVal["2"];
+            var commentString = "[Error occured decrypting comment.]";
+
+            try {
+                commentString = Utilities.Encryptions.Base64Decode(commentBase64String);
+            } catch { }
+
             return new LevelComment() {
-                Comment = Utilities.Encryptions.Base64Decode(keyAndVal["2"]),
+                Comment = commentString,
                 CommenterAccID = int.Parse(keyAndVal["3"]),
                 ItemID = int.Parse(keyAndVal["6"]),
                 SpecialID = int.Parse(keyAndVal["1"]),
