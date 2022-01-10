@@ -15,16 +15,30 @@ namespace GDTools.Scenes {
 
 
             Console.WriteLine(
-                $"Paste new accounts and press Enter.");
+                $"Paste new accounts and press Tab to start.");
 
 
             List<string> accountsList = new();
-            string line;
-            while ((line = Console.ReadLine()) != "") {
-                // Either you do here something with each line separately or
-                accountsList.Add(line);
+
+            StringBuilder buffer = new StringBuilder();
+
+            ConsoleKeyInfo info = Console.ReadKey(true);
+
+            while (info.Key != ConsoleKey.Tab) {
+                string consoleKeyString = info.KeyChar.ToString();
+
+                if (info.Key == ConsoleKey.Enter) {
+                    consoleKeyString = Environment.NewLine;
+                }
+
+                Console.Write(consoleKeyString);
+                buffer.Append(consoleKeyString);
+
+                info = Console.ReadKey(true);
             }
 
+            var stringBuffer = buffer.ToString();
+            accountsList = stringBuffer.Split(Environment.NewLine).ToList();
             accountsList = accountsList
                 .Where(x => !string.IsNullOrWhiteSpace(x) && x.Contains(":"))
                 .ToList();
@@ -35,26 +49,37 @@ namespace GDTools.Scenes {
             // check accounts
             List<(Core.Boomlings_Networking.Login_GJ_Account loginAcc, string username, string password)> accountLogins = new();
             foreach (var account in accountsList) {
-                var accountSplit = account.Split(':');
-                if (accountSplit.Count() <= 0) continue;
+                try {
+                    var accountSplit = account.Split(':');
 
-                var username = accountSplit[0];
-                var password = accountSplit[1];
-                var udid = Utilities.Random_Generator.RandomUDID();
-                var uuid = Utilities.Random_Generator.RandomUUID();
+                    var username = accountSplit[0];
+                    var password = accountSplit[1];
+                    var udid = Utilities.Random_Generator.RandomUDID();
+                    var uuid = Utilities.Random_Generator.RandomUUID();
 
-                Core.Boomlings_Networking.Login_GJ_Account accountLogin = new(username, password, udid, uuid);
-                accountLogins.Add((accountLogin, username, password));
+                    Core.Boomlings_Networking.Login_GJ_Account accountLogin = new(username, password, udid, uuid);
+                    accountLogins.Add((accountLogin, username, password));
+                } catch { }
             }
 
-            List<(Task<Core.Boomlings_Networking.Account_Data_Result> task, string username, string password)> accountLoginTasks = new();
-            foreach (var accountLogin in accountLogins) {
-                var loginTask = accountLogin.loginAcc.GetResult();
-                accountLoginTasks.Add((loginTask, accountLogin.username, accountLogin.password));
-            }
+            Console.WriteLine($"Valid {accountLogins.Count()} combinations...");
 
             // get results 
             List<Database.Account> validAccounts = new();
+
+
+            const int sub = 20;
+            List<(Task<Core.Boomlings_Networking.Account_Data_Result> task, string username, string password)> accountLoginTasks = new();
+            for (int i = 0; i < accountLogins.Count; i++) {
+                var accountLogin = accountLogins[i];
+                var loginTask = accountLogin.loginAcc.GetResult();
+                accountLoginTasks.Add((loginTask, accountLogin.username, accountLogin.password));
+
+                if (i % sub == 0) {
+                    Console.WriteLine($"Sleeping...");
+                    await Task.Delay(10000);
+                }
+            }
             foreach (var accountLoginTask in accountLoginTasks) {
                 var result = await accountLoginTask.task;
                 if (result.Success) {
@@ -64,8 +89,9 @@ namespace GDTools.Scenes {
                     validAccounts.Add(validAcc);
                 }
             }
-            Console.WriteLine(
-                $"Valid {validAccounts.Count()} accounts...\r\nPress any key to continue.");
+
+
+            Console.WriteLine($"Valid {validAccounts.Count()} accounts...\r\nPress any key to continue.");
 
             Console.ReadKey();
         }

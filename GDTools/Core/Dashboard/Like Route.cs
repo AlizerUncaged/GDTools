@@ -50,6 +50,7 @@ namespace GDTools.Core.Dashboard {
                 itemIDString = splitted[0];
                 specialIDString = splitted[1];
             }
+
             var isLikeString = fieldsAndValues.Get("isLike");
             var itemTypeString = fieldsAndValues.Get("itemType");
             var maxLikesString = fieldsAndValues.Get("maxLikes");
@@ -69,6 +70,7 @@ namespace GDTools.Core.Dashboard {
             int.TryParse(itemTypeString, out itemType);
 
             int.TryParse(maxLikesString, out maxLikes);
+
             maxLikes = Math.Abs(maxLikes);
             // parse to likeItem
             var likeItem = new Boomlings_Networking.Like_Item();
@@ -80,8 +82,8 @@ namespace GDTools.Core.Dashboard {
             Logger.Debug($"Like request, Type: {likeItem.ItemType.ToString()} Max: {maxLikes} ItemID: {itemID} SpecialID: {specialID} IsLike: {isLike}");
 
             LikeBot_Task lTask = new(account, likeItem, maxLikes);
-            await lTask.LikeBotAll();
-            Logger.Debug("Done!");
+            var success = await lTask.LikeBotAll();
+            Logger.Debug($"Done, expect {success}.");
         }
     }
 }

@@ -27,7 +27,7 @@ namespace GDTools.Core.Boomlings_Networking {
         }
 
         public async Task<List<LevelComment>> GetCommentHistory() {
-            var serverResponse = await SendAsync();
+            var serverResponse = await SendAsync(ProxyType.PaidProxy);
 
             if (serverResponse == null) return null;
             if (!serverResponse.Contains("~")) return null;

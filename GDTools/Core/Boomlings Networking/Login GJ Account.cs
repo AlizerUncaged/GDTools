@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace GDTools.Core.Boomlings_Networking {
                 UUID = _uuid, Success = false
             };
 
-            var response = await SendAsync();
+            var response = await SendAsync(ProxyType.PaidProxy);
 
             if (response == null) return result;
 
@@ -46,7 +47,6 @@ namespace GDTools.Core.Boomlings_Networking {
                         result.Message = "Successfully logged in!";
                     }
                 }
-
 
             if (response == null) {
                 result.Error = true;

@@ -22,8 +22,17 @@ namespace GDTools.Core.Boomlings_Networking {
 
         private static
                 readonly MediaTypeHeaderValue ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-        public async Task<string> SendAsync() {
-            var proxiedClient = Proxies.NextProxy();
+        public async Task<string> SendAsync(ProxyType proxyToUse) {
+            HttpClient proxiedClient = null;
+            switch (proxyToUse) {
+                case ProxyType.PaidProxy:
+                    proxiedClient = Proxies.NextPaidProxy();
+                    break;
+                case ProxyType.ScrapedProxy:
+                    proxiedClient = Proxies.NextScrapedProxy();
+                    break;
+            }
+
             var content = new StringContent(Query);
 
             content.Headers.ContentType = ContentType;

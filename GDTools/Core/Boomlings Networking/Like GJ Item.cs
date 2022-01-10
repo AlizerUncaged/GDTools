@@ -18,7 +18,7 @@ namespace GDTools.Core.Boomlings_Networking {
 
         }
         public async Task<bool> SendAndGetValid() {
-            var serverResponse = await SendAsync();
+            var serverResponse = await SendAsync(ProxyType.ScrapedProxy);
 
             return string.IsNullOrWhiteSpace(serverResponse) ? 
                 false : serverResponse.Trim() == "1";

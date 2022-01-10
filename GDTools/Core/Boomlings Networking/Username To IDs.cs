@@ -15,7 +15,7 @@ namespace GDTools.Core.Boomlings_Networking {
         }
 
         public async Task<(int accountID, int playerID)> GetIDs() {
-            var response = await SendAsync();
+            var response = await SendAsync(ProxyType.PaidProxy);
 
             Dictionary<string, string> keyAndVal = new();
             var splitted = response.Split(':');
