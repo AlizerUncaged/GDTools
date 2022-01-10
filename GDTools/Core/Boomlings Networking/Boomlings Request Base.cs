@@ -20,10 +20,8 @@ namespace GDTools.Core.Boomlings_Networking {
 
         public string Query { get; set; }
 
-        private static
-                readonly MediaTypeHeaderValue ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
         public async Task<string> SendAsync(ProxyType proxyToUse) {
-            HttpClient proxiedClient = null;
+            CustomWebClient proxiedClient = null;
             switch (proxyToUse) {
                 case ProxyType.PaidProxy:
                     proxiedClient = Proxies.NextPaidProxy();
@@ -33,25 +31,12 @@ namespace GDTools.Core.Boomlings_Networking {
                     break;
             }
 
-            var content = new StringContent(Query);
-
-            content.Headers.ContentType = ContentType;
 
             try {
-                string dataResult = null;
-                using (var postResult = await proxiedClient.PostAsync(Endpoint, content)) {
-                    dataResult = await postResult.Content.ReadAsStringAsync();
-                }
-                return dataResult;
-            } catch (HttpRequestException) {
-                // proxy fucked up
-            } catch (TaskCanceledException) {
-                // was a timeout, ignore
-            } catch (Exception ex) {
-                // holy shit its a real exception
-                Logger.Fatal(ex);
-            }
-
+                var postResult = await proxiedClient.UploadStringTaskAsync(Endpoint, Query);
+                proxiedClient.Dispose();
+                return postResult;
+            } catch { }
             return null;
         }
 

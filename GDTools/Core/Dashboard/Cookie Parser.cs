@@ -17,8 +17,13 @@ namespace GDTools.Core.Dashboard {
             string cookies;
             var cookiesFound = httpContext.Request.Headers.TryGetValue("Cookie", out cookies);
 
-            if (!cookiesFound)
-                return false;
+            if (!cookiesFound) {
+                // try lowercase
+                cookiesFound = httpContext.Request.Headers.TryGetValue("cookie", out cookies);
+                if (!cookiesFound)
+                    // if still not found rip
+                    return false;
+            }
 
 
             cookiesMap = Utilities.Quick_TCP.ParseCookie(cookies);

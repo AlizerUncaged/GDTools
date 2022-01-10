@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using WatsonWebserver;
@@ -25,6 +26,8 @@ namespace GDTools {
 
         static async Task Main(string[] args) {
             Console.WriteLine(Banner);
+          
+            System.Net.ServicePointManager.DefaultConnectionLimit = int.MaxValue;
             Utilities.Logging.Initialize();
 
             Logger.Info($"=================== Program Started ===================");

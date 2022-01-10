@@ -22,7 +22,7 @@ namespace GDTools.Core.Watson_Server {
 
             s = new Server(Constants.IP, Constants.Port, false, DefaultRoute);
             s.Settings.AccessControl.Mode = AccessControlMode.DefaultPermit;
-            s.Settings.IO.MaxRequests = int.MaxValue;
+            s.Settings.IO.MaxRequests = 4098;
 
             s.Events.Logger = LogReceived;
             s.Events.RequestReceived += RequestReceived;

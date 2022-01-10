@@ -43,10 +43,12 @@ namespace GDTools.Core.Boomlings_Networking {
         }
     }
 
-    public class ProxiedHttpClient : HttpClient {
-        public ProxiedHttpClient(HttpClientHandler handler, bool reuse) : base(handler, reuse) { }
-
-        public Proxy Proxy;
+    public class CustomWebClient : WebClient {
+        protected override WebRequest GetWebRequest(Uri uri) {
+            WebRequest w = base.GetWebRequest(uri);
+            w.Timeout = 30 * 1000; // 30 seconds
+            return w;
+        }
     }
 
     public static class Proxies {
@@ -64,8 +66,8 @@ namespace GDTools.Core.Boomlings_Networking {
         public static List<Proxy> PaidProxyList = new();
         public static List<Proxy> ScrapedProxies = new();
 
-        public static List<ProxiedHttpClient> PaidProxiedHttpClients = new();
-        public static List<ProxiedHttpClient> ScrapedProxiedHttpClients = new();
+        // public static List<ProxiedHttpClient> PaidProxiedHttpClients = new();
+        // public static List<ProxiedHttpClient> ScrapedProxiedHttpClients = new();
         public static async Task<bool> InitializeProxies() {
             Logger.Debug("Loading paid proxies...");
             string proxies = await Quick_TCP.ReadURL(Constants.ProxyList);
@@ -83,11 +85,6 @@ namespace GDTools.Core.Boomlings_Networking {
             // shuffle
             PaidProxyList.Shuffle();
 
-            // generate http clients based on proxy
-            foreach (var proxy in PaidProxyList) {
-                var generatedClient = generateHttpClient(proxy);
-                PaidProxiedHttpClients.Add(generatedClient);
-            }
 
             Logger.Info($"Loaded {PaidProxyList.Count()} paid proxies...");
 
@@ -114,14 +111,15 @@ namespace GDTools.Core.Boomlings_Networking {
             }
             ScrapedProxies = ScrapedProxies.Distinct().ToList();
             ScrapedProxies.Shuffle();
+
             // generate http clients based on proxy
-            foreach (var proxy in ScrapedProxies) {
-                var generatedClient = generateHttpClient(proxy);
-                ScrapedProxiedHttpClients.Add(generatedClient);
-            }
+            // foreach (var proxy in ScrapedProxies) {
+            //     var generatedClient = generateHttpClient(proxy);
+            //     ScrapedProxiedHttpClients.Add(generatedClient);
+            // }
 
 
-            Logger.Debug($"Finished gathering free proxies {ScrapedProxiedHttpClients.Count} total...");
+            Logger.Debug($"Finished gathering free proxies {ScrapedProxies.Count} total...");
 
 
         }
@@ -149,51 +147,74 @@ namespace GDTools.Core.Boomlings_Networking {
         // generate an http client for each proxy to save hardware resources because each HttpClient generates
         // its own socket for some reason and i dont want to create a new instance of HttpClient each request
         // when we can generate for each proxies.
-        private static ProxiedHttpClient generateHttpClient(Proxy proxy) {
-            HttpToSocks5Proxy socks5 = null;
+        private static CustomWebClient generateWebClient(Proxy proxy) {
+            var wproxy = new WebProxy();
+            wproxy.Address = new Uri($"socks5://{proxy.IP}:{proxy.Port}");
+            wproxy.Credentials = new NetworkCredential(proxy.Username, proxy.Password); //Used to set Proxy logins. 
 
-            if (proxy.Username == null && proxy.Password == null)
-                socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port);
+            var webClient = new CustomWebClient { Proxy = wproxy };
+            webClient.Headers["User-Agent"] = string.Empty;
 
-            else
-                socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port, proxy.Username, proxy.Password);
-            socks5.ResolveHostnamesLocally = true;
+            webClient.Headers["Accept"] = "*/*";
+            webClient.Headers["Content-Type"] = "application/x-www-form-urlencoded";
+            return webClient;
 
-            var handler = new HttpClientHandler { Proxy = socks5 };
-            var httpClient = new ProxiedHttpClient(handler, true);
+            //HttpToSocks5Proxy socks5 = null;
 
-            // timeout of clients in seconds
-            const int timeout = 20;
+            //if (proxy.Username == null && proxy.Password == null)
+            //    socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port);
 
-            httpClient.Timeout = TimeSpan.FromSeconds(timeout);
-            httpClient.DefaultRequestHeaders.Accept.Add(AcceptAll);
-            httpClient.DefaultRequestVersion = HttpVersion.Version11;
-            httpClient.Proxy = proxy;
-            return httpClient;
+            //else
+            //    socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port, proxy.Username, proxy.Password);
+            //socks5.ResolveHostnamesLocally = true;
+
+            //var handler = new HttpClientHandler { Proxy = socks5 };
+            //var httpClient = new ProxiedHttpClient(handler, true);
+
+            //// timeout of clients in seconds
+            //const int timeout = 20;
+
+            //httpClient.Timeout = TimeSpan.FromSeconds(timeout);
+            //httpClient.DefaultRequestHeaders.Accept.Add(AcceptAll);
+            //httpClient.DefaultRequestVersion = HttpVersion.Version11;
+            //httpClient.Proxy = proxy;
+            //return httpClient;
+
+
         }
 
         private static int currentPaidProxyIndex = -1; // initial value
-        public static HttpClient NextPaidProxy() {
+        public static CustomWebClient NextPaidProxy() {
             currentPaidProxyIndex++;
-            currentPaidProxyIndex = currentPaidProxyIndex >= PaidProxiedHttpClients.Count() ? 0 : currentPaidProxyIndex;
+            currentPaidProxyIndex = currentPaidProxyIndex >= PaidProxyList.Count() ? 0 : currentPaidProxyIndex;
             if (currentPaidProxyIndex <= 0) {
-                PaidProxiedHttpClients.Shuffle();
+                PaidProxyList.Shuffle();
             }
-            var proxiedHttpClient = PaidProxiedHttpClients[currentPaidProxyIndex];
-            Debug.WriteLine($"Took proxy: {proxiedHttpClient.Proxy}");
-            return proxiedHttpClient;
+            var proxiedHttpClient = PaidProxyList[currentPaidProxyIndex];
+            var webclient = generateWebClient(proxiedHttpClient);
+            return webclient;
         }
 
         private static int currentScrapedProxyIndex = -1; // initial value
-        public static HttpClient NextScrapedProxy() {
+        public static CustomWebClient NextScrapedProxy() {
+            // generate HttpClient per proxy?
             currentScrapedProxyIndex++;
-            currentScrapedProxyIndex = currentScrapedProxyIndex >= ScrapedProxiedHttpClients.Count() ? 0 : currentScrapedProxyIndex;
+            currentScrapedProxyIndex = currentScrapedProxyIndex >= ScrapedProxies.Count() ? 0 : currentScrapedProxyIndex;
             if (currentScrapedProxyIndex <= 0) {
-                ScrapedProxiedHttpClients.Shuffle();
+                ScrapedProxies.Shuffle();
             }
-            var proxiedHttpClient = ScrapedProxiedHttpClients[currentScrapedProxyIndex];
-            Debug.WriteLine($"Took proxy: {proxiedHttpClient.Proxy}");
-            return proxiedHttpClient;
+            var currentProxy = ScrapedProxies[currentScrapedProxyIndex];
+            var generatedClient = generateWebClient(currentProxy);
+            return generatedClient;
+            // generate httpclient already
+            ////currentScrapedProxyIndex++;
+            ////currentScrapedProxyIndex = currentScrapedProxyIndex >= ScrapedProxiedHttpClients.Count() ? 0 : currentScrapedProxyIndex;
+            ////if (currentScrapedProxyIndex <= 0) {
+            ////    ScrapedProxiedHttpClients.Shuffle();
+            ////}
+            ////var proxiedHttpClient = ScrapedProxiedHttpClients[currentScrapedProxyIndex];
+            ////Debug.WriteLine($"Took proxy: {proxiedHttpClient.Proxy}");
+            ////return proxiedHttpClient;
         }
     }
 }
