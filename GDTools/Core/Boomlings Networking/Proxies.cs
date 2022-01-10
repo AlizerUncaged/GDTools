@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 using GDTools.Utilities;
 using System.Diagnostics;
+using System.Threading;
 
 namespace GDTools.Core.Boomlings_Networking {
     // socks only 
@@ -81,6 +82,7 @@ namespace GDTools.Core.Boomlings_Networking {
 
             // shuffle
             PaidProxyList.Shuffle();
+
             // generate http clients based on proxy
             foreach (var proxy in PaidProxyList) {
                 var generatedClient = generateHttpClient(proxy);
@@ -89,6 +91,19 @@ namespace GDTools.Core.Boomlings_Networking {
 
             Logger.Info($"Loaded {PaidProxyList.Count()} paid proxies...");
 
+            await gatherScrapedProxies();
+            // start periodically checking of new proxies
+            _ = Task.Factory.StartNew(async () => {
+                var gatherFreeProxiesScheduler = new PeriodicTimer(TimeSpan.FromHours(2));
+                while (await gatherFreeProxiesScheduler.WaitForNextTickAsync()) {
+                    await gatherScrapedProxies();
+                }
+            });
+            // generate scraped proxies
+            return true;
+        }
+
+        private static async Task gatherScrapedProxies() {
             Logger.Debug($"Gathering scraped proxies from {scrapedProxySources.Count()} sources...");
 
             foreach (var source in scrapedProxySources) {
@@ -108,7 +123,7 @@ namespace GDTools.Core.Boomlings_Networking {
 
             Logger.Debug($"Finished gathering free proxies {ScrapedProxiedHttpClients.Count} total...");
 
-            return true;
+
         }
         private static async Task<IEnumerable<Proxy>> scrapedProxies(string source) {
             var proxies = await Utilities.Quick_TCP.ReadURL(source);
@@ -135,14 +150,20 @@ namespace GDTools.Core.Boomlings_Networking {
         // its own socket for some reason and i dont want to create a new instance of HttpClient each request
         // when we can generate for each proxies.
         private static ProxiedHttpClient generateHttpClient(Proxy proxy) {
-            var socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port, proxy.Username, proxy.Password);
+            HttpToSocks5Proxy socks5 = null;
+
+            if (proxy.Username == null && proxy.Password == null)
+                socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port);
+
+            else
+                socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port, proxy.Username, proxy.Password);
             socks5.ResolveHostnamesLocally = true;
 
             var handler = new HttpClientHandler { Proxy = socks5 };
             var httpClient = new ProxiedHttpClient(handler, true);
 
             // timeout of clients in seconds
-            const int timeout = 40;
+            const int timeout = 20;
 
             httpClient.Timeout = TimeSpan.FromSeconds(timeout);
             httpClient.DefaultRequestHeaders.Accept.Add(AcceptAll);

@@ -12,7 +12,7 @@ namespace GDTools
         public static string IP = 
             "*";
         public static int Port = 
-            8080;
+            80;
 
         public const string BoomlingsHost =
             "http://www.boomlings.com";

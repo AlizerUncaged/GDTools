@@ -43,6 +43,8 @@ namespace GDTools.Core.Boomlings_Networking {
                     dataResult = await postResult.Content.ReadAsStringAsync();
                 }
                 return dataResult;
+            } catch (HttpRequestException) {
+                // proxy fucked up
             } catch (TaskCanceledException) {
                 // was a timeout, ignore
             } catch (Exception ex) {
