@@ -77,7 +77,7 @@ namespace GDTools.Core.Dashboard {
             likeItem.SpecialID = specialID;
             likeItem.ItemType = (Boomlings_Networking.ItemType)itemType;
 
-            Logger.Debug($"Like request, Type: {likeItem.ItemType} Max: {maxLikes} ItemID: {itemID} SpecialID: {specialID} IsLike: {isLike}");
+            Logger.Debug($"Like request, Type: {likeItem.ItemType.ToString()} Max: {maxLikes} ItemID: {itemID} SpecialID: {specialID} IsLike: {isLike}");
 
             LikeBot_Task lTask = new(account, likeItem, maxLikes);
             await lTask.LikeBotAll();
