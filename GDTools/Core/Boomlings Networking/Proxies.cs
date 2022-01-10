@@ -32,6 +32,14 @@ namespace GDTools.Core.Boomlings_Networking {
         public override string ToString() {
             return $"{IP}:{Port}";
         }
+
+        public static bool operator ==(Proxy left, Proxy right) {
+            return (left.IP == right.IP) && (left.Port == right.Port);
+        }
+
+        public static bool operator !=(Proxy left, Proxy right) {
+            return (left.IP != right.IP) && (left.Port != right.Port);
+        }
     }
 
     public class ProxiedHttpClient : HttpClient {
@@ -83,9 +91,43 @@ namespace GDTools.Core.Boomlings_Networking {
 
             Logger.Debug($"Gathering scraped proxies from {scrapedProxySources.Count()} sources...");
 
+            foreach (var source in scrapedProxySources) {
+                var list = await scrapedProxies(source);
+                if (list != null) {
+                    ScrapedProxies.AddRange(list);
+                }
+            }
+            ScrapedProxies = ScrapedProxies.Distinct().ToList();
+            ScrapedProxies.Shuffle();
+            // generate http clients based on proxy
+            foreach (var proxy in ScrapedProxies) {
+                var generatedClient = generateHttpClient(proxy);
+                ScrapedProxiedHttpClients.Add(generatedClient);
+            }
+
+
+            Logger.Debug($"Finished gathering free proxies {ScrapedProxiedHttpClients.Count} total...");
+
             return true;
         }
+        private static async Task<IEnumerable<Proxy>> scrapedProxies(string source) {
+            var proxies = await Utilities.Quick_TCP.ReadURL(source);
+            if (string.IsNullOrWhiteSpace(proxies)) return null;
 
+            List<Proxy> proxiesObject = new();
+            var splitted = proxies.Split(
+                            new string[] { "\r\n", "\r", "\n" },
+                            StringSplitOptions.None
+                        );
+
+            foreach (var str in splitted) {
+                if (str.Contains(":")) {
+                    var ipport = str.Split(':');
+                    proxiesObject.Add(new Proxy(ProxyType.ScrapedProxy) { IP = ipport[0].Trim(), Port = int.Parse(ipport[1].Trim()) });
+                }
+            }
+            return proxiesObject;
+        }
         private static
                 readonly MediaTypeWithQualityHeaderValue AcceptAll = new MediaTypeWithQualityHeaderValue("*/*");
 
