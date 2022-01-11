@@ -1,7 +1,9 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WatsonWebserver;
@@ -9,6 +11,7 @@ using WatsonWebserver;
 namespace GDTools.Core.Dashboard {
     public class Comments_List {
 
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static Dictionary<string, int> cachedUsernameAndPlayerID = new();
         public readonly string PostsPage = File.ReadAllText("Core/Dashboard/Find Posts.html");
 
@@ -30,11 +33,18 @@ namespace GDTools.Core.Dashboard {
                 var usernameToIDsParser = new Boomlings_Networking.Username_To_IDs(username.Trim());
                 var IDs = await usernameToIDsParser.GetIDs();
                 targetPlayerID = IDs.playerID;
+                cachedUsernameAndPlayerID.Add(username, targetPlayerID);
             }
+            Logger.Debug($"Attempt to get comments from {username} with ID {targetPlayerID}.");
 
             List<string> forms = new();
             var commentRequest = new Boomlings_Networking.Get_GJ_Comment_History(targetPlayerID);
             var foundComments = await commentRequest.GetCommentHistory();
+            if (foundComments == null) {
+                // {ownerID}
+                await ctx.Response.Send(@"<html><p style='color:white'>Can't find comments, author account may have been banned.</p></html>");
+            }
+
             foreach (var comment in foundComments) {
                 var form = GetForm(comment.Comment, comment.ItemID, comment.SpecialID, comment.Age);
                 forms.Add(form);

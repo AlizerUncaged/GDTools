@@ -23,24 +23,26 @@ namespace GDTools.Core.Login {
         public readonly byte[] LoginPage = File.ReadAllBytes("Core/Login/Login.html");
         [StaticRoute(HttpMethod.GET, "/login")]
         public async Task LoginForm(HttpContext ctx) {
-            string cookies;
-            var cookiesFound = ctx.Request.Headers.TryGetValue("Cookie", out cookies);
 
-            if (cookiesFound) {
-                var keysAndCookies = Utilities.Quick_TCP.ParseCookie(cookies);
-                string sessionKey;
-                var sessionKeyFound = keysAndCookies.TryGetValue("SessionsKey", out sessionKey);
-                if (sessionKeyFound) {
-                    var account = Database.Database.GetUserFromSessionKey(sessionKey);
-                    if (account != null) {
-                        ctx.Response.StatusCode = 302;
-                        ctx.Response.Headers["Location"] = "/dashboard";
-                        await ctx.Response.Send();
-                        return;
-                    }
+            var cookies = new Dashboard.Cookie_Parser(ctx);
 
-                }
+            if (!cookies.Parse()) {
+                // if cookies dont exist send login page
+                await ctx.Response.Send(LoginPage);
+                return;
             }
+
+            var sessionKey = cookies.GetSessionKey();
+
+            var accountFromSessionKey = Database.Database.GetUserFromSessionKey(sessionKey);
+            if (accountFromSessionKey != null) {
+                // theres an account tied with the session key, go to dashboard
+                ctx.Response.StatusCode = 302;
+                ctx.Response.Headers["Location"] = "/dashboard";
+                await ctx.Response.Send();
+                return;
+            }
+
             await ctx.Response.Send(LoginPage);
             return;
         }
