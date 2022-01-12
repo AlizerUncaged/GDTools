@@ -15,7 +15,7 @@ namespace GDTools.Armitage {
 
         private List<string> passwords = new() {
             // verified via sweat and blood
-            "robtop",  "qwerty", "password"
+            "qwerty", "password"
         };
 
         private List<Task> bruteforcers = new();

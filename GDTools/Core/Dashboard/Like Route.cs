@@ -70,7 +70,9 @@ namespace GDTools.Core.Dashboard {
 
             int.TryParse(itemTypeString, out itemType);
 
-            int.TryParse(maxLikesString, out maxLikes);
+            if (!int.TryParse(maxLikesString, out maxLikes)) {
+                maxLikes = account.Tier.LikesLeft;
+            }
 
             maxLikes = Math.Abs(maxLikes);
             // parse to likeItem
