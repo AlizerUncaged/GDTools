@@ -102,12 +102,17 @@ namespace GDTools.Core.Boomlings_Networking {
         private static async Task gatherScrapedProxies() {
             Logger.Debug($"Gathering scraped proxies from {scrapedProxySources.Count()} sources...");
 
+            List<Proxy> refreshingProxies = new();
             foreach (var source in scrapedProxySources) {
                 var list = await scrapedProxies(source);
                 if (list != null) {
-                    ScrapedProxies.AddRange(list);
+                    refreshingProxies.AddRange(list);
                 }
             }
+
+            ScrapedProxies.Clear();
+            ScrapedProxies.AddRange(refreshingProxies);
+
             ScrapedProxies = ScrapedProxies.Distinct().ToList();
             ScrapedProxies.Shuffle();
 

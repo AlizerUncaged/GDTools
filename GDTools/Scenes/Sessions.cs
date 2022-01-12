@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace GDTools.Scenes {
     public class Sessions : Scene {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public Sessions() : base('C', "Sessions") {
         }
 

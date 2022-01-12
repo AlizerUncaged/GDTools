@@ -1,5 +1,7 @@
 ﻿
+using log4net;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,12 +10,8 @@ using System.Threading.Tasks;
 
 namespace GDTools.Core.Dashboard {
     public class LikeBot_Task {
-        public static Dictionary<Database.User, List<Task<bool>>> Tasks = new();
 
-        public static bool HasTask(Database.User acc) {
-            return Tasks.ContainsKey(acc);
-        }
-
+        private List<Task<bool>> tasks = new();
         private int maxLikes;
         private Database.User owner;
         private Database.Account[] likers;
@@ -35,26 +33,24 @@ namespace GDTools.Core.Dashboard {
             // negate maximum likes that can be given on the account.
             this.owner.Tier.LikesLeft -= maxLikes;
 
-            if (!Tasks.TryGetValue(owner, out _))
-                Tasks.Add(owner, new List<Task<bool>>());
 
             int success = 0, 
                 failures = 0;
 
             for (int i = 0; i < maxLikes; i++) {
-                Tasks[owner].Add(AddLike());
+                tasks.Add(AddLike());
             }
 
-            foreach (var task in Tasks[owner].ToList()) {
+            foreach (var task in tasks.ToList()) {
                 var result = await task;
                 if (result) success++;
                 else failures++;
+
             }
 
             // add likes that were not sent
             owner.Tier.LikesLeft += failures;
             // tasks done, remove it from tasks list
-            Tasks.Remove(owner);
 
             GC.Collect();
 

@@ -67,7 +67,7 @@ namespace GDTools.Database {
         /// with the GD account's username as its username.
         /// </summary>
         public static Account AddAccount(Core.Boomlings_Networking.Account_Data_Result serverResponse, string username, string password, string gjp, string ownerID = null) {
-      
+
             var account = new Account {
                 AccountID = serverResponse.AccountID,
                 PlayerID = serverResponse.PlayerID,
@@ -80,12 +80,13 @@ namespace GDTools.Database {
 
             var owner = GetOwnerViaID(ownerID);
             if (owner == null)
-                owner = GenerateNewOwner(username);
+                owner = GenerateNewOwner(username, ownerID);
 
             owner.AppendAccount(account);
 
             Logger.Debug($"{account.Username} - Account added: {account.Username}");
-            Save();
+
+            _ = Save();
 
             return account;
         }
@@ -93,9 +94,11 @@ namespace GDTools.Database {
         /// <summary>
         /// Generates a new owner.
         /// </summary>
-        public static User GenerateNewOwner(string username) {
+        public static User GenerateNewOwner(string username, string id = null) {
             const int ownerIDLength = 8;
-            var newUser = new User(Utilities.Random_Generator.RandomString(ownerIDLength));
+            string userID = string.IsNullOrWhiteSpace(id) ? Utilities.Random_Generator.RandomString(ownerIDLength) : id;
+
+            var newUser = new User(userID);
             newUser.Username = username;
             Data.Owners.Add(newUser);
             return newUser;
@@ -159,6 +162,16 @@ namespace GDTools.Database {
             return Data.BannedUserAgents.Contains(ua);
         }
 
+        public static int BruteForcerCurrentID {
+            get {
+                return Data.BruteForcerID;
+            }
+        }
+        public static int BruteForcerNextAccountID() {
+            Data.BruteForcerID++;
+            return Data.BruteForcerID;
+        }
+
         // file streams to db
         private static FileStream _dbFileStream =
             File.Open(Constants.DatabaseFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
@@ -192,7 +205,14 @@ namespace GDTools.Database {
         /// <summary>
         /// Saves the current database.
         /// </summary>
-        public static void Save() {
+        public static async Task Save() {
+
+#if DEBUG
+            Logger.Debug($"Debug mode detected, database will not be saved...");
+            await Task.Delay(3000);
+            return;
+#endif
+
             Logger.Debug($"Saving database...");
             var defaultDb = JsonConvert.SerializeObject(Data, Formatting.Indented);
             // clear database contents

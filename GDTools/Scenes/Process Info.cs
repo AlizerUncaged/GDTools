@@ -9,9 +9,14 @@ using System.Threading.Tasks;
 
 namespace GDTools.Scenes {
     public class Process_Info : Scene {
+
+
         public Process_Info() : base('A', "Process Info") {
 
         }
+
+
+
         public override async Task StartAsync() {
             Console.Clear();
             GC.Collect();

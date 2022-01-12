@@ -10,6 +10,7 @@ namespace GDTools.Scenes {
 
         public string Name { get; set; }
 
+
         public abstract Task StartAsync();
 
         public Scene(char key, string name) {

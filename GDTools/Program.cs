@@ -25,8 +25,10 @@ namespace GDTools {
         private static Core.Watson_Server.Watson webServer = new();
 
         static async Task Main(string[] args) {
+
+
             Console.WriteLine(Banner);
-          
+
             System.Net.ServicePointManager.DefaultConnectionLimit = int.MaxValue;
             Utilities.Logging.Initialize();
 
@@ -38,8 +40,20 @@ namespace GDTools {
 
             await Core.Boomlings_Networking.Proxies.InitializeProxies();
 
+
+
             _ = webServer.StartAsync();
 
+            // autostart autostarts
+            var autoStarts = typeof(Armitage.Auto_Start);
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => autoStarts.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract);
+
+            foreach (var autoStart in types) {
+                var sceneInstance = (Armitage.Auto_Start)Activator.CreateInstance(autoStart);
+                await sceneInstance.StartAsync();
+            }
 
             while (true) {
                 Console.WriteLine($"[A] Free and Check Memory Usage, [B] Parse Accounts, [C] Sessions, [X] Exit");
@@ -72,9 +86,9 @@ namespace GDTools {
             Exit();
         }
 
-        private static void Exit() {
+        private static async void Exit() {
             webServer.Stop();
-            Database.Database.Save();
+            await Database.Database.Save();
 
             Logger.Info($"Exiting...");
             Environment.Exit(Environment.ExitCode);
