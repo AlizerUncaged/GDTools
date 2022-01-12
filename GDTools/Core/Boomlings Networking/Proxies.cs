@@ -45,7 +45,7 @@ namespace GDTools.Core.Boomlings_Networking {
     public class CustomWebClient : WebClient {
         protected override WebRequest GetWebRequest(Uri uri) {
             WebRequest w = base.GetWebRequest(uri);
-            w.Timeout = 30 * 1000; // 30 seconds
+            w.Timeout = 15 * 1000; // 30 seconds
             return w;
         }
     }

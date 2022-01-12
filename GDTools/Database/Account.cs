@@ -39,6 +39,6 @@ namespace GDTools.Database {
         /// <summary>
         /// Items the account liked, total contributions to other accounts.
         /// </summary>
-        public List<Contribution> Contributions = new();
+        public List<(Core.Boomlings_Networking.Like_Item item, DateTime date)> Contributions = new();
     }
 }

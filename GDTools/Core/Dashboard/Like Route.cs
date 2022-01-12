@@ -86,7 +86,7 @@ namespace GDTools.Core.Dashboard {
 
             LikeBot_Task lTask = new(account, likeItem, maxLikes);
             var success = await lTask.LikeBotAll();
-            Logger.Debug($"Done, expect {success}.");
+            Logger.Debug($"Done, expect {success} for {account.Username}");
         }
     }
 }

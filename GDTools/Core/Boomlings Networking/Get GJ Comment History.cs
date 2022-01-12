@@ -22,8 +22,8 @@ namespace GDTools.Core.Boomlings_Networking {
     }
     public class Get_GJ_Comment_History : Boomlings_Request_Base {
 
-        public Get_GJ_Comment_History(int fromAccountID) : base("/database/getGJCommentHistory.php",
-            $"gameVersion=21&binaryVersion=35&gdw=0&page=0&total=0&secret=Wmfd2893gb7&mode=0&userID={fromAccountID}&count=20"
+        public Get_GJ_Comment_History(int fromAccountID, int count = 75) : base("/database/getGJCommentHistory.php",
+            $"gameVersion=21&binaryVersion=35&gdw=0&page=0&total=0&secret=Wmfd2893gb7&mode=0&userID={fromAccountID}&count={count}"
             ) {
 
         }

@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using GDTools.Core.Boomlings_Networking;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,8 @@ namespace GDTools.Database {
 
         // default tier is Free
         public Tier Tier = new();
+
+        public List<(Like_Item item, DateTime date)> History = new();
 
         [JsonProperty]
         /// <summary>
