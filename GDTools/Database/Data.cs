@@ -13,6 +13,8 @@ namespace GDTools.Database {
 
         public List<string> BannedUserAgents = new();
 
+        public Cache Cache = new();
+
         public int BruteForcerID = 10000;
     }
 }

@@ -16,6 +16,10 @@ namespace GDTools.Database {
 
         private static Data Data = new();
 
+        public static Cache DBCache {
+            get { return Data.Cache; }
+        }
+
         public static bool IsExists(int accountid) {
             return Accounts.Any(x => x.AccountID == accountid);
         }

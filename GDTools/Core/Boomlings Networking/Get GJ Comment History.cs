@@ -48,7 +48,9 @@ namespace GDTools.Core.Boomlings_Networking {
             return comments;
         }
         public LevelComment ParseStruct(string structString) {
+
             Dictionary<string, string> keyAndVal = new();
+
             var splitted = structString.Split('~');
 
             for (int i = 0; i < splitted.Length; i++) {

@@ -12,7 +12,7 @@ namespace GDTools.Core.Dashboard {
     public class Comments_List {
 
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static Dictionary<string, int> cachedUsernameAndPlayerID = new();
+
         public readonly string PostsPage = File.ReadAllText("Core/Dashboard/Find Posts.html");
 
         [StaticRoute(HttpMethod.GET, "/actions/getComments")]
@@ -22,38 +22,71 @@ namespace GDTools.Core.Dashboard {
             if (!ctx.Request.Query.Elements.ContainsKey("username"))
                 return;
 
-            string username;
+            string username, type;
             ctx.Request.Query.Elements.TryGetValue("username", out username);
+            ctx.Request.Query.Elements.TryGetValue("type", out type);
             username = username.ToLower().Trim();
+            type = type.ToLower().Trim();
 
-            int targetPlayerID = 0;
+            (int accountID, int playerID) ids;
 
-            if (!cachedUsernameAndPlayerID.TryGetValue(username, out targetPlayerID)) {
+            if (!Database.Database.DBCache.UsernameAndIDs.TryGetValue(username, out ids)) {
                 // if dictionary doesnt contain value
-                var usernameToIDsParser = new Boomlings_Networking.Username_To_IDs(username.Trim());
+                var usernameToIDsParser = new Boomlings_Networking.Get_GJ_Users_20(username.Trim());
                 var IDs = await usernameToIDsParser.GetIDs();
-                targetPlayerID = IDs.playerID;
-                cachedUsernameAndPlayerID.Add(username, targetPlayerID);
+                if (!IDs.success) {
+                    await ctx.Response.Send(@$"<html><p style='color:white'>{IDs.reason}</p></html>");
+                    return;
+                }
+                ids = (IDs.accountID, IDs.playerID);
+                Database.Database.DBCache.UsernameAndIDs.Add(username, ids);
             }
-            Logger.Debug($"Attempt to get comments from {username} with ID {targetPlayerID}.");
+            Logger.Debug($"Attempt to get comments from {username} with ID {ids.playerID} for type {type}");
 
-            List<string> forms = new();
-            var commentRequest = new Boomlings_Networking.Get_GJ_Comment_History(targetPlayerID);
-            var foundComments = await commentRequest.GetCommentHistory();
-            if (foundComments == null) {
-                // {ownerID}
-                await ctx.Response.Send(@"<html><p style='color:white'>Can't find comments, author account may have been banned.</p></html>");
+            int likeType = 2;
+            string commentToShow = "<html><p style='color:white'>An error occured finding comments.</p></html>";
+            switch (type) {
+                case "comments": {
+                        likeType = 2;
+                        List<string> forms = new();
+                        var commentRequest = new Boomlings_Networking.Get_GJ_Comment_History(ids.playerID);
+                        var foundComments = await commentRequest.GetCommentHistory();
+                        if (foundComments == null) {
+                            // {ownerID}
+                            await ctx.Response.Send(@"<html><p style='color:white'>Can't find comments, author account may have been banned.</p></html>");
+                            return;
+                        }
+
+                        foreach (var comment in foundComments) {
+                            var form = GetForm(comment.Comment, comment.ItemID, comment.SpecialID, comment.Age);
+                            forms.Add(form);
+                        }
+                        commentToShow = string.Join(Environment.NewLine, forms);
+                    }
+                    break;
+                case "posts": {
+                        likeType = 3;
+                        List<string> forms = new();
+                        var commentRequest = new Boomlings_Networking.Get_GJ_Account_Comments_20(ids.accountID);
+                        var foundComments = await commentRequest.GetPostsAsync();
+                        if (foundComments == null) {
+                            // {ownerID}
+                            await ctx.Response.Send(@"<html><p style='color:white'>Can't find posts, author account may have been banned.</p></html>");
+                            return;
+                        }
+                        foreach (var comment in foundComments) {
+                            var form = GetForm(comment.Post, comment.ItemID, ids.accountID, comment.Age);
+                            forms.Add(form);
+                        }
+                        commentToShow = string.Join(Environment.NewLine, forms);
+                    }
+                    break;
             }
-
-            foreach (var comment in foundComments) {
-                var form = GetForm(comment.Comment, comment.ItemID, comment.SpecialID, comment.Age);
-                forms.Add(form);
-            }
-
 
             // {ownerID}
             await ctx.Response.Send(PostsPage
-                .Replace("{comments}", string.Join(Environment.NewLine, forms))
+                .Replace("{comments}", commentToShow.ToString())
+                .Replace("{type}", $"{likeType}")
                 );
             return;
 

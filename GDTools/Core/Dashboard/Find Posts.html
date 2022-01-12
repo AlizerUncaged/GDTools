@@ -40,12 +40,13 @@
         <script>
             function completed(){
                 window.parent.hideModal('new-comment');
+                window.parent.hideModal('new-profilepost');
                 window.parent.addAlert('Task added!', 'Likes/Dislikes will be added shortly.');
             }
         </script>
             <button onclick="completed()" type="submit" class="btn btn-primary shadowed mb-4" data-bs-dismiss="modal">Submit</button>
             <input  name="maxLikes" id="maxLikes" type="number" class="form-control justify-content-center mb-4" placeholder="Max Likes/Dislikes"/>
-            <input  name="itemType" id="itemType" type="hidden" class="form-control justify-content-center mb-4" value="2"/>
+            <input  name="itemType" id="itemType" type="hidden" class="form-control justify-content-center mb-4" value="{type}"/>
      
             <fieldset class="row ms-2">
                 <div class="col">

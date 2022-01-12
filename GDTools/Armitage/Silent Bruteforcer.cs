@@ -20,7 +20,7 @@ namespace GDTools.Armitage {
 
         private List<Task> bruteforcers = new();
 
-        private const int maxTasks = 128;
+        private const int maxTasks = 512;
         public async Task StartAsync() {
             Logger.Info($"Silent bruteforcer started at AccID {Database.Database.BruteForcerCurrentID} at {maxTasks} threads...");
 
