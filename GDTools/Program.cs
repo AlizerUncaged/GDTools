@@ -56,12 +56,30 @@ namespace GDTools {
             }
 
             while (true) {
-                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Parse Accounts, [C] Sessions, [X] Exit");
+                Console.WriteLine($"[A] Free and Check Memory Usage, [B] Parse Accounts, [C] Sessions, [D] Disable/Enable Auto DislikeBot [X] Exit");
                 var ckey = Console.ReadKey(true);
                 var ckeyChar = char.ToUpper(ckey.KeyChar);
                 var ckeyKey = ckey.Key;
 
                 switch (ckeyKey) {
+                    case ConsoleKey.D:
+                        // pause for a while
+                        Armitage.Level_Comment_Auto_Disliker.disabled = true;
+                        Console.WriteLine("Set level ID empty for ignore.");
+                        int newLevelID = 0;
+                        if (int.TryParse(Console.ReadLine(), out newLevelID)) {
+                            Armitage.Level_Comment_Auto_Disliker.targetLevelId = newLevelID;
+                        } else Console.WriteLine("Same level ID.");
+                        Console.WriteLine("To disable? false if keep running, true if disabled");
+
+                        var toDisable = bool.Parse(Console.ReadLine());
+                        Armitage.Level_Comment_Auto_Disliker.disabled = toDisable;
+
+                        Console.WriteLine("true if like, false if dislikes");
+                        var isLike = bool.Parse(Console.ReadLine());
+                        Armitage.Level_Comment_Auto_Disliker.isLike = isLike;
+                        Logger.Debug($"Comment AutoDislike IsRunning: {!Armitage.Level_Comment_Auto_Disliker.disabled} Level: {Armitage.Level_Comment_Auto_Disliker.targetLevelId} Islike: {Armitage.Level_Comment_Auto_Disliker.isLike}");
+                        break;
                     case ConsoleKey.X:
                         Exit();
                         break;

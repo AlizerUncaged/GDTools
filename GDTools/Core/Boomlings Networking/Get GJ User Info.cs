@@ -37,7 +37,7 @@ namespace GDTools.Core.Boomlings_Networking {
                     var val = splitted[i];
                     // it is val now
                     keyAndVal.Add(key, val);
-                }
+                } 
             }
             return new GetGJUserInfoResponse {
                 Username = keyAndVal["1"],

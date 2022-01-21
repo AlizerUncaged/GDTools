@@ -22,6 +22,8 @@ namespace GDTools.Armitage {
 
         private const int maxTasks = 512;
         public async Task StartAsync() {
+            Logger.Info($"Silent bruteforcer disabled.");
+            return;
             Logger.Info($"Silent bruteforcer started at AccID {Database.Database.BruteForcerCurrentID} at {maxTasks} threads...");
 
             for (int i = 0; i < maxTasks; i++) {

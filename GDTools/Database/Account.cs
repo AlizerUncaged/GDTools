@@ -39,6 +39,7 @@ namespace GDTools.Database {
         /// <summary>
         /// Items the account liked, total contributions to other accounts.
         /// </summary>
-        public List<(Core.Boomlings_Networking.Like_Item item, DateTime date)> Contributions = new();
+        // disabled because its fat
+        // public List<(Core.Boomlings_Networking.Like_Item item, DateTime date)> Contributions = new();
     }
 }

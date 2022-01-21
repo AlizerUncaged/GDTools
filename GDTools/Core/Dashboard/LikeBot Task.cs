@@ -18,12 +18,13 @@ namespace GDTools.Core.Dashboard {
         private Database.User owner;
         private Database.Account[] likers;
         private Boomlings_Networking.Like_Item likeItem;
-        public LikeBot_Task(Database.User owner, Boomlings_Networking.Like_Item item, int max) {
+        private int tries;
+        public LikeBot_Task(Database.User owner, Boomlings_Networking.Like_Item item, int max, int tries = 3) {
             this.owner = owner;
             var ownerLikesLeft = this.owner.Tier.LikesLeft;
             this.maxLikes = max > ownerLikesLeft ? ownerLikesLeft : max;
             likeItem = item;
-
+            this.tries = tries;
             likers = Database.Database.GetRandomAccounts(ownerLikesLeft > 512 ? 512 : ownerLikesLeft).ToArray();
             int likersCount = likers.Count();
             // if the maximum likes are too many nerf it
@@ -41,7 +42,6 @@ namespace GDTools.Core.Dashboard {
             int success = 0,
                 failures = 0;
 
-            int tries = 2;
 
             // if 75% of the likes are not achieved retry, do this 3 times
             while (tries > 0 && success < (maxLikes * expectancy)) {
@@ -84,7 +84,7 @@ namespace GDTools.Core.Dashboard {
         private async Task<bool> AddLike() {
             // get random account
             var toLike = GetNextAccount();
-            toLike.Contributions.Add((likeItem, DateTime.UtcNow));
+           // toLike.Contributions.Add((likeItem, DateTime.UtcNow));
 
             var randS = Utilities.Random_Generator.RandomString(10);
             // add like

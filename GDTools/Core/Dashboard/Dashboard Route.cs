@@ -27,7 +27,7 @@ namespace GDTools.Core.Dashboard {
             var account = Database.Database.GetUserFromSessionKey(sessionKey);
             // else return to login screen
             if (account == null) {
-                await cookies.MoveToLogin(ctx); 
+                await cookies.MoveToLogin(ctx);
                 return;
             }
             // {ownerID}
@@ -35,6 +35,7 @@ namespace GDTools.Core.Dashboard {
                 .Replace("{ownerID}", account.OwnerID.ToString())
                 .Replace("{username}", account.Username)
                 .Replace("{left}", account.Tier.LikesLeft.ToString())
+                .Replace("/*left*/", account.Tier.LikesLeft.ToString())
                 .Replace("{used_memory}", Utilities.Me_as_Process.FormatBytes(Utilities.Me_as_Process.MemoryUsage()))
                 );
             return;

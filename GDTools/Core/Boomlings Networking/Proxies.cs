@@ -163,28 +163,6 @@ namespace GDTools.Core.Boomlings_Networking {
             webClient.Headers["Content-Type"] = "application/x-www-form-urlencoded";
             return webClient;
 
-            //HttpToSocks5Proxy socks5 = null;
-
-            //if (proxy.Username == null && proxy.Password == null)
-            //    socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port);
-
-            //else
-            //    socks5 = new HttpToSocks5Proxy(proxy.IP, proxy.Port, proxy.Username, proxy.Password);
-            //socks5.ResolveHostnamesLocally = true;
-
-            //var handler = new HttpClientHandler { Proxy = socks5 };
-            //var httpClient = new ProxiedHttpClient(handler, true);
-
-            //// timeout of clients in seconds
-            //const int timeout = 20;
-
-            //httpClient.Timeout = TimeSpan.FromSeconds(timeout);
-            //httpClient.DefaultRequestHeaders.Accept.Add(AcceptAll);
-            //httpClient.DefaultRequestVersion = HttpVersion.Version11;
-            //httpClient.Proxy = proxy;
-            //return httpClient;
-
-
         }
 
         private static int currentPaidProxyIndex = -1; // initial value

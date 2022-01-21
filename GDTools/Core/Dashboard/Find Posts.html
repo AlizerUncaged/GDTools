@@ -28,44 +28,69 @@
 
     <link rel="icon" href="/resources/Logo.ico?v=1">
 
-    <link rel="stylesheet" href="/resources/Main.css">
+    <link rel="stylesheet" href="/resources/Main.css?v=1">
     <title>Account Comments | GDTools</title>
     <style>
-        
+
     </style>
 </head>
 
 <body>
-    <form method="post" action="/actions/like" class="d-flex justify-content-center flex-column m-2" target="dummyframe">
+    <form id="find-post-form" method="post" action="/actions/like"
+        class="d-flex justify-content-center flex-column m-2" target="dummyframe">
         <script>
-            function completed(){
-                window.parent.hideModal('new-comment');
-                window.parent.hideModal('new-profilepost');
+            function levelFormFinished(formName) {
+                var elements = document.getElementById(formName).elements;
+
+                var obj = {};
+                for (var i = 0; i < elements.length; i++) {
+                    var item = elements.item(i);
+                    obj[item.name] = item.value;
+                }
+
+                if (window.parent.minusLikes(obj["maxLikes"])) {
+                    // no more likes left
+                    window.parent.document.getElementById("login-new-acc-description").innerText = "You have 0 likes left! Please login a new Geometry Dash account to add 100 more likes to your account.";
+                    var myModal = new bootstrap.Modal(window.parent.document.getElementById('add-account'), { keyboard: false });
+                    myModal.show();
+                }
                 window.parent.addAlert('Task added!', 'Likes/Dislikes will be added shortly.');
             }
+
+            function completed() {
+                try {
+                    window.parent.hideModal('new-comment');
+                    window.parent.hideModal('new-profilepost');
+                }
+                catch { }
+                levelFormFinished("find-post-form");
+            }
         </script>
-            <button onclick="completed()" type="submit" class="btn btn-primary shadowed mb-4" data-bs-dismiss="modal">Submit</button>
-            <input  name="maxLikes" id="maxLikes" type="number" class="form-control justify-content-center mb-4" placeholder="Max Likes/Dislikes"/>
-            <input  name="itemType" id="itemType" type="hidden" class="form-control justify-content-center mb-4" value="{type}"/>
-     
-            <fieldset class="row ms-2">
-                <div class="col">
-                    <input class="form-check-input likeDislike" type="radio" name="isLike" value="false"
-                        id="levelDislikeRadio">
-                    <label class="text-center" for="levelDislikeRadio">
-                        <i class="bi bi-hand-thumbs-down"></i>
-                        Dislike</label>
-                </div>
-                <div class="col">
-                    <input class="form-check-input likeDislike" type="radio" name="isLike" value="true"
-                        id="levelLikeRadio" checked>
-                    <label class="text-center" for="levelLikeRadio">
-                        <i class="bi bi-hand-thumbs-up"></i>
-                        Like</label>
-                </div>
-            </fieldset>
-            <p class="text-center m-2">Select any comment below.</p>
-            {comments}
+        <button onclick="completed()" type="submit" class="btn btn-primary shadowed mb-4"
+            data-bs-dismiss="modal">Submit</button>
+        <input name="maxLikes" id="maxLikes" type="number" class="form-control justify-content-center mb-4"
+            placeholder="Max Likes/Dislikes" />
+        <input name="itemType" id="itemType" type="hidden" class="form-control justify-content-center mb-4"
+            value="{type}" />
+
+        <fieldset class="row ms-2">
+            <div class="col">
+                <input class="form-check-input likeDislike" type="radio" name="isLike" value="false"
+                    id="levelDislikeRadio">
+                <label class="text-center" for="levelDislikeRadio">
+                    <i class="bi bi-hand-thumbs-down"></i>
+                    Dislike</label>
+            </div>
+            <div class="col">
+                <input class="form-check-input likeDislike" type="radio" name="isLike" value="true" id="levelLikeRadio"
+                    checked>
+                <label class="text-center" for="levelLikeRadio">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                    Like</label>
+            </div>
+        </fieldset>
+        <p class="text-center m-2">Select any comment below.</p>
+        {comments}
 
     </form>
 </body>

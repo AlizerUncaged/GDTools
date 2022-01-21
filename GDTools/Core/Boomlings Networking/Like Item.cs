@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GDTools.Core.Boomlings_Networking {
     public enum ItemType {
-        Level = 1
+        Level = 1, Comment = 2
     }
     public struct Like_Item {
         public int ItemID { get; set; }

@@ -31,7 +31,7 @@
         rel="stylesheet">
 
     <link rel="icon" href="/resources/Logo.ico?v=1">
-    <link rel="stylesheet" href="/resources/Main.css?v=2">
+    <link rel="stylesheet" href="/resources/Main.css?v=3">
     <style>
         :root {
             --background: #24252D;
@@ -167,7 +167,7 @@
                 + Add Level</button>
             <button data-bs-toggle="modal" data-bs-target="#new-comment" class="btn round-s addbot-button"
                 type="submit"> + Add Comment</button>
-                
+
             <button data-bs-toggle="modal" data-bs-target="#new-profilepost" class="btn round-s addbot-button"
                 type="submit"> + Add Profile Post</button>
         </div>
@@ -196,7 +196,8 @@
                     <h5 class="modal-title" id="exampleModalLabel"> <b>Login Account</b></h5>
                 </div>
                 <div class="modal-body justify-content-center">
-                    <p class="mt-2">Please log in a valid <b>Geometry Dash</b> account, additional likes will be added
+                    <p class="mt-2" id="login-new-acc-description">Please log in a valid <b>Geometry Dash</b> account,
+                        additional likes will be added
                         if the account is valid.</p>
                     <form action="/">
                         <input name="username" id="username" type="text" class="form-control mb-3"
@@ -224,6 +225,13 @@
                     </button>
                 </div>
                 <script>
+                    var currentLikes = /*left*/;
+                    function minusLikes(howMany) {
+                        var backlikes = currentLikes;
+                        currentLikes -= howMany;
+                        return backlikes <= 0;
+                    }
+
                     function setCookie(name, value, days) {
                         var expires = "";
                         if (days) {
@@ -328,7 +336,7 @@
                                 data-bs-target="#add-account" class="btn round-s addbot-button">Add Account</a>
                         </div>
                     </div>
-                <!--
+                    <!--
                     <div class="card bg-dark-lighter shadow" style="width: 200px; border: 0;">
                         <img style="height: 115px;"
                             src="https://pm1.narvii.com/7905/18bb34d0d74a3bf75008fb2c560189bae4f6b4dfr1-1920-1080v2_hq.jpg"
@@ -356,7 +364,27 @@
     <div class="modal fade" id="new-level" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" action="/actions/like" target="dummyframe">
+                <form id="new-level-form" method="post" action="/actions/like" target="dummyframe">
+                    <script>
+                        function levelFormFinished(formName) {
+                            var elements = document.getElementById(formName).elements;
+
+                            var obj = {};
+                            for (var i = 0; i < elements.length; i++) {
+                                var item = elements.item(i);
+                                obj[item.name] = item.value;
+                            }
+
+                            if (minusLikes(obj["maxLikes"])) {
+                                // no more likes left
+                                document.getElementById("login-new-acc-description").innerText = "You have 0 likes left! Please login a new Geometry Dash account to add 100 more likes to your account.";
+                                var myModal = new bootstrap.Modal(document.getElementById('add-account'), {  keyboard: false });
+                                myModal.show();
+                            }
+                            else
+                                addAlert('Task added!', 'Likes/Dislikes will be added shortly.');
+                        }
+                    </script>
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"> <b>Level Likes</b></h5>
                     </div>
@@ -388,8 +416,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary shadowed"
-                            onclick="addAlert('Task added!', 'Likes/Dislikes will be added shortly.')"
-                            data-bs-dismiss="modal">Submit</button>
+                            onclick="levelFormFinished('new-level-form')" data-bs-dismiss="modal">Submit</button>
                     </div>
 
                 </form>
@@ -403,7 +430,7 @@
                 var modal = document.getElementById(modalid);
                 modal.classList.remove("show");
                 modal.setAttribute('aria-hidden', 'true');
-                modal.setAttribute('style', 'display: none');
+                modal.style.display = "none";
                 // get modal backdrop
                 const modalBackdrops = document.getElementsByClassName('modal-backdrop');
 
@@ -413,7 +440,8 @@
         </script>
         <div class="modal-dialog" id="comment-modal">
             <div class="modal-content">
-                <form onsubmit="showId('search-comments-spinner')" action="/actions/getComments" method="get" target="comments-iframe">
+                <form onsubmit="showId('search-comments-spinner')" action="/actions/getComments" method="get"
+                    target="comments-iframe">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"> <b>Comment Likes</b></h5>
                     </div>
@@ -423,21 +451,23 @@
                             placeholder="Author Username ex. Robtop">
                         <input name="type" id="type" type="hidden" value="comments">
                         <div class="row container" id="comment-area">
-                            <iframe onload="hideId('search-comments-spinner')" name="comments-iframe" style="height: 400px; width: 100%;"></iframe>
+                            <iframe onload="hideId('search-comments-spinner')" name="comments-iframe"
+                                style="height: 400px; width: 100%;"></iframe>
                         </div>
                     </div>
-                        <script>
-                            function hideId(id){
-                                document.getElementById(id).style.display = "none";
-                            }
-                            function showId(id){
-                                document.getElementById(id).style.display = "inline-block";
-                            }
-                        </script>
+                    <script>
+                        function hideId(id) {
+                            document.getElementById(id).style.display = "none";
+                        }
+                        function showId(id) {
+                            document.getElementById(id).style.display = "inline-block";
+                        }
+                    </script>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary shadowed">
-                            <div class="spinner-border spinner-border-sm" style="display: none;" id="search-comments-spinner"></div>
+                            <div class="spinner-border spinner-border-sm" style="display: none;"
+                                id="search-comments-spinner"></div>
                             Search for Comments
                         </button>
                     </div>
@@ -448,7 +478,8 @@
     <div class="modal fade" id="new-profilepost" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form onsubmit="showId('search-posts-spinner')" action="/actions/getComments" method="get" target="posts-iframe">
+                <form onsubmit="showId('search-posts-spinner')" action="/actions/getComments" method="get"
+                    target="posts-iframe">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"> <b>Comment Likes</b></h5>
                     </div>
@@ -458,21 +489,23 @@
                             placeholder="Author Username ex. Robtop">
                         <input name="type" id="type" type="hidden" value="posts">
                         <div class="row container" id="comment-area">
-                            <iframe onload="hideId('search-posts-spinner')" name="posts-iframe" style="height: 400px; width: 100%;"></iframe>
+                            <iframe onload="hideId('search-posts-spinner')" name="posts-iframe"
+                                style="height: 400px; width: 100%;"></iframe>
                         </div>
                     </div>
-                        <script>
-                            function hideId(id){
-                                document.getElementById(id).style.display = "none";
-                            }
-                            function showId(id){
-                                document.getElementById(id).style.display = "inline-block";
-                            }
-                        </script>
+                    <script>
+                        function hideId(id) {
+                            document.getElementById(id).style.display = "none";
+                        }
+                        function showId(id) {
+                            document.getElementById(id).style.display = "inline-block";
+                        }
+                    </script>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary shadowed" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary shadowed">
-                            <div class="spinner-border spinner-border-sm" style="display: none;" id="search-posts-spinner"></div>
+                            <div class="spinner-border spinner-border-sm" style="display: none;"
+                                id="search-posts-spinner"></div>
                             Search for Profile Posts
                         </button>
                     </div>

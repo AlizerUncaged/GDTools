@@ -39,11 +39,13 @@ namespace GDTools.Core.Watson_Server {
 
         }
         public void Stop() {
-            Logger.Debug($"Stopping webserver...");
-            if (s != null && s.IsListening) {
-                s.Stop();
-                s.Dispose();
-            }
+            try {
+                Logger.Debug($"Stopping webserver...");
+                if (s != null && s.IsListening) {
+                    s.Stop();
+                    s.Dispose();
+                }
+            } catch { }
             Logger.Info($"Server stopped...");
         }
 
