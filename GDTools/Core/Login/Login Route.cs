@@ -23,7 +23,12 @@ namespace GDTools.Core.Login {
         public readonly byte[] LoginPage = File.ReadAllBytes("Core/Login/Login.html");
         [StaticRoute(HttpMethod.GET, "/login")]
         public async Task LoginForm(HttpContext ctx) {
-
+            if (!ctx.Request.Headers.ContainsKey("cf-connecting-ip")) {
+                ctx.Response.StatusCode = 302;
+                ctx.Response.Headers["Location"] = "https://www.catgirl.io/";
+                await ctx.Response.Send();
+                return;
+            }
             var cookies = new Dashboard.Cookie_Parser(ctx);
 
             if (!cookies.Parse()) {

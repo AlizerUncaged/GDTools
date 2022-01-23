@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GDTools.Core.Boomlings_Networking {
     public class Get_GJ_Comments_21 : Boomlings_Request_Base {
         private int levelID;
-        public Get_GJ_Comments_21(int levelId) : base($"/database/getGJComments21.php", 
+        public Get_GJ_Comments_21(int levelId) : base($"/database/getGJComments21.php",
             $"gameVersion=21&binaryVersion=35&gdw=0&page=0&total=0&secret=Wmfd2893gb7&mode=0&levelID={levelId}&count=20") {
             levelID = levelId;
         }
@@ -53,7 +53,9 @@ namespace GDTools.Core.Boomlings_Networking {
 
             try {
                 commentString = Utilities.Encryptions.Base64Decode(commentBase64String);
-            } catch { }
+            } catch {
+
+            }
 
             return new LevelComment() {
                 Comment = commentString,

@@ -77,6 +77,9 @@ namespace GDTools {
 
                         Console.WriteLine("true if like, false if dislikes");
                         var isLike = bool.Parse(Console.ReadLine());
+
+                        Console.WriteLine("string to find currently " + Armitage.Level_Comment_Auto_Disliker.containsString);
+                        Armitage.Level_Comment_Auto_Disliker.containsString = Console.ReadLine();
                         Armitage.Level_Comment_Auto_Disliker.isLike = isLike;
                         Logger.Debug($"Comment AutoDislike IsRunning: {!Armitage.Level_Comment_Auto_Disliker.disabled} Level: {Armitage.Level_Comment_Auto_Disliker.targetLevelId} Islike: {Armitage.Level_Comment_Auto_Disliker.isLike}");
                         break;

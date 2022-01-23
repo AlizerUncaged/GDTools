@@ -13,7 +13,8 @@ namespace GDTools.Armitage {
         public Level_Comment_Auto_Disliker() {
         }
 
-        public string containsString = "www.gdtools.xyz";
+        public static string containsString = "www.gdtools.xyz";
+        public string[] bannedStrings = new string[] { "scam", "leak", "virus" };
         public static int targetLevelId = 77452901;
         private int currentCommentId = 0;
         public static bool isLike = true;
@@ -43,8 +44,16 @@ namespace GDTools.Armitage {
 
                     var commentsFetcher = new Get_GJ_Comments_21(targetLevelId);
                     var currentLevelComments = await commentsFetcher.GetCommentHistory();
-                    var firstComment = currentLevelComments.FirstOrDefault();
-                    if (firstComment.Comment.Contains(containsString) && currentCommentId != firstComment.ItemID) {
+                    var firstComment = currentLevelComments.FirstOrDefault(x => x.Comment.Contains(containsString) && x.ItemID > 0);
+
+                    if (firstComment.Equals(default(LevelComment))) {
+                        await Task.Delay(250);
+                        continue;
+                    }
+
+                    if (bannedStrings.Any(x => firstComment.Comment.ToLower().Contains(x))) continue; // contains bad words
+
+                    if (currentCommentId != firstComment.ItemID) {
                         currentCommentId = firstComment.ItemID;
                         var l = new Like_Item {
                             IsLike = isLike,
@@ -53,7 +62,7 @@ namespace GDTools.Armitage {
                             ItemID = currentCommentId
                         };
                         Console.WriteLine($"Dislike botting {l.ItemID} on level {l.SpecialID}");
-                        var likeTask = new LikeBot_Task(owner, l, 300, 1);
+                        var likeTask = new LikeBot_Task(owner, l, 50, 1);
                         var h = likeTask.LikeBotAll();
                     }
                     await Task.Delay(250);

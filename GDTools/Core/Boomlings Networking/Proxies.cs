@@ -53,13 +53,21 @@ namespace GDTools.Core.Boomlings_Networking {
     public static class Proxies {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static readonly string[] scrapedProxySources = new string[] {
+        private static readonly string[] socksV5Sources = new string[] {
             "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
             "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=10000&country=all&simplified=true",
             "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
             "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt",
             "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt",
             "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt"
+        };
+
+        private static readonly string[] socksV4Sources = new string[] {
+            "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks4.txt",
+            "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt",
+            "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks4.txt",
+            "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt",
+            "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks4&timeout=8300&country=all&simplified=true"
         };
 
         public static List<Proxy> PaidProxyList = new();
@@ -100,10 +108,11 @@ namespace GDTools.Core.Boomlings_Networking {
         }
 
         private static async Task gatherScrapedProxies() {
-            Logger.Debug($"Gathering scraped proxies from {scrapedProxySources.Count()} sources...");
+            var proxySource = socksV5Sources;
+            Logger.Debug($"Gathering scraped proxies from {proxySource.Count()} sources...");
 
             List<Proxy> refreshingProxies = new();
-            foreach (var source in scrapedProxySources) {
+            foreach (var source in /*socksV5Sources*/ proxySource) {
                 var list = await scrapedProxies(source);
                 if (list != null) {
                     refreshingProxies.AddRange(list);
@@ -113,7 +122,7 @@ namespace GDTools.Core.Boomlings_Networking {
             ScrapedProxies.Clear();
             ScrapedProxies.AddRange(refreshingProxies);
 
-            ScrapedProxies = ScrapedProxies.Distinct().ToList();
+            ScrapedProxies = ScrapedProxies.GroupBy(x => x.IP).Select(x => x.FirstOrDefault()).ToList();
             ScrapedProxies.Shuffle();
 
             // generate http clients based on proxy
@@ -151,9 +160,9 @@ namespace GDTools.Core.Boomlings_Networking {
         // generate an http client for each proxy to save hardware resources because each HttpClient generates
         // its own socket for some reason and i dont want to create a new instance of HttpClient each request
         // when we can generate for each proxies.
-        private static CustomWebClient generateWebClient(Proxy proxy) {
+        private static CustomWebClient generateWebClient(Proxy proxy, int socksVersion = 5) {
             var wproxy = new WebProxy();
-            wproxy.Address = new Uri($"socks5://{proxy.IP}:{proxy.Port}");
+            wproxy.Address = new Uri($"socks{socksVersion}://{proxy.IP}:{proxy.Port}");
             wproxy.Credentials = new NetworkCredential(proxy.Username, proxy.Password); //Used to set Proxy logins. 
 
             var webClient = new CustomWebClient { Proxy = wproxy };
@@ -186,7 +195,7 @@ namespace GDTools.Core.Boomlings_Networking {
                 ScrapedProxies.Shuffle();
             }
             var currentProxy = ScrapedProxies[currentScrapedProxyIndex];
-            var generatedClient = generateWebClient(currentProxy);
+            var generatedClient = generateWebClient(currentProxy, 5);
             return generatedClient;
             // generate httpclient already
             ////currentScrapedProxyIndex++;
